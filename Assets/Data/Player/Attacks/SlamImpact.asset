@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3caa333406ed2a44eb451a644e60b334, type: 3}
+  m_Name: SlamImpact
+  m_EditorClassIdentifier: 
+  attackName: SlamImpact
+  direction: 1
+  baseDamage: 3
+  baseKnockback: {x: 20, y: 10}
+  hitboxOffset: {x: 0, y: 0}
+  hitboxSize: {x: 3.5, y: 2}
+  recoilType: 0
+  recoilForce: {x: 0, y: 0}
+  knockbackMode: 1
+  stunDuration: 0.4
+  hitStopDuration: 0
+  screenShakeMagnitude: 0.1
+  animationName: 
+  baseAnimDuration: 0
+  hitActiveNormalized: 0.2
+  lockMovementOnGround: 0
+  lockDuration: 0

@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 242be9c2e51300a40840bb9dc1f611b4, type: 3}
+  m_Name: PetData
+  m_EditorClassIdentifier: 
+  anchorOffset: {x: 1.7, y: 1.3}
+  anchorUpdateSpeed: 6
+  hoverRadius: 1
+  hoverSmoothTime: 1
+  randomOffsetBlendSpeed: 2
+  changePosTimeMin: 2
+  changePosTimeMax: 5
+  chaseSmoothTime: 0.15
+  hoverDistanceMin: 0
+  hoverDistanceMax: 6
+  floatingAmplitude: 0.4
+  floatingFrequency: 2
+  teleportDistance: 15
+  teleportOffset: {x: 1.5, y: 2}
+  teleportCooldown: 0.5
+  followToGhostDistance: 10
+  ghostToFollowDistance: 2
+  stuckTimeThreshold: 0.5
+  ghostSpeed: 20
+  ghostAlpha: 0.7
+  followMaxSpeed: 10
+  runawayVelocityThreshold: 15
+  arrivalThreshold: 0.05
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 7168
+  maxBlockDistance: 3
+  playerStabilityThreshold: 0.5
+  closeRangeThreshold: 1
+  closeRangeTimerWeight: 0.3
+  ghostExitCooldown: 0.5
+  rushSpeed: 30
+  rushMaxCharge: 5
+  rushDamage: 1
+  rushDetectRadius: 25
+  rushGlobalCooldown: 2
+  rushHitStopDuration: 0.15
+  rushRecoilForce: 5
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 512
+  ghostFastSpeed: 15
+  ghostStuckSpeed: 10

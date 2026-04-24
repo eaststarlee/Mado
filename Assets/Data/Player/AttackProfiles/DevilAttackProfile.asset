@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a008d0f049352d943b08f77816546422, type: 3}
+  m_Name: DevilAttackProfile
+  m_EditorClassIdentifier: 
+  normalAttack: {fileID: 11400000, guid: a8db675c96b438d4bbc08f78d527011f, type: 2}
+  upAttack: {fileID: 11400000, guid: 85c6790adf2ba224f8d82b6fdc0ab3a8, type: 2}
+  downAttack: {fileID: 11400000, guid: e6ad583384d7eae4f99cddd842b44621, type: 2}
+  attackSpeedMultiplier: 0.7
+  damageMultiplier: 1.3
+  rangeMultiplier: 1.1

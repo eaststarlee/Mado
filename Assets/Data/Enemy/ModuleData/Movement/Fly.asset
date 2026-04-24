@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fdb2eedcb0b11d04db81323d0bc9da61, type: 3}
+  m_Name: Fly
+  m_EditorClassIdentifier: Assembly-CSharp::FlyModuleData
+  maxSpeed: 5
+  chaseSmoothTime: 0.3
+  hoverSmoothTime: 1
+  turnThreshold: 0.1
+  hoverRadius: 1
+  randomOffsetBlendSpeed: 1.5
+  changePosTimeRange: {x: 1.5, y: 1.5}
+  floatingAmplitude: 0.5
+  floatingFrequency: 1
+  rayDistance: 1.5
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 7168
+  avoidForce: 2
+  patrolType: 0
+  stuckThreshold: 2
+  hoverDistanceMax: 6
+  hoverDistanceMin: 1
