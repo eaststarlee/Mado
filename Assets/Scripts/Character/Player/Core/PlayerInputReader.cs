@@ -49,8 +49,15 @@ public class PlayerInputReader : MonoBehaviour
         player   = GetComponent<PlayerController>();
     }
 
-    private void OnEnable()  => controls.Enable();
-    private void OnDisable() => controls.Disable();
+    private void OnEnable()
+    {
+        if (controls == null) controls = new Controls();
+        controls.Enable();
+    }
+    private void OnDisable()
+    {
+        if (controls != null) controls.Disable();
+    }
 
     // ── 공개 API ────────────────────────────────────────────────
 

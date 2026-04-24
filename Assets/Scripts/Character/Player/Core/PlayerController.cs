@@ -134,12 +134,11 @@ public class PlayerController : MonoBehaviour, ISaveable
     #region Unity Callback Functions
     private void Awake()
     {
+        // 1. 필수 컴포넌트 캐싱
         Health = GetComponent<PlayerHealth>();
         inputReader = GetComponent<PlayerInputReader>();
         formManager = GetComponent<PlayerFormManager>();
         actionController = GetComponent<PlayerActionController>();
-
-        StateMachine = new PlayerStateMachine();
         RB = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>(); 
@@ -147,6 +146,13 @@ public class PlayerController : MonoBehaviour, ISaveable
         Combat = GetComponent<PlayerCombat>(); 
         GrappleDetector = GetComponent<GrappleDetector>(); 
 
+        // 2. [Build Optimization] 물리 보간 및 프레임 안정화
+        if (RB != null) RB.interpolation = RigidbodyInterpolation2D.Interpolate;
+        QualitySettings.vSyncCount = 1;
+        Application.targetFrameRate = -1;
+
+        // 3. 시스템 초기화
+        StateMachine = new PlayerStateMachine();
         IsFacingRight = true;
         InitializeStates();
 
@@ -211,13 +217,20 @@ public class PlayerController : MonoBehaviour, ISaveable
 
     public void OnSave(SaveData data)
     {
-        // 위치 정보는 SavePoint 상호작용 시에만 저장 (여기서는 씬 이름만 갱신)
-        data.lastSceneName = SceneManager.GetActiveScene().name;
+        data.lastSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
     }
 
     public void OnLoad(SaveData data)
     {
-        // 로드 후 항상 Idle 상태에서 시작
+        // 1. 차원에 따른 폼 강제 동기화
+        FormType targetForm = data.currentWorld == "Devil" ? FormType.Devil : FormType.Normal;
+        if (formManager != null)
+        {
+            formManager.InitializeFormData(); // 안전장치
+            formManager.TransformTo(targetForm);
+        }
+
+        // 2. 상태 초기화
         if (StateMachine != null && IdleState != null)
             StateMachine.ChangeState(IdleState);
     }
@@ -227,7 +240,7 @@ public class PlayerController : MonoBehaviour, ISaveable
         UpdateTimers();
         inputReader.GatherInput();
         CheckCollisions();
-        HandleWorldSwitch(); // [World Switch] D키 홀드 체크
+        HandleWorldSwitch();
 
         if(IsGrounded())
         {
@@ -820,6 +833,14 @@ public class PlayerController : MonoBehaviour, ISaveable
         if (layer < 0 || layer >= anim.layerCount)
         {
             Debug.LogError($"[PlayerController] Invalid Layer Index: {layer}");
+            return;
+        }
+
+        // 1.5 [Safety] 애니메이터에 해당 상태가 존재하는지 확인
+        // 존재하지 않는 상태로 Play()를 호출하면 애니메이터가 불안정해져
+        // 이후 모든 애니메이션 전환이 깨짐 (에셋 미제작 상태에서 정상 동작 보장)
+        if (!anim.HasState(layer, animHash))
+        {
             return;
         }
 

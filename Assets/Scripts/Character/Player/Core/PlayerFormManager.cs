@@ -38,10 +38,13 @@ public class PlayerFormManager : MonoBehaviour
 
     /// <summary>
     /// 폼 데이터 맵을 빌드하고 초기 폼을 설정합니다.
-    /// PlayerController.Awake() 이후 호출됩니다(스크립트 실행 순서 주의).
     /// </summary>
     public void InitializeFormData()
     {
+        // 이미 초기화되었다면 중단 (데이터 맵이 이미 있고 폼이 설정된 경우)
+        if (formDataMap != null && formDataMap.Count > 0 && ActiveFormData != null) 
+            return;
+
         formDataMap = new Dictionary<FormType, CharacterFormData>();
 
         if (characterForms != null)

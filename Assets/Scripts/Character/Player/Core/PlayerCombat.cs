@@ -135,13 +135,17 @@ public class PlayerCombat : MonoBehaviour
     /// <param name="direction">공격 방향</param>
     public void RequestAttack(AttackDirection direction)
     {
-        // 디버그 로그 제거 (너무 시끄러움)
-        // Debug.Log($"[PlayerCombat] RequestAttack({direction}) - CanAttack: {CanAttack()}...");
-        
+        // [Build Fix] 데이터가 없으면 즉시 초기화 시도
         if (CurrentProfile == null)
         {
-            Debug.LogWarning("[PlayerCombat] CurrentProfile이 null입니다.");
-            return;
+            var formManager = player.GetComponent<PlayerFormManager>();
+            if (formManager != null) formManager.InitializeFormData();
+            
+            if (CurrentProfile == null)
+            {
+                Debug.LogError("[PlayerCombat] 공격 프로필 NULL - 인스펙터에서 FormAttackProfile 할당 확인 필요");
+                return;
+            }
         }
         
         // 1. 즉시 공격 가능하면 실행
@@ -218,11 +222,12 @@ public class PlayerCombat : MonoBehaviour
         // Pogo 안전 중단
         ForceStopPogo();
         
+        // [TODO] 추후 공격 애니메이션 에셋 제작 후 주석 해제
         // 중요: Animator 속도 복구
-        if (player.Animator != null)
-        {
-            player.Animator.speed = 1f;
-        }
+        // if (player.Animator != null)
+        // {
+        //     player.Animator.speed = 1f;
+        // }
     }
     
     /// <summary>
@@ -282,9 +287,17 @@ public class PlayerCombat : MonoBehaviour
         
         // 2. 현재 폼의 공격 데이터 로드
         currentAttack = CurrentProfile.GetAttack(dir);
+        
+        // [Build Fix] 만약 특정 방향 공격 데이터가 없으면 일반 공격 데이터로 대체 시도
         if (currentAttack == null)
         {
-            Debug.LogWarning($"[PlayerCombat] {dir} 방향 공격 데이터가 없습니다.");
+            currentAttack = CurrentProfile.normalAttack;
+            Debug.LogWarning($"[PlayerCombat] {dir} 공격 데이터가 없어 기본 공격으로 대체합니다.");
+        }
+
+        if (currentAttack == null)
+        {
+            Debug.LogError("[PlayerCombat] 빌드본 오류: 모든 공격 데이터가 누락되었습니다.");
             return;
         }
         
@@ -311,17 +324,19 @@ public class PlayerCombat : MonoBehaviour
             LockMovement = true;
         }
         
-        // 6. 애니메이션 재생 (속도 동기화)
-        float animSpeed = CurrentProfile.attackSpeedMultiplier;
-        if (player.Animator != null)
-        {
-            player.Animator.speed = animSpeed;
-        }
+        // [TODO] 추후 애니메이터 노드 연결이 아닌 코드로 애니메이션 클립 이름을 찾아 넣는 방식으로 변경 예정
+        // 현재 공격 애니메이션 에셋 미제작 상태이므로 주석 처리
+        // float animSpeed = CurrentProfile.attackSpeedMultiplier;
+        // if (player.Animator != null)
+        // {
+        //     player.Animator.speed = animSpeed;
+        // }
+        // int animHash = !string.IsNullOrEmpty(currentAttack.animationName) 
+        //     ? Animator.StringToHash(currentAttack.animationName) 
+        //     : GetAnimHash(dir);
+        // player.ChangeAnimation(animHash);
         
-        int animHash = GetAnimHash(dir);
-        player.ChangeAnimation(animHash);
-        
-        // 7. 이벤트 발생
+        // 7. 이벤트 발생 (로직은 정상 작동)
         CombatEvents.RaiseAttackStart(currentAttack);
     }
     
@@ -329,8 +344,16 @@ public class PlayerCombat : MonoBehaviour
     {
         if (!IsAttacking || currentAttack == null) return;
         
+        // [Build Fix] 공격이 어떤 이유로든 끝나지 않는 현상 방지 (안전 타이머 2초)
+        if (attackTimer > 2.0f)
+        {
+            Debug.LogWarning("[PlayerCombat] 공격이 너무 오래 지속되어 강제 종료합니다.");
+            EndAttack();
+            return;
+        }
+
         // 속도 배율 적용된 타이머
-        float speedMult = CurrentProfile?.attackSpeedMultiplier ?? 1f;
+        float speedMult = (CurrentProfile != null) ? CurrentProfile.attackSpeedMultiplier : 1f;
         attackTimer += Time.deltaTime * speedMult;
         
         // 이동 잠금 해제 체크
@@ -356,7 +379,13 @@ public class PlayerCombat : MonoBehaviour
     
     private void ExecuteHit()
     {
-        if (currentSession == null || hitResolver == null) return;
+        if (currentSession == null) return;
+        
+        // [Fix] 캐싱된 참조가 null이면 매번 다시 찾기 (씬 로드 순서 문제 해결)
+        if (hitResolver == null)
+            hitResolver = HitResolver.Instance ?? FindFirstObjectByType<HitResolver>();
+        
+        if (hitResolver == null) return;
         
         // 현재 위치 갱신
         currentSession.origin = transform.position;
@@ -454,11 +483,12 @@ public class PlayerCombat : MonoBehaviour
         LockMovement = false;
         currentSession = null;
         
+        // [TODO] 추후 공격 애니메이션 에셋 제작 후 주석 해제
         // Animator 속도 복구
-        if (player.Animator != null)
-        {
-            player.Animator.speed = 1f;
-        }
+        // if (player.Animator != null)
+        // {
+        //     player.Animator.speed = 1f;
+        // }
         
         // 버퍼 확인 (쿨타임보다 우선!)
         if (hasBufferedAttack && inputBufferTimer > 0)
