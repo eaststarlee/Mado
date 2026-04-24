@@ -6,7 +6,7 @@ using UnityEngine;
 /// 차후 아이템 획득을 통한 최대치(Max Gauge) 영구 증가 기능을 지원합니다.
 /// </summary>
 [RequireComponent(typeof(PlayerController))]
-public class PlayerSkillResource : MonoBehaviour
+public class PlayerSkillResource : MonoBehaviour, ISaveable
 {
     private PlayerController playerController;
 
@@ -23,6 +23,14 @@ public class PlayerSkillResource : MonoBehaviour
     private void Awake()
     {
         playerController = GetComponent<PlayerController>();
+
+        // ISaveable 등록 (Awake에서 등록 — 타이밍 계약)
+        SaveManager.Instance?.Register(this);
+    }
+
+    private void OnDestroy()
+    {
+        SaveManager.Instance?.Unregister(this);
     }
 
     private void Start()
@@ -106,5 +114,21 @@ public class PlayerSkillResource : MonoBehaviour
     private void NotifyGaugeChanged()
     {
         PlayerEvents.RaiseSkillGaugeChanged(currentGauge, currentMaxGauge);
+    }
+
+    // ── ISaveable ────────────────────────────────────────
+
+    public void OnSave(SaveData data)
+    {
+        data.currentSP = currentGauge;
+        data.maxSP     = currentMaxGauge;
+    }
+
+    public void OnLoad(SaveData data)
+    {
+        // 로드 시 SP는 0으로 시작 (체크포인트 정책: SP는 Checkpoint 데이터)
+        currentMaxGauge = data.maxSP > 0 ? data.maxSP : currentMaxGauge;
+        currentGauge    = data.currentSP;
+        NotifyGaugeChanged();
     }
 }

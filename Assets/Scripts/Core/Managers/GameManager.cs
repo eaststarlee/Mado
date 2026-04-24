@@ -18,6 +18,9 @@ public class GameManager : MonoBehaviour
     private Collider2D playerCollider;
     private Rigidbody2D playerRigidbody;
     
+    /// <summary>등록된 플레이어 컨트롤러 (SceneLoader 등 외부에서 참조)</summary>
+    public PlayerController Player => player;
+    
     private bool isRespawning = false;
     
     void Awake()
@@ -78,8 +81,10 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private void OnPlayerDeathEvent()
     {
-        // 중복 방지
         if (isRespawning) return;
+        
+        // Persistent 데이터(재화, 능력 등)는 유지하고 Checkpoint 데이터(위치, 체력)만 롤백
+        SaveManager.Instance?.RollbackToCheckpoint();
         
         StartCoroutine(RespawnPlayer());
     }

@@ -7,7 +7,7 @@ using System.Linq;
 /// 플레이어 체력 관리 컴포넌트
 /// </summary>
 [RequireComponent(typeof(PlayerController))]
-public class PlayerHealth : MonoBehaviour, IDamageable
+public class PlayerHealth : MonoBehaviour, IDamageable, ISaveable
 {
     // 무적 소스 정의 (확장 가능)
     public enum InvincibilitySource { None, Hit, SlamImpact, SlamDescent, Dash, Cutscene }
@@ -60,6 +60,14 @@ public class PlayerHealth : MonoBehaviour, IDamageable
             maxHealth = 5;
             currentHealth = 5;
         }
+
+        // ISaveable 등록 (Awake에서 등록 — 타이밍 계약)
+        SaveManager.Instance?.Register(this);
+    }
+
+    private void OnDestroy()
+    {
+        SaveManager.Instance?.Unregister(this);
     }
     
     private void Update()
@@ -67,6 +75,35 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         UpdateInvincibilityTimers();
     }
     #endregion
+
+    // ── ISaveable ────────────────────────────────────────
+
+    public void OnSave(SaveData data)
+    {
+        data.currentHP = currentHealth;
+        data.maxHP     = maxHealth;
+    }
+
+    public void OnLoad(SaveData data)
+    {
+        isDead     = false;
+        maxHealth  = data.maxHP > 0 ? data.maxHP : maxHealth;
+        currentHealth = data.currentHP > 0 ? data.currentHP : maxHealth;
+
+        // 시각적 처리 복구
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.enabled = true;
+            spriteRenderer.color   = UnityEngine.Color.white;
+        }
+
+        // 무적 초기화
+        invincibilityTimers.Clear();
+        if (invincibilityCoroutine != null) { StopCoroutine(invincibilityCoroutine); invincibilityCoroutine = null; }
+        SetEnemyCollision(true);
+
+        PlayerEvents.RaiseHealthChanged(currentHealth, maxHealth);
+    }
     
     #region IDamageable Implementation
     /// <summary>
@@ -384,10 +421,8 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     }
     #endregion
     
-    #region Cleanup
     private void OnDisable()
     {
-        // 비활성화 시 코루틴 정지 및 스프라이트 복구 (안전장치)
         if (invincibilityCoroutine != null)
         {
             StopCoroutine(invincibilityCoroutine);
@@ -400,11 +435,4 @@ public class PlayerHealth : MonoBehaviour, IDamageable
             spriteRenderer.enabled = true;
         }
     }
-
-    private void OnDestroy()
-    {
-        // 충돌 설정 복구 (안전 장치)
-        SetEnemyCollision(true);
-    }
-    #endregion
 }

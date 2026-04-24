@@ -1,7 +1,8 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, ISaveable
 {
     #region State Machine Variables
     public PlayerStateMachine StateMachine { get; private set; }
@@ -147,9 +148,13 @@ public class PlayerController : MonoBehaviour
         GrappleDetector = GetComponent<GrappleDetector>(); 
 
         IsFacingRight = true;
-        // Wait for Start/InitializeFormData before getting DashCount
         InitializeStates();
+
+        // ISaveable 등록 (Awake에서 등록 — 타이밍 계약)
+        SaveManager.Instance?.Register(this);
     }
+
+
 
     private void InitializeStates()
     {
@@ -200,6 +205,21 @@ public class PlayerController : MonoBehaviour
         }
         
         StateMachine.Initialize(IdleState);
+    }
+
+    // ── ISaveable ──────────────────────────────────────────
+
+    public void OnSave(SaveData data)
+    {
+        // 위치 정보는 SavePoint 상호작용 시에만 저장 (여기서는 씬 이름만 갱신)
+        data.lastSceneName = SceneManager.GetActiveScene().name;
+    }
+
+    public void OnLoad(SaveData data)
+    {
+        // 로드 후 항상 Idle 상태에서 시작
+        if (StateMachine != null && IdleState != null)
+            StateMachine.ChangeState(IdleState);
     }
 
     private void Update()
@@ -587,7 +607,7 @@ public class PlayerController : MonoBehaviour
     
     private void OnDestroy()
     {
-        // 씬 언로드/캐릭터 파괴 시 펫 복구 보장
+        SaveManager.Instance?.Unregister(this);
         ForceEndGlide();
     }
     

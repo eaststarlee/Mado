@@ -124,11 +124,7 @@ public class SceneLoader : MonoBehaviour
         IsTransitioning = true;
         
         PlayerController player = FindAnyObjectByType<PlayerController>(FindObjectsInactive.Include);
-        if (player != null && !player.gameObject.activeSelf)
-        {
-            Debug.Log("[SceneLoader] 비활성화된 플레이어를 발견하여 활성화합니다.");
-            player.gameObject.SetActive(true);
-        }
+        if (player != null && !player.gameObject.activeSelf) player.gameObject.SetActive(true);
 
         // 가로 이동일 경우, Freeze 대신 자동 걷기를 활성화
         if (transitionDirX != 0 && player != null)
@@ -300,7 +296,7 @@ public class SceneLoader : MonoBehaviour
         AsyncOperation op = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
         if (op == null)
         {
-            Debug.LogError($"[SceneLoader] '{sceneName}' 씬을 찾을 수 없습니다. Build Settings에 추가되었는지 확인하세요.");
+            Debug.LogError($"[SceneLoader] '{sceneName}' 씬을 LoadSceneAsync로 불러오지 못했습니다. Build Settings에 씬 이름이 정확히 등록되어 있는지, 대소문자가 맞는지 확인하세요.");
             yield break;
         }
 
@@ -353,34 +349,16 @@ public class SceneLoader : MonoBehaviour
     /// <summary>로딩 중 플레이어 물리 연산 강제 정지 (추락 방지 방어벽)</summary>
     private void FreezePlayer(bool freeze)
     {
-        var player = FindAnyObjectByType<PlayerController>(FindObjectsInactive.Include);
-        if (player != null && !player.gameObject.activeSelf)
+        var player = GameManager.Instance?.Player;
+        if (player != null && player.RB != null)
         {
-            Debug.Log("[SceneLoader] 비활성화된 플레이어를 발견하여 활성화합니다. (Freeze)");
-            player.gameObject.SetActive(true);
-        }
-        if (player != null && player.GetComponent<Rigidbody2D>() != null)
-        {
-            var rb = player.GetComponent<Rigidbody2D>();
-            if (freeze)
-            {
-                // [수정] 속도를 먼저 0으로 만든 후 Static으로 전환 (순서 중요)
-                rb.linearVelocity = Vector2.zero;
-                rb.bodyType = RigidbodyType2D.Static;
-            }
-            else
-            {
-                rb.bodyType = RigidbodyType2D.Dynamic;
-            }
+            if (freeze) { player.RB.linearVelocity = Vector2.zero; player.RB.bodyType = RigidbodyType2D.Static; }
+            else        { player.RB.bodyType = RigidbodyType2D.Dynamic; }
         }
 
         // 펫도 함께 물리 프리즈 적용 (전환 중 추락/오동작 방지)
         var pet = FindAnyObjectByType<PetController>(FindObjectsInactive.Include);
-        if (pet != null && !pet.gameObject.activeSelf)
-        {
-            Debug.Log("[SceneLoader] 비활성화된 펫을 발견하여 활성화합니다. (Freeze)");
-            pet.gameObject.SetActive(true);
-        }
+        if (pet != null && !pet.gameObject.activeSelf) pet.gameObject.SetActive(true);
         if (pet != null && pet.GetComponent<Rigidbody2D>() != null)
         {
             var petRb = pet.GetComponent<Rigidbody2D>();
@@ -400,7 +378,7 @@ public class SceneLoader : MonoBehaviour
     /// <summary>플레이어 현재 위치 반환. 플레이어가 없으면 Vector3.zero.</summary>
     private Vector3 GetPlayerPosition()
     {
-        var player = FindAnyObjectByType<PlayerController>(FindObjectsInactive.Include);
+        var player = GameManager.Instance?.Player;
         if (player != null) return player.transform.position;
 
         Debug.LogWarning("[SceneLoader] PlayerController를 찾을 수 없습니다. 위치 캐싱 실패.");
@@ -410,25 +388,19 @@ public class SceneLoader : MonoBehaviour
     /// <summary>플레이어를 지정 위치로 순간이동.</summary>
     private void SetPlayerPosition(Vector3 position)
     {
-        var player = FindAnyObjectByType<PlayerController>(FindObjectsInactive.Include);
-        if (player != null && !player.gameObject.activeSelf)
-        {
-            Debug.Log("[SceneLoader] 비활성화된 플레이어를 발견하여 활성화합니다. (SetPosition)");
-            player.gameObject.SetActive(true);
-        }
+        var player = GameManager.Instance?.Player;
         if (player != null)
         {
             player.transform.position = position;
 
             // 관성 제거
-            var rb = player.GetComponent<Rigidbody2D>();
-            if (rb != null)
+            if (player.RB != null)
             {
-                rb.linearVelocity = Vector2.zero;
-                rb.angularVelocity = 0f;
+                player.RB.linearVelocity = Vector2.zero;
+                player.RB.angularVelocity = 0f;
             }
 
-            // 펫도 플레이어와 동일한 위치로 즉시 강제 이동시킴 (거리 차이로 인한 GhostState 방지)
+            // 펫도 플레이어와 동일한 위치로 이동 (GhostState 방지)
             var pet = FindAnyObjectByType<PetController>(FindObjectsInactive.Include);
             if (pet != null && !pet.gameObject.activeSelf) pet.gameObject.SetActive(true);
             if (pet != null)
@@ -500,16 +472,8 @@ public class SceneLoader : MonoBehaviour
         }
 
         // Follow 타겟 재연결
-        var player = FindAnyObjectByType<PlayerController>(FindObjectsInactive.Include);
-        if (player != null && !player.gameObject.activeSelf)
-        {
-            Debug.Log("[SceneLoader] 비활성화된 플레이어를 발견하여 활성화합니다. (RefreshCamera)");
-            player.gameObject.SetActive(true);
-        }
-        if (player != null)
-        {
-            CameraManager.Instance.SetFollowTarget(player.transform);
-        }
+        var player = GameManager.Instance?.Player;
+        if (player != null) CameraManager.Instance.SetFollowTarget(player.transform);
 
         // 룸 카메라 활성화
         CameraManager.Instance.ActivateRoomCamera();

@@ -3,16 +3,18 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 /// <summary>
-/// 게임이 시작될 때 최초의 씬(방)을 불러오고 세이브 데이터를 연결해주는 부팅 매니저.
-/// 이 컴포넌트는 Master 씬의 Managers 오브젝트(또는 전용 오브젝트)에 부착합니다.
+/// [레거시 — BootSequencer로 대체됨]
+/// 이 스크립트는 Master 씬에서 BootSequencer로 교체해야 합니다.
+/// 새 시스템: BootSequencer.cs
+/// 이 파일은 교체 완료 후 삭제하세요.
 /// </summary>
+[System.Obsolete("GameBootstrapper는 BootSequencer로 대체되었습니다. Master 씬의 컴포넌트를 BootSequencer로 교체하세요.")]
 public class GameBootstrapper : MonoBehaviour
 {
     private IEnumerator Start()
     {
-        Debug.Log("[GameBootstrapper] Start 코루틴 진입 완료 (매니저 초기화 대기 시작)");
+        Debug.LogWarning("[GameBootstrapper] 이 컴포넌트는 레거시입니다. Master 씬에서 BootSequencer로 교체하세요.");
 
-        // 1. 모든 싱글톤 매니저들이 Awake를 마칠 때까지 대기
         int waitFrames = 0;
         while (SceneLoader.Instance == null && waitFrames < 15)
         {
@@ -22,92 +24,55 @@ public class GameBootstrapper : MonoBehaviour
 
         if (SceneLoader.Instance == null)
         {
-            Debug.LogError("[GameBootstrapper] SceneLoader 인스턴스를 찾지 못했습니다. (WaitFrames: " + waitFrames + ")");
+            Debug.LogError("[GameBootstrapper] SceneLoader를 찾지 못했습니다.");
             yield break;
         }
 
-        Debug.Log($"[GameBootstrapper] SceneLoader 준비됨 (WaitFrames: {waitFrames}). 씬 상태 점검 시작...");
-
-        // 2프레임 더 대기하여 씬들이 Hierarchy에 완전히 올라오도록 함
         yield return null;
         yield return null;
 
         bool isEditorSandbox = false;
 
-#if UNITY_EDITOR
-        Debug.Log($"[GameBootstrapper] 현재 로드된 씬 수: {SceneManager.sceneCount}");
-        
+        // 2. 이미 로드된 방 씬이 있는지 확인 (에디터 샌드박스 지원)
         for (int i = 0; i < SceneManager.sceneCount; i++)
         {
             Scene scene = SceneManager.GetSceneAt(i);
-            Debug.Log($"[GameBootstrapper] 씬 확인중 [{i}]: {scene.name} (Loaded: {scene.isLoaded})");
-            
-            // Master/DontDestroyOnLoad 외에 이미 로드된 방 씬이 있다면 샌드박스 모드로 판단
             if (scene.isLoaded && scene.name != "Master" && scene.name != "DontDestroyOnLoad" && !scene.name.Contains("Init"))
             {
                 isEditorSandbox = true;
-                Debug.Log($"[GameBootstrapper] >>> 에디터 샌드박스 모드 확정: '{scene.name}' 기준 바인딩 수행 <<<");
-                
                 SceneManager.SetActiveScene(scene);
                 SceneLoader.Instance.BindToAlreadyLoadedRoom(scene.name);
                 break;
             }
         }
 
-        if (!isEditorSandbox)
-        {
-            Debug.Log("[GameBootstrapper] 에디터에서 실행 중이나, 적절한 방 씬을 찾지 못했습니다. (일반 로드 시퀀스로 전환 가능성 있음)");
-        }
-#endif
-
-        // [추가] 빌드/에디터 공통: 세이브 데이터를 불러오기 전, Master 씬의 플레이어와 펫을 먼저 찾아 활성화
+        // 3. 주인공 및 펫 활성화 보장
         EnsurePlayerAndPet();
 
+        // 4. 실제 게임 로드 (샌드박스 모드가 아닐 때만)
         if (!isEditorSandbox)
         {
-            Debug.Log("[GameBootstrapper] 실제 게임 로드 시퀀스 시작 (세이브 파일 확인)");
-            
             var saveManager = SaveManager.Instance ?? FindFirstObjectByType<SaveManager>();
             if (saveManager != null)
             {
-                SaveData currentSave = saveManager.LoadGame();
-                Debug.Log($"[GameBootstrapper] 세이브 데이터 로드 완료: {currentSave.lastSceneName} (Spawn: {currentSave.lastSpawnId})");
-                SceneLoader.Instance.LoadNextRoom(currentSave.lastSceneName, currentSave.lastSpawnId);
+                // 레거시 호환: 슬롯 0을 기본으로 로드
+                saveManager.LoadSlot(0);
+                var data = saveManager.CurrentData;
+                SceneLoader.Instance.LoadNextRoom(data.lastSceneName, data.lastSpawnId);
             }
             else
             {
-                Debug.LogError("[GameBootstrapper] 치명적 에러: SaveManager 인스턴스를 찾을 수 없습니다.");
+                Debug.LogError("[GameBootstrapper] SaveManager를 찾을 수 없습니다!");
             }
         }
     }
 
-    /// <summary>
-    /// Master 씬에 숨겨져(비활성화) 있을 수 있는 플레이어와 펫을 찾아 활성화합니다.
-    /// </summary>
     private void EnsurePlayerAndPet()
     {
         var player = FindAnyObjectByType<PlayerController>(FindObjectsInactive.Include);
-        if (player != null)
-        {
-            if (!player.gameObject.activeSelf)
-            {
-                Debug.Log("[GameBootstrapper] 비활성화된 플레이어를 발견하여 활성화합니다.");
-                player.gameObject.SetActive(true);
-            }
-        }
-        else
-        {
-            Debug.LogWarning("[GameBootstrapper] 플레이어를 찾을 수 없습니다. (Master 씬 구성을 확인하세요)");
-        }
+        if (player != null && !player.gameObject.activeSelf) player.gameObject.SetActive(true);
 
         var pet = FindAnyObjectByType<PetController>(FindObjectsInactive.Include);
-        if (pet != null)
-        {
-            if (!pet.gameObject.activeSelf)
-            {
-                Debug.Log("[GameBootstrapper] 비활성화된 펫을 발견하여 활성화합니다.");
-                pet.gameObject.SetActive(true);
-            }
-        }
+        if (pet != null && !pet.gameObject.activeSelf) pet.gameObject.SetActive(true);
     }
 }
