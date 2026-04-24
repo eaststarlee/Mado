@@ -9,14 +9,14 @@ EditorBuildSettings:
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
+    path: Assets/Scenes/Master.unity
+    guid: 281b97cfe28f18441ba5014d730d521c
+  - enabled: 1
     path: Assets/Scenes/TestRoom.unity
     guid: 3a255516add1f3c489842a0877f49061
   - enabled: 1
     path: Assets/Scenes/S_FR_001_Start.unity
     guid: 38805a7a49f7afc41b6ee1ba4adf532f
-  - enabled: 1
-    path: Assets/Scenes/Master.unity
-    guid: 281b97cfe28f18441ba5014d730d521c
   - enabled: 1
     path: Assets/Scenes/S_FR_003_Way.unity
     guid: ae5bc53d813ff684384626c9d57e83f2

@@ -60,6 +60,9 @@ public class GameBootstrapper : MonoBehaviour
         }
 #endif
 
+        // [추가] 빌드/에디터 공통: 세이브 데이터를 불러오기 전, Master 씬의 플레이어와 펫을 먼저 찾아 활성화
+        EnsurePlayerAndPet();
+
         if (!isEditorSandbox)
         {
             Debug.Log("[GameBootstrapper] 실제 게임 로드 시퀀스 시작 (세이브 파일 확인)");
@@ -74,6 +77,36 @@ public class GameBootstrapper : MonoBehaviour
             else
             {
                 Debug.LogError("[GameBootstrapper] 치명적 에러: SaveManager 인스턴스를 찾을 수 없습니다.");
+            }
+        }
+    }
+
+    /// <summary>
+    /// Master 씬에 숨겨져(비활성화) 있을 수 있는 플레이어와 펫을 찾아 활성화합니다.
+    /// </summary>
+    private void EnsurePlayerAndPet()
+    {
+        var player = FindAnyObjectByType<PlayerController>(FindObjectsInactive.Include);
+        if (player != null)
+        {
+            if (!player.gameObject.activeSelf)
+            {
+                Debug.Log("[GameBootstrapper] 비활성화된 플레이어를 발견하여 활성화합니다.");
+                player.gameObject.SetActive(true);
+            }
+        }
+        else
+        {
+            Debug.LogWarning("[GameBootstrapper] 플레이어를 찾을 수 없습니다. (Master 씬 구성을 확인하세요)");
+        }
+
+        var pet = FindAnyObjectByType<PetController>(FindObjectsInactive.Include);
+        if (pet != null)
+        {
+            if (!pet.gameObject.activeSelf)
+            {
+                Debug.Log("[GameBootstrapper] 비활성화된 펫을 발견하여 활성화합니다.");
+                pet.gameObject.SetActive(true);
             }
         }
     }
