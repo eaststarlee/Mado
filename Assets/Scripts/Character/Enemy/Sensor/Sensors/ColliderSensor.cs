@@ -1,3 +1,4 @@
+#if false // TODO: Unused Script (주석 처리됨)
 using UnityEngine;
 
 /// <summary>
@@ -81,3 +82,4 @@ public class ColliderSensor : SensorBase
         }
     }
 }
+#endif
