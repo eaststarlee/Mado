@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PlayerSprintStopState : PlayerState
 {
-    public PlayerSprintStopState(PlayerController player, PlayerStateMachine stateMachine) : base(player, stateMachine)
+    public PlayerSprintStopState(PlayerController player, PlayerStateMachine stateMachine, Mado.Character.Animation.PlayerAnimType animType) : base(player, stateMachine, animType)
     {
     }
 

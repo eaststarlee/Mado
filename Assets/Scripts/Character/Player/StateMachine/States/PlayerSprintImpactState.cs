@@ -4,7 +4,7 @@ public class PlayerSprintImpactState : PlayerState
 {
     private float impactEndTime;
 
-    public PlayerSprintImpactState(PlayerController player, PlayerStateMachine stateMachine) : base(player, stateMachine)
+    public PlayerSprintImpactState(PlayerController player, PlayerStateMachine stateMachine, Mado.Character.Animation.PlayerAnimType animType) : base(player, stateMachine, animType)
     {
     }
 

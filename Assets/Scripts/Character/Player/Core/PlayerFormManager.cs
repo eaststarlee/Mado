@@ -22,14 +22,12 @@ public class PlayerFormManager : MonoBehaviour
     private Dictionary<FormType, CharacterFormData> formDataMap;
     private SpriteRenderer spriteRenderer;
     private Sprite         normalSprite;
-    private Animator       anim;
 
     // ── Unity Lifecycle ─────────────────────────────────────────
 
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        anim           = GetComponent<Animator>();
 
         InitializeFormData();
     }
@@ -131,9 +129,7 @@ public class PlayerFormManager : MonoBehaviour
 
     private void ApplyAnimatorController()
     {
-        if (anim != null && ActiveFormData?.animatorController != null)
-        {
-            anim.runtimeAnimatorController = ActiveFormData.animatorController;
-        }
+        // [New] Animator 의존성 제거. 애니메이션 스왑은 PlayerController.PlayAnimation이 
+        // ActiveFormData.animationData를 참조할 때 자동으로 해결됩니다.
     }
 }

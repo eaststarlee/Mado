@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a1f4f3634b7597409a7bde4cc0894d1, type: 3}
+  m_Name: Nomal_Anime_Data
+  m_EditorClassIdentifier: Assembly-CSharp::Mado.Character.Animation.PlayerAnimationData
+  idle: {fileID: 11400000, guid: a39f8f7e8c7abaf499518ec2197dc20b, type: 2}
+  move: {fileID: 11400000, guid: 712cdd25bba201f4e848985056c0d5d4, type: 2}
+  jump: {fileID: 0}
+  inAir: {fileID: 0}
+  dash: {fileID: 0}
+  sprint: {fileID: 0}
+  sprintStop: {fileID: 0}
+  sprintTurn: {fileID: 0}
+  turn: {fileID: 0}
+  jumpReady: {fileID: 0}
+  jumpRise: {fileID: 0}
+  jumpApex: {fileID: 0}
+  jumpFall: {fileID: 0}
+  wallSlide: {fileID: 0}
+  wallClimb: {fileID: 0}
+  ledgeClimb: {fileID: 0}
+  glide: {fileID: 0}
+  grappleAim: {fileID: 0}
+  grappling: {fileID: 0}
+  hit: {fileID: 0}
+  death: {fileID: 0}
+  parry: {fileID: 0}
+  transformForm: {fileID: 0}
+  attackNormal: {fileID: 0}
+  attackUp: {fileID: 0}
+  attackDown: {fileID: 0}

@@ -4,7 +4,7 @@ public class PlayerSprintJumpPrepareState : PlayerState
 {
     private float startTime;
 
-    public PlayerSprintJumpPrepareState(PlayerController player, PlayerStateMachine stateMachine) : base(player, stateMachine)
+    public PlayerSprintJumpPrepareState(PlayerController player, PlayerStateMachine stateMachine, Mado.Character.Animation.PlayerAnimType animType) : base(player, stateMachine, animType)
     {
     }
 

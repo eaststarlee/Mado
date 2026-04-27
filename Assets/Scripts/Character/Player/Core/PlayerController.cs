@@ -48,6 +48,8 @@ public class PlayerController : MonoBehaviour, ISaveable
     public bool DashInput => inputReader.DashInput;
     public bool SprintInputHeld => inputReader.SprintInputHeld;
     public float LastPressedJumpTime { get; set; }
+    public float LastPressedDashTime { get; set; }
+    public float LastPressedAttackTime { get; set; }
     public bool JumpInputUp => inputReader.JumpInputUp;
     public bool JumpInput => inputReader.JumpInput;
     public bool JumpInputDown => inputReader.JumpInputDown;
@@ -91,8 +93,8 @@ public class PlayerController : MonoBehaviour, ISaveable
     public GrappleData GrappleData => grappleData;
 
     private SpriteRenderer spriteRenderer;
-    private Animator anim;
-    public Animator Animator => anim; 
+    // [Removed] Animator 의존성
+    public Mado.Character.Animation.CharacterAnimationController AnimationController { get; private set; } 
 
     // ── 신규 전담 컴포넌트 참조 ──
     public PlayerInputReader inputReader { get; private set; }
@@ -102,7 +104,7 @@ public class PlayerController : MonoBehaviour, ISaveable
     public FormType CurrentForm => formManager.CurrentForm;
     public CharacterFormData ActiveFormData => formManager.ActiveFormData;
 
-    private Dictionary<int, int> currentAnimHashes = new Dictionary<int, int>();
+    // [Removed] private Dictionary<int, int> currentAnimHashes = new Dictionary<int, int>();
 
     public event System.Action OnGroundedConfirmed;
     public void RaiseGroundedConfirmed() => OnGroundedConfirmed?.Invoke();
@@ -112,7 +114,14 @@ public class PlayerController : MonoBehaviour, ISaveable
 
     public void StartRecoil(Vector2 force, float duration) => actionController.StartRecoil(force, duration);
     public void PogoBounce(float bounceVelocity) => actionController.PogoBounce(bounceVelocity);
-    public void StartHitStop(float duration) => actionController.StartHitStop(duration);
+    public void StartHitStop(float duration)
+    {
+        actionController.StartHitStop(duration);
+        AnimationController?.PauseForHitStop(); // [New] 역경직 시 애니메이션 정지
+        Invoke(nameof(ResumeAnimation), duration);
+    }
+    
+    private void ResumeAnimation() => AnimationController?.ResumeFromHitStop();
     #endregion
 
     #region Check Variables
@@ -141,7 +150,8 @@ public class PlayerController : MonoBehaviour, ISaveable
         actionController = GetComponent<PlayerActionController>();
         RB = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        anim = GetComponent<Animator>(); 
+        
+        AnimationController = GetComponent<Mado.Character.Animation.CharacterAnimationController>(); 
         LedgeDetector = GetComponentInChildren<LedgeDetector>(); 
         Combat = GetComponent<PlayerCombat>(); 
         GrappleDetector = GetComponent<GrappleDetector>(); 
@@ -164,26 +174,26 @@ public class PlayerController : MonoBehaviour, ISaveable
 
     private void InitializeStates()
     {
-        IdleState = new PlayerIdleState(this, StateMachine, PlayerAnimID.Idle);
-        MoveState = new PlayerMoveState(this, StateMachine);
-        InAirState = new PlayerInAirState(this, StateMachine);
-        DashState = new PlayerDashState(this, StateMachine);
-        SprintState = new PlayerSprintState(this, StateMachine);
-        SprintStopState = new PlayerSprintStopState(this, StateMachine);
-        SprintTurnState = new PlayerSprintTurnState(this, StateMachine);
-        SprintJumpPrepareState = new PlayerSprintJumpPrepareState(this, StateMachine);
-        SprintImpactState = new PlayerSprintImpactState(this, StateMachine);
-        WallSlideState = new PlayerWallSlideState(this, StateMachine);
-        WallJumpState = new PlayerWallJumpState(this, StateMachine);
-        WallClimbState = new PlayerWallClimbState(this, StateMachine);
-        LedgeClimbState = new PlayerLedgeClimbState(this, StateMachine);
-        GlideState = new PlayerGlideState(this, StateMachine);
-        TransformState = new PlayerTransformState(this, StateMachine);
-        HitState = new PlayerHitState(this, StateMachine);
-        ParryState = new PlayerParryState(this, StateMachine, 0); // [New] (0 for now, update with real anim hash later)
-        DeathState = new PlayerDeathState(this, StateMachine);
-        GrappleAimState = new PlayerGrappleAimState(this, StateMachine, grappleData); // [Grapple] Aim
-        GrapplingState = new PlayerGrapplingState(this, StateMachine, grappleData); // [Grapple] Dash
+        IdleState = new PlayerIdleState(this, StateMachine, Mado.Character.Animation.PlayerAnimType.Idle);
+        MoveState = new PlayerMoveState(this, StateMachine, Mado.Character.Animation.PlayerAnimType.Move);
+        InAirState = new PlayerInAirState(this, StateMachine, Mado.Character.Animation.PlayerAnimType.InAir);
+        DashState = new PlayerDashState(this, StateMachine, Mado.Character.Animation.PlayerAnimType.Dash);
+        SprintState = new PlayerSprintState(this, StateMachine, Mado.Character.Animation.PlayerAnimType.Sprint);
+        SprintStopState = new PlayerSprintStopState(this, StateMachine, Mado.Character.Animation.PlayerAnimType.SprintStop);
+        SprintTurnState = new PlayerSprintTurnState(this, StateMachine, Mado.Character.Animation.PlayerAnimType.SprintTurn);
+        SprintJumpPrepareState = new PlayerSprintJumpPrepareState(this, StateMachine, Mado.Character.Animation.PlayerAnimType.Jump);
+        SprintImpactState = new PlayerSprintImpactState(this, StateMachine, Mado.Character.Animation.PlayerAnimType.Hit);
+        WallSlideState = new PlayerWallSlideState(this, StateMachine, Mado.Character.Animation.PlayerAnimType.WallSlide);
+        WallJumpState = new PlayerWallJumpState(this, StateMachine, Mado.Character.Animation.PlayerAnimType.Jump);
+        WallClimbState = new PlayerWallClimbState(this, StateMachine, Mado.Character.Animation.PlayerAnimType.WallClimb);
+        LedgeClimbState = new PlayerLedgeClimbState(this, StateMachine, Mado.Character.Animation.PlayerAnimType.LedgeClimb);
+        GlideState = new PlayerGlideState(this, StateMachine, Mado.Character.Animation.PlayerAnimType.Glide);
+        TransformState = new PlayerTransformState(this, StateMachine, Mado.Character.Animation.PlayerAnimType.Transform);
+        HitState = new PlayerHitState(this, StateMachine, Mado.Character.Animation.PlayerAnimType.Hit);
+        ParryState = new PlayerParryState(this, StateMachine, Mado.Character.Animation.PlayerAnimType.Parry);
+        DeathState = new PlayerDeathState(this, StateMachine, Mado.Character.Animation.PlayerAnimType.Death);
+        GrappleAimState = new PlayerGrappleAimState(this, StateMachine, grappleData, Mado.Character.Animation.PlayerAnimType.GrappleAim);
+        GrapplingState = new PlayerGrapplingState(this, StateMachine, grappleData, Mado.Character.Animation.PlayerAnimType.Grappling);
     }
     
     private void OnDisable()
@@ -193,7 +203,7 @@ public class PlayerController : MonoBehaviour, ISaveable
 
     private void OnEnable()
     {
-        currentAnimHashes.Clear();
+        // [Removed] currentAnimHashes.Clear();
     }
 
     private void Start()
@@ -276,9 +286,16 @@ public class PlayerController : MonoBehaviour, ISaveable
         {
             StateMachine.ChangeState(ParryState);
         }
-        // 3순위: 기본 상태 로직 업데이트 (Move, InAir, Glide, Attack 등)
         else
         {
+            // 공격 선입력 소비
+            if (Combat != null && !Combat.IsAttacking && !Combat.IsSpecialActionLocked && LastPressedAttackTime > 0)
+            {
+                LastPressedAttackTime = 0f;
+                ProcessAttackInput();
+            }
+
+            // 3순위: 기본 상태 로직 업데이트 (Move, InAir, Glide, Attack 등)
             StateMachine.CurrentState?.LogicUpdate();
         }
         
@@ -296,6 +313,8 @@ public class PlayerController : MonoBehaviour, ISaveable
     {
         float dt = Time.deltaTime;
         LastPressedJumpTime -= dt;
+        LastPressedDashTime -= dt;
+        LastPressedAttackTime -= dt;
         LastOnGroundTime -= dt;
         LastOnWallTime -= dt; // Wall Coyote Time 감소
         
@@ -817,60 +836,17 @@ public class PlayerController : MonoBehaviour, ISaveable
     }
     
     /// <summary>
-    /// 안전하고 강력한 애니메이션 변경 메서드 (Perfected 2D Architecture)
+    /// 커스텀 애니메이션 플레이어에게 클립 재생을 요청합니다.
     /// </summary>
-    /// <param name="animHash">PlayerAnimID에 정의된 해시</param>
-    /// <param name="fadeTime">0f = Play(즉시), >0f = CrossFade(부드럽게)</param>
-    /// <param name="force">true면 현재 애니메이션과 같아도 강제로 다시 처음부터 재생</param>
-    /// <param name="layer">애니메이션 레이어 인덱스</param>
-    /// <param name="startNormalizedTime">시작 프레임 (기본값 NegativeInfinity = 0f or 유지)</param>
-    public void ChangeAnimation(int animHash, float fadeTime = 0f, bool force = false, int layer = 0, float startNormalizedTime = float.NegativeInfinity)
+    public void PlayAnimation(Mado.Character.Animation.PlayerAnimType animType, bool force = false)
     {
-        // 0. 안정성 체크
-        if (anim == null) return;
+        if (AnimationController == null || ActiveFormData?.animationData == null) return;
         
-        // 1. Layer 유효성 검증
-        if (layer < 0 || layer >= anim.layerCount)
+        var clip = ActiveFormData.animationData.GetClip(animType);
+        if (clip != null)
         {
-            Debug.LogError($"[PlayerController] Invalid Layer Index: {layer}");
-            return;
-        }
-
-        // 1.5 [Safety] 애니메이터에 해당 상태가 존재하는지 확인
-        // 존재하지 않는 상태로 Play()를 호출하면 애니메이터가 불안정해져
-        // 이후 모든 애니메이션 전환이 깨짐 (에셋 미제작 상태에서 정상 동작 보장)
-        if (!anim.HasState(layer, animHash))
-        {
-            return;
-        }
-
-        // 2. 상태 추적 및 중복 재생 방지
-        bool isSameAnim = false;
-        if (currentAnimHashes.TryGetValue(layer, out int currentHash) && currentHash == animHash)
-        {
-            isSameAnim = true;
-        }
-
-        if (!force && isSameAnim) return;
-
-        // 3. 상태 갱신
-        currentAnimHashes[layer] = animHash;
-
-        // 4. 재생 로직
-        if (fadeTime > 0f)
-        {
-            if (force) 
-                Debug.LogWarning("[PlayerController] Force + CrossFade 조합은 권장되지 않습니다 (고스팅 위험).");
-            
-            // startNormalizedTime이 설정된 경우 반영 (기본값 NegativeInfinity 체크)
-            float startOffset = float.IsNegativeInfinity(startNormalizedTime) ? float.NegativeInfinity : startNormalizedTime;
-            anim.CrossFade(animHash, fadeTime, layer, startOffset);
-        }
-        else
-        {
-            // Play는 0f(처음) 부터 시작이 기본, Sync 필요 시 값 지정
-            float startOffset = float.IsNegativeInfinity(startNormalizedTime) ? 0f : startNormalizedTime;
-            anim.Play(animHash, layer, startOffset);
+            var priority = Mado.Character.Animation.PlayerAnimationData.GetPriority(animType);
+            AnimationController.Play(clip, priority, force);
         }
     }
     #endregion

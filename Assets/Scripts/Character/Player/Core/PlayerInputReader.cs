@@ -126,11 +126,16 @@ public class PlayerInputReader : MonoBehaviour
         JumpInputUp     = controls.Player.Jump.WasReleasedThisFrame();
         JumpInput       = controls.Player.Jump.IsPressed();
         DashInput       = controls.Player.Dash.triggered;
+        if (DashInput)
+        {
+            player.LastPressedDashTime = 0.15f; // 대쉬 선입력 버퍼
+        }
         SprintInputHeld = controls.Player.Sprint.IsPressed();
 
         // 공격
         if (controls.Player.Attack.triggered && player.Combat != null)
         {
+            player.LastPressedAttackTime = 0.15f; // 공격 선입력 버퍼
             player.ProcessAttackInput();
         }
         IsAttackHeld = controls.Player.Attack.IsPressed();

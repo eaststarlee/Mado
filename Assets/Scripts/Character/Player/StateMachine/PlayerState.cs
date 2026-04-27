@@ -7,24 +7,24 @@ public abstract class PlayerState
     protected PlayerController player;
     protected PlayerStateMachine stateMachine;
     
-    // [Animation] 상태별 애니메이션 해시 (0이면 애니메이션 없음)
-    protected int animBoolHash;
+    // [Animation] 상태별 애니메이션 타입 (None이면 애니메이션 없음)
+    protected Mado.Character.Animation.PlayerAnimType animType;
 
-    // 생성자 (애니메이션 해시를 받도록 수정)
-    protected PlayerState(PlayerController player, PlayerStateMachine stateMachine, int animBoolHash = 0)
+    // 생성자 (애니메이션 타입을 받도록 수정)
+    protected PlayerState(PlayerController player, PlayerStateMachine stateMachine, Mado.Character.Animation.PlayerAnimType animType = Mado.Character.Animation.PlayerAnimType.None)
     {
         this.player = player;
         this.stateMachine = stateMachine;
-        this.animBoolHash = animBoolHash;
+        this.animType = animType;
     }
 
     // 상태에 진입할 때 한 번 호출되는 함수
     public virtual void Enter() 
     {
-        // 0이 아닌 경우 애니메이션 재생 요청 (기본: 즉시 전환, Force False, Layer 0, StartOffset 0)
-        if (animBoolHash != 0)
+        // None이 아닌 경우 커스텀 애니메이션 플레이어에 재생 요청
+        if (animType != Mado.Character.Animation.PlayerAnimType.None)
         {
-            player.ChangeAnimation(animBoolHash);
+            player.PlayAnimation(animType);
         }
     }
 

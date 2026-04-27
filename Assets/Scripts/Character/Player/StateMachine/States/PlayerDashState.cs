@@ -4,7 +4,7 @@ public class PlayerDashState : PlayerState
 {
     private float dashStartTime;
 
-    public PlayerDashState(PlayerController player, PlayerStateMachine stateMachine) : base(player, stateMachine)
+    public PlayerDashState(PlayerController player, PlayerStateMachine stateMachine, Mado.Character.Animation.PlayerAnimType animType) : base(player, stateMachine, animType)
     {
     }
 

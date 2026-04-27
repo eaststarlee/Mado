@@ -5,7 +5,7 @@ public class PlayerGlideState : PlayerState
     // SmoothDamp 전용 ref 변수 (상태 전환 시 속도 꼬임 방지)
     private float glideVelocityRef;
 
-    public PlayerGlideState(PlayerController player, PlayerStateMachine stateMachine) : base(player, stateMachine)
+    public PlayerGlideState(PlayerController player, PlayerStateMachine stateMachine, Mado.Character.Animation.PlayerAnimType animType) : base(player, stateMachine, animType)
     {
     }
 

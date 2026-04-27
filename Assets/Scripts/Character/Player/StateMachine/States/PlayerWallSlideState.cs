@@ -4,7 +4,7 @@ public class PlayerWallSlideState : PlayerState
 {
     private float wallStickTimer;
 
-    public PlayerWallSlideState(PlayerController player, PlayerStateMachine stateMachine) : base(player, stateMachine)
+    public PlayerWallSlideState(PlayerController player, PlayerStateMachine stateMachine, Mado.Character.Animation.PlayerAnimType animType) : base(player, stateMachine, animType)
     {
     }
 

@@ -8,8 +8,7 @@ public class PlayerTransformState : PlayerState
     private PlayerState returnState; // 변신 후 돌아갈 상태
     private float originalGravity; // 변신 전 중력 저장
     
-    public PlayerTransformState(PlayerController player, PlayerStateMachine stateMachine) 
-        : base(player, stateMachine) { }
+    public PlayerTransformState(PlayerController player, PlayerStateMachine stateMachine, Mado.Character.Animation.PlayerAnimType animType) : base(player, stateMachine, animType) { }
     
     /// <summary>
     /// 변신 설정

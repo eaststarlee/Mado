@@ -15,7 +15,7 @@ public class PlayerInAirState : PlayerState
     private float postGrappleTimer;
 
 
-    public PlayerInAirState(PlayerController player, PlayerStateMachine stateMachine) : base(player, stateMachine)
+    public PlayerInAirState(PlayerController player, PlayerStateMachine stateMachine, Mado.Character.Animation.PlayerAnimType animType) : base(player, stateMachine, animType)
     {
     }
 
@@ -196,8 +196,9 @@ public class PlayerInAirState : PlayerState
         }
         
         // Dash transition - 복구됨
-        if (player.DashInput && player.CanDash())
+        if (player.LastPressedDashTime > 0 && player.CanDash())
         {
+            player.LastPressedDashTime = 0f;
             stateMachine.ChangeState(player.DashState);
             return;
         }

@@ -394,7 +394,7 @@ public class SceneLoader : MonoBehaviour
             player.transform.position = position;
 
             // 관성 제거
-            if (player.RB != null)
+            if (player.RB != null && player.RB.bodyType != RigidbodyType2D.Static)
             {
                 player.RB.linearVelocity = Vector2.zero;
                 player.RB.angularVelocity = 0f;
@@ -407,7 +407,7 @@ public class SceneLoader : MonoBehaviour
             {
                 pet.transform.position = position;
                 var petRb = pet.GetComponent<Rigidbody2D>();
-                if (petRb != null)
+                if (petRb != null && petRb.bodyType != RigidbodyType2D.Static)
                 {
                     petRb.linearVelocity = Vector2.zero;
                     petRb.angularVelocity = 0f;

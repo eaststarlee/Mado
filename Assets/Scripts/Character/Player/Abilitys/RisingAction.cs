@@ -48,8 +48,8 @@ public class RisingAction : ISpecialAction
         };
 
         // 2. 애니메이션 실행
-        int animHash = PlayerAnimID.AttackUp; // 위쪽 공격 애니메이션 해시
-        player.ChangeAnimation(animHash);
+        Mado.Character.Animation.PlayerAnimType animType = Mado.Character.Animation.PlayerAnimType.AttackUp;
+        player.PlayAnimation(animType, force: true);
 
         // 3. Anticipation 시작 (체공 및 역경직 효과)
         currentPhase = Phase.Anticipation;

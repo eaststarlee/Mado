@@ -324,17 +324,9 @@ public class PlayerCombat : MonoBehaviour
             LockMovement = true;
         }
         
-        // [TODO] 추후 애니메이터 노드 연결이 아닌 코드로 애니메이션 클립 이름을 찾아 넣는 방식으로 변경 예정
-        // 현재 공격 애니메이션 에셋 미제작 상태이므로 주석 처리
-        // float animSpeed = CurrentProfile.attackSpeedMultiplier;
-        // if (player.Animator != null)
-        // {
-        //     player.Animator.speed = animSpeed;
-        // }
-        // int animHash = !string.IsNullOrEmpty(currentAttack.animationName) 
-        //     ? Animator.StringToHash(currentAttack.animationName) 
-        //     : GetAnimHash(dir);
-        // player.ChangeAnimation(animHash);
+        // 6. [New] 커스텀 애니메이션 재생
+        Mado.Character.Animation.PlayerAnimType animType = GetAnimType(dir);
+        player.PlayAnimation(animType, force: true);
         
         // 7. 이벤트 발생 (로직은 정상 작동)
         CombatEvents.RaiseAttackStart(currentAttack);
@@ -510,13 +502,13 @@ public class PlayerCombat : MonoBehaviour
     
     #region Helpers
     
-    private int GetAnimHash(AttackDirection dir)
+    private Mado.Character.Animation.PlayerAnimType GetAnimType(AttackDirection dir)
     {
         return dir switch
         {
-            AttackDirection.Up => PlayerAnimID.AttackUp,
-            AttackDirection.Down => PlayerAnimID.AttackDown,
-            _ => PlayerAnimID.Attack
+            AttackDirection.Up => Mado.Character.Animation.PlayerAnimType.AttackUp,
+            AttackDirection.Down => Mado.Character.Animation.PlayerAnimType.AttackDown,
+            _ => Mado.Character.Animation.PlayerAnimType.AttackNormal
         };
     }
     

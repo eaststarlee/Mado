@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PlayerMoveState : PlayerState
 {
-    public PlayerMoveState(PlayerController player, PlayerStateMachine stateMachine) : base(player, stateMachine)
+    public PlayerMoveState(PlayerController player, PlayerStateMachine stateMachine, Mado.Character.Animation.PlayerAnimType animType) : base(player, stateMachine, animType)
     {
     }
 
@@ -44,8 +44,9 @@ public class PlayerMoveState : PlayerState
             }
         }
 
-        if (player.DashInput && player.CanDash())
+        if (player.LastPressedDashTime > 0 && player.CanDash())
         {
+            player.LastPressedDashTime = 0f;
             stateMachine.ChangeState(player.DashState);
         }
         else if (player.LastPressedJumpTime > 0)

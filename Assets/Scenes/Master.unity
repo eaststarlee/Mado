@@ -131,7 +131,6 @@ GameObject:
   - component: {fileID: 11146182}
   - component: {fileID: 11146181}
   - component: {fileID: 11146180}
-  - component: {fileID: 11146179}
   - component: {fileID: 11146178}
   - component: {fileID: 11146177}
   - component: {fileID: 11146176}
@@ -141,6 +140,7 @@ GameObject:
   - component: {fileID: 11146187}
   - component: {fileID: 11146185}
   - component: {fileID: 11146184}
+  - component: {fileID: 11146188}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -244,28 +244,6 @@ MonoBehaviour:
   wallCheckPoint: {fileID: 32571153}
   wallCheckSize: {x: 0.1, y: 0.8}
   currentStateName: 
---- !u!95 &11146179
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 11146172}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: eccd3b1c532b0224fa90aa207924e8be, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!61 &11146180
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -455,6 +433,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7b808ecb22f77a428669f5750250e30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInputReader
+--- !u!114 &11146188
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 11146172}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83c252c3423f1c342a54ea54d1f55244, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mado.Character.Animation.CharacterAnimationController
+  spriteRenderer: {fileID: 11146182}
+  currentClip: {fileID: 0}
+  currentFrameIndex: 0
+  frameTimer: 0
+  isPlaying: 1
 --- !u!1 &32571152
 GameObject:
   m_ObjectHideFlags: 0

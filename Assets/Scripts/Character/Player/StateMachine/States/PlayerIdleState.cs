@@ -3,15 +3,19 @@ using UnityEngine;
 public class PlayerIdleState : PlayerState
 {
     // 생성자에서 Idle 애니메이션 해시 전달
-    public PlayerIdleState(PlayerController player, PlayerStateMachine stateMachine, int animBoolHash) 
-        : base(player, stateMachine, animBoolHash)
+    public PlayerIdleState(PlayerController player, PlayerStateMachine stateMachine, Mado.Character.Animation.PlayerAnimType animType) 
+        : base(player, stateMachine, animType)
     {
     }
 
     public override void Enter()
     {
-        base.Enter(); // 애니메이션 재생 (PlayerAnimID.Idle)
-        player.RB.linearVelocity = new Vector2(0, player.RB.linearVelocity.y); // 즉시 수평 이동 정지
+        base.Enter(); // 애니메이션 재생
+        
+        if (player.RB != null && player.RB.bodyType != RigidbodyType2D.Static)
+        {
+            player.RB.linearVelocity = new Vector2(0, player.RB.linearVelocity.y); // 즉시 수평 이동 정지
+        }
         player.IsSprintJumping = false; // 스프린트 점프 상태 초기화
     }
 
@@ -33,8 +37,9 @@ public class PlayerIdleState : PlayerState
             return;
         }
         
-        if (player.DashInput && player.CanDash())
+        if (player.LastPressedDashTime > 0 && player.CanDash())
         {
+            player.LastPressedDashTime = 0f;
             stateMachine.ChangeState(player.DashState);
         }
         else if (player.LastPressedJumpTime > 0)

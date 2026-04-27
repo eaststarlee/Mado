@@ -5,8 +5,7 @@ using UnityEngine;
 /// </summary>
 public class PlayerDeathState : PlayerState
 {
-    public PlayerDeathState(PlayerController player, PlayerStateMachine stateMachine) 
-        : base(player, stateMachine)
+    public PlayerDeathState(PlayerController player, PlayerStateMachine stateMachine, Mado.Character.Animation.PlayerAnimType animType) : base(player, stateMachine, animType)
     {
     }
     
