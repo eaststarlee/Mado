@@ -17,8 +17,8 @@ public class PetGhostState : PetState
         // 투명도 감소
         pet.SetAlpha(pet.PetData.ghostAlpha);
         
-        // 둥실거림 비활성화
-        pet.SetFloating(false);
+        // 둥실거림 활성화 (Ghost 상태 시에도 유지하도록 변경)
+        pet.SetFloating(true);
     }
 
     public override void Exit()
@@ -84,10 +84,16 @@ public class PetGhostState : PetState
             moveSpeed = pet.PetData.ghostSpeed; // 멀리서 올 땐 빠르게 (기존 값 사용)
         }
 
-        // [수정] 목표를 플레이어가 아닌 '앵커(등 뒤)'로 설정
+        // [수정] 목표를 플레이어가 아닌 '앵커(등 뒤)'로 설정하되, 플로팅 적용
+        Vector2 targetAnchor = pet.CalculateDesiredAnchor();
+        
+        float floatingY = Mathf.Sin(Time.time * pet.PetData.floatingFrequency) 
+                         * pet.PetData.floatingAmplitude;
+        targetAnchor.y += floatingY;
+
         Vector2 targetPos = Vector2.MoveTowards(
             pet.RB.position,
-            pet.CalculateDesiredAnchor(), // Anchor로 직행
+            targetAnchor, 
             moveSpeed * Time.fixedDeltaTime
         );
         

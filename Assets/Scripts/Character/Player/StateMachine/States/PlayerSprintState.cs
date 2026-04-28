@@ -36,28 +36,7 @@ public class PlayerSprintState : PlayerState
             return;
         }
 
-        // 지형 충돌 감지
-        if (player.IsTouchingGroundOnSide())
-        {
-            stateMachine.ChangeState(player.IdleState);
-            return;
-        }
 
-        // 벽 충돌 감지 (스프린트 유지 시간에 따라 분기)
-        if (player.IsTouchingWall())
-        {
-            if (Time.time >= sprintStartTime + player.ActiveFormData.ability.sprintDurationForImpact)
-            {
-                // 충분히 오래 스프린트했으면 강하게 튕겨나감
-                stateMachine.ChangeState(player.SprintImpactState);
-            }
-            else
-            {
-                // 스프린트 유지 시간이 짧으면 그냥 멈춤
-                stateMachine.ChangeState(player.IdleState);
-            }
-            return;
-        }
 
         // 방향 전환 감지 (Hybrid Sprint Turn)
         // 1. 방향 입력이 반대일 때
@@ -104,6 +83,12 @@ public class PlayerSprintState : PlayerState
     public override void PhysicsUpdate()
     {
         base.PhysicsUpdate();
+
+        // [Fix] 반동(Recoil) 중이면 물리 엔진에 맡기고 스프린트 강제 이동을 스킵하여 X 넉백 보존
+        if (player.IsRecoiling)
+        {
+            return;
+        }
 
         float currentSpeed = player.RB.linearVelocity.x;
         float inputDirection = (player.InputX != 0) ? player.InputX : lastDirection;

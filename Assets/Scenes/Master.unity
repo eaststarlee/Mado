@@ -210,6 +210,11 @@ MonoBehaviour:
   enemyLayer:
     serializedVersion: 2
     m_Bits: 512
+  recoilTriggerLayers:
+    serializedVersion: 2
+    m_Bits: 512
+  recoilTriggerSurfaces: 000000000100000002000000
+  recoilForceMultiplier: 1
 --- !u!114 &11146177
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -450,6 +455,7 @@ MonoBehaviour:
   currentFrameIndex: 0
   frameTimer: 0
   isPlaying: 1
+  currentPriority: 0
 --- !u!1 &32571152
 GameObject:
   m_ObjectHideFlags: 0

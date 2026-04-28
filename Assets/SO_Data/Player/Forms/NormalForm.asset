@@ -75,19 +75,15 @@ MonoBehaviour:
     sprintSpeed: 13
     sprintStopDeceleration: 7
     sprintStopDeccelAmount: 26.923077
-    sprintTurnDuration: 1
-    sprintTurnDeceleration: 5
-    sprintTurnDeccelAmount: 19.23077
-    sprintTurnCooldown: 1
-    sprintImpactKnockback: {x: 10, y: 3}
-    sprintImpactDuration: 0.3
-    sprintDurationForImpact: 1.5
+    sprintTurnDuration: 0.7
+    sprintTurnDeceleration: 7
+    sprintTurnDeccelAmount: 26.923077
+    sprintTurnCooldown: 0.5
     glideFallSpeed: 3
     glideSmoothTime: 0.01
     glideHorizontalMultiplier: 0.8
     glideAccelerationMultiplier: 1
     glideFallThreshold: 2.5
-    glidingSprite: {fileID: 21300000, guid: 895dd219ece8576488b9caed9eee55ed, type: 3}
   assist:
     coyoteTime: 0.15
     jumpInputBufferTime: 0.15

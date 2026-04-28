@@ -20,7 +20,7 @@ MonoBehaviour:
   changePosTimeMin: 2
   changePosTimeMax: 5
   chaseSmoothTime: 0.15
-  hoverDistanceMin: 0
+  hoverDistanceMin: 2
   hoverDistanceMax: 6
   floatingAmplitude: 0.4
   floatingFrequency: 2

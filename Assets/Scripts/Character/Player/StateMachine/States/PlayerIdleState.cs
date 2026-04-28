@@ -23,6 +23,13 @@ public class PlayerIdleState : PlayerState
     {
         base.LogicUpdate();
         
+        // C 키(스프린트)를 꾹 누르고 있으면 즉시 전환
+        if (player.SprintInputHeld)
+        {
+            stateMachine.ChangeState(player.SprintState);
+            return;
+        }
+        
         // 변신 입력 체크 (↑ + A)
         if (stateMachine.CurrentState != player.TransformState 
             && player.InputY > 0.5f 

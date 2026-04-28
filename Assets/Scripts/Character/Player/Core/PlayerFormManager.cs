@@ -113,16 +113,7 @@ public class PlayerFormManager : MonoBehaviour
     /// </summary>
     public void SetGlidingSprite(bool isGliding)
     {
-        if (spriteRenderer == null) return;
-
-        if (isGliding && ActiveFormData?.ability.glidingSprite != null)
-        {
-            spriteRenderer.sprite = ActiveFormData.ability.glidingSprite;
-        }
-        else if (!isGliding && normalSprite != null)
-        {
-            spriteRenderer.sprite = normalSprite;
-        }
+        // [Removed] glidingSprite 변수 삭제에 따른 기능 롤백
     }
 
     // ── 헬퍼 ────────────────────────────────────────────────────

@@ -195,11 +195,7 @@ public class CharacterFormData : ScriptableObject
 		[HideInInspector] public float sprintTurnDeccelAmount; // 실제 감속 힘
 		public float sprintTurnCooldown; // 스프린트 턴 재사용 대기시간 (작을수록 자주 턴 가능)
 
-		[Space(20)]
-		[Header("Sprint Wall Impact")]
-		public Vector2 sprintImpactKnockback; // 스프린트 중 벽 충돌 시 넉백 힘
-		public float sprintImpactDuration; // 스프린트 중 벽 충돌 시 경직 시간
-		public float sprintDurationForImpact; // 벽에 튕겨나가기 위한 최소 스프린트 유지 시간
+
 
 
 
@@ -210,7 +206,6 @@ public class CharacterFormData : ScriptableObject
 		public float glideHorizontalMultiplier; // 활공 중 좌우 이동 속도 감속
 		public float glideAccelerationMultiplier; // 활공 중 좌우 가속도 배율 (방향 전환 빠릿함 유지)
 		public float glideFallThreshold; // 낙하 감지 임계값 (짧은 점프는 활공 안 됨)
-		public Sprite glidingSprite; // 활공 중 보여질 플레이어 스프라이트 (펫을 잡고 있는 모션)
 	}
 
 	[System.Serializable]

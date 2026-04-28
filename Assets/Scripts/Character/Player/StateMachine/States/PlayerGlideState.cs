@@ -68,6 +68,12 @@ public class PlayerGlideState : PlayerState
     {
         base.PhysicsUpdate();
         
+        // [Fix] 반동(Recoil) 중이면 물리 엔진에 맡기고 활공 속도 제어를 스킵하여 X 넉백 보존
+        if (player.IsRecoiling)
+        {
+            return;
+        }
+        
         // 1. Y축 속도 제어 (부드러운 하강)
         float newY = Mathf.SmoothDamp(
             player.RB.linearVelocity.y,

@@ -11,7 +11,6 @@ public class RaySensor : SensorBase
     [SerializeField] private Vector2 boxSize = new Vector2(10f, 5f);
     [Tooltip("감지 영역의 중심 오프셋 (X는 보는 방향 기준)")]
     [SerializeField] private Vector2 boxOffset = new Vector2(5f, 1f); 
-    [SerializeField] private LayerMask obstacleLayer; // 벽, 지형 레이어
     [SerializeField] private LayerMask targetLayer;   // 플레이어 레이어
 
     [Header("Debug")]
@@ -75,13 +74,16 @@ public class RaySensor : SensorBase
         }
 
         // 2. 장애물(벽) 투시 방지 (Raycast)
-        // 눈 위치(Eye)에서 타겟까지 레이 발사
-        // Eye Height는 boxOffset.y를 적절히 활용하거나 별도 필드 가능. 여기선 transform.position + offset.y 사용
+        // 월드 마스크 사용
+        LayerMask worldMask = DimensionManager.Instance != null 
+            ? DimensionManager.Instance.CurrentWorldMask 
+            : ~0;
+            
         Vector2 eyePos = myPos + new Vector2(0f, boxOffset.y); 
         Vector2 dirToTarget = (targetPos - eyePos).normalized;
         float distToTarget = Vector2.Distance(eyePos, targetPos);
 
-        RaycastHit2D hit = Physics2D.Raycast(eyePos, dirToTarget, distToTarget, obstacleLayer);
+        RaycastHit2D hit = Physics2D.Raycast(eyePos, dirToTarget, distToTarget, worldMask);
         if (hit.collider != null)
         {
             UpdateFlag(bb, false);

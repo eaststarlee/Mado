@@ -9,14 +9,10 @@ public class GroundSensor : SensorBase
     [Header("Ground Check")]
     [SerializeField] private Vector2 groundCheckOffset = new Vector2(0f, -0.5f);
     [SerializeField] private float groundCheckRadius = 0.2f;
-    [Tooltip("이동 가능한 지면 레이어를 모두 선택하세요 (예: Ground, ClimbGround). 다중 선택 가능.")]
-    [SerializeField] private LayerMask groundLayer;
     
     [Header("Wall Check")]
     [SerializeField] private float wallCheckDistance = 0.5f;
     [SerializeField] private Vector2 wallCheckOffset = new Vector2(0f, 0f);
-    [Tooltip("이동을 막는 벽 레이어를 선택하세요 (예: Wall).")]
-    [SerializeField] private LayerMask wallLayer;
     
     [Header("Ledge Check")]
     [SerializeField] private float ledgeCheckDistance = 1.5f;
@@ -28,41 +24,49 @@ public class GroundSensor : SensorBase
         int facing = bb.Movement.facingDirection;
         if (facing == 0) facing = 1;
         
+        // 월드 마스크 가져오기 (DimensionManager가 없으면 모든 레이어)
+        LayerMask worldMask = DimensionManager.Instance != null 
+            ? DimensionManager.Instance.CurrentWorldMask 
+            : ~0;
+            
         // 1. 지면 체크
-        bb.Movement.isGrounded = Physics2D.OverlapCircle(
-            pos + groundCheckOffset, 
-            groundCheckRadius, 
-            groundLayer
-        ) != null;
+        Collider2D groundHit = Physics2D.OverlapCircle(pos + groundCheckOffset, groundCheckRadius, worldMask);
+        bb.Movement.isGrounded = IsGroundSurface(groundHit);
         
-        // 2. 벽 체크 — 진행 방향으로 Raycast (wallLayer 사용)
+        // 2. 벽 체크 — 진행 방향으로 Raycast
         Vector2 wallOrigin = pos + wallCheckOffset;
-        RaycastHit2D wallHit = Physics2D.Raycast(
-            wallOrigin, 
-            Vector2.right * facing, 
-            wallCheckDistance, 
-            wallLayer
-        );
-        bb.Movement.wallAhead = wallHit.collider != null;
+        RaycastHit2D wallHit = Physics2D.Raycast(wallOrigin, Vector2.right * facing, wallCheckDistance, worldMask);
+        bb.Movement.wallAhead = IsWallSurface(wallHit.collider);
         
-        // 3. 낭떠러지 체크 — 진행 방향 앞쪽 아래로 Raycast (groundLayer 사용)
+        // 3. 낭떠러지 체크 — 진행 방향 앞쪽 아래로 Raycast
         Vector2 ledgeOrigin = pos + new Vector2(ledgeCheckForwardOffset * facing, 0f);
-        RaycastHit2D ledgeHit = Physics2D.Raycast(
-            ledgeOrigin, 
-            Vector2.down, 
-            ledgeCheckDistance, 
-            groundLayer
-        );
-        bb.Movement.ledgeAhead = ledgeHit.collider == null && bb.Movement.isGrounded;
+        RaycastHit2D ledgeHit = Physics2D.Raycast(ledgeOrigin, Vector2.down, ledgeCheckDistance, worldMask);
         
-        // Debug.Log line removed
+        bb.Movement.ledgeAhead = !IsGroundSurface(ledgeHit.collider) && bb.Movement.isGrounded;
     }
 
-    private void Reset()
+    private bool IsGroundSurface(Collider2D col)
     {
-        // 자동으로 Ground, ClimbGround 레이어 마스크 설정
-        groundLayer = LayerMask.GetMask("Ground", "ClimbGround");
-        wallLayer = LayerMask.GetMask("Wall");
+        if (col == null) return false;
+        SurfaceInfo surface = col.GetComponentInParent<SurfaceInfo>();
+        if (surface != null)
+        {
+            return surface.type == SurfaceType.Ground || surface.type == SurfaceType.ClimbGround;
+        }
+        return true; // SurfaceInfo가 없으면 기본 지형(밟을 수 있음)으로 간주
+    }
+
+    private bool IsWallSurface(Collider2D col)
+    {
+        if (col == null) return false;
+        SurfaceInfo surface = col.GetComponentInParent<SurfaceInfo>();
+        if (surface != null)
+        {
+            return surface.type == SurfaceType.Wall || 
+                   surface.type == SurfaceType.BreakableWall || 
+                   surface.type == SurfaceType.Devil_BreakableWall;
+        }
+        return false; // SurfaceInfo가 없으면 벽이 아님
     }
 #if UNITY_EDITOR
     private void OnDrawGizmosSelected()

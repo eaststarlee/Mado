@@ -22,6 +22,17 @@ public class PlayerCombat : MonoBehaviour
     [SerializeField] private CombatConfig config;
     [SerializeField] private LayerMask enemyLayer;
     
+    [Header("반동(Recoil) 설정")]
+    [Tooltip("공격 시 플레이어를 뒤로 밀려나게 할 대상 레이어 (예: Enemy, Ground 등)")]
+    public LayerMask recoilTriggerLayers;
+    
+    [Tooltip("공격 시 플레이어를 뒤로 밀려나게 할 표면(Surface) 타입들")]
+    public List<SurfaceType> recoilTriggerSurfaces;
+    
+    [Tooltip("반동 힘의 배율 (1.0 = AttackData의 기본값)")]
+    [Range(0.1f, 5.0f)]
+    public float recoilForceMultiplier = 1.0f;
+    
     private PlayerController player;
     private HitResolver hitResolver;
     
@@ -310,7 +321,9 @@ public class PlayerCombat : MonoBehaviour
             targetLayer = enemyLayer,
             attacker = gameObject,
             damageMultiplier = CurrentProfile.damageMultiplier,
-            rangeMultiplier = CurrentProfile.rangeMultiplier
+            rangeMultiplier = CurrentProfile.rangeMultiplier,
+            recoilTargetLayer = recoilTriggerLayers,
+            recoilTargetSurfaces = recoilTriggerSurfaces
         };
         
         // 4. 상태 초기화
@@ -385,7 +398,13 @@ public class PlayerCombat : MonoBehaviour
         // 히트 판정
         HitResult result = hitResolver.ProcessAttack(currentSession);
         
-        // 적중 시 반동 및 피드백 처리
+        // [반동] 설정된 레이어나 표면에 적중했는지 확인하여 반동 적용
+        if (result.TriggerRecoil)
+        {
+            ApplyRecoil();
+        }
+        
+        // 적중(데미지 판정) 시 피드백 처리
         if (result.HasHit)
         {
             // 타격감: 역경직(HitStop)
@@ -393,8 +412,6 @@ public class PlayerCombat : MonoBehaviour
             {
                 player.StartHitStop(currentAttack.hitStopDuration);
             }
-
-            ApplyRecoil();
         }
     }
     
@@ -402,7 +419,8 @@ public class PlayerCombat : MonoBehaviour
     {
         if (currentAttack == null) return;
         
-        Vector2 recoil = currentAttack.recoilForce;
+        // 인스펙터에 설정된 배율(Multiplier)을 적용
+        Vector2 recoil = currentAttack.recoilForce * recoilForceMultiplier;
         
         switch (currentAttack.recoilType)
         {
@@ -440,7 +458,9 @@ public class PlayerCombat : MonoBehaviour
                 {
                     bounceVel = pogoData.pogoBounceVelocity;
                 }
-                player.PogoBounce(bounceVel);
+                
+                // Pogo 바운스에도 배율 적용
+                player.PogoBounce(bounceVel * recoilForceMultiplier);
                 
                 // 2. 히트 스톱 (Game Feel) - Pogo는 약간 길게
                 CombatFeedback.Instance?.RequestHitStop(0.08f);

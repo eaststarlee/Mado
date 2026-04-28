@@ -55,6 +55,9 @@ public class HitResolver : MonoBehaviour
         // [Environment] 환경 오브젝트 스캔 및 가격 (BreakableWall 등)
         CheckEnvironmentHits(session);
         
+        // [Recoil] 반동(넉백) 여부 검사
+        result.TriggerRecoil = CheckRecoilTriggers(session);
+        
         // 피드백 트리거
         if (result.hitCount > 0 && feedback != null)
         {
@@ -62,6 +65,45 @@ public class HitResolver : MonoBehaviour
         }
         
         return result;
+    }
+
+    /// <summary>
+    /// 설정된 Layer 또는 SurfaceInfo를 기반으로 넉백 발생 여부를 판정합니다.
+    /// </summary>
+    private bool CheckRecoilTriggers(AttackSession session)
+    {
+        Vector2 boxCenter = session.origin + new Vector2(
+            session.attack.hitboxOffset.x * session.facing * session.rangeMultiplier,
+            session.attack.hitboxOffset.y
+        );
+        Vector2 boxSize = session.attack.hitboxSize * session.rangeMultiplier;
+
+        // 1. 지정된 레이어(recoilTargetLayer) 충돌 검사
+        if (session.recoilTargetLayer != 0)
+        {
+            Collider2D col = Physics2D.OverlapBox(boxCenter, boxSize, 0f, session.recoilTargetLayer);
+            if (col != null) return true;
+        }
+
+        // 2. 지정된 SurfaceInfo 검사
+        if (session.recoilTargetSurfaces != null && session.recoilTargetSurfaces.Count > 0)
+        {
+            LayerMask worldMask = DimensionManager.Instance != null
+                ? DimensionManager.Instance.CurrentWorldMask
+                : ~0; // 모든 레이어
+                
+            Collider2D[] hits = Physics2D.OverlapBoxAll(boxCenter, boxSize, 0f, worldMask);
+            foreach (var col in hits)
+            {
+                SurfaceInfo surface = col.GetComponentInParent<SurfaceInfo>();
+                if (surface != null && session.recoilTargetSurfaces.Contains(surface.type))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
     
     #region Stage 1: Detection
@@ -353,6 +395,10 @@ public class AttackSession
     public float damageMultiplier = 1f;
     public float rangeMultiplier = 1f;
     
+    // 반동(Recoil) 감지용
+    public LayerMask recoilTargetLayer;
+    public List<SurfaceType> recoilTargetSurfaces;
+    
     // 중복 히트 방지 (세션이 소유)
     public HashSet<GameObject> alreadyHit = new HashSet<GameObject>();
     
@@ -377,6 +423,7 @@ public struct HitResult
 {
     public int hitCount;
     public List<GameObject> hitTargets;
+    public bool TriggerRecoil;
     
     public bool HasHit => hitCount > 0;
 }

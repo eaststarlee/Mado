@@ -12,11 +12,11 @@ public class PlayerSprintImpactState : PlayerState
     {
         base.Enter();
 
-        impactEndTime = Time.time + player.ActiveFormData.ability.sprintImpactDuration;
+        impactEndTime = Time.time + 0.2f; // 임시 고정값 (미사용 상태)
 
         // Apply knockback force
         int facingDirection = player.IsFacingRight ? 1 : -1;
-        Vector2 knockbackForce = player.ActiveFormData.ability.sprintImpactKnockback;
+        Vector2 knockbackForce = Vector2.zero; // 임시 고정값 (미사용 상태)
         
         player.RB.linearVelocity = new Vector2(-facingDirection * knockbackForce.x, knockbackForce.y);
     }

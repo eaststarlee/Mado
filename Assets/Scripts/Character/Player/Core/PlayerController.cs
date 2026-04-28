@@ -621,7 +621,7 @@ public class PlayerController : MonoBehaviour, ISaveable
         IsGliding = true;
         PlayerEvents.RaiseGlideStart();
         
-        formManager.SetGlidingSprite(true);
+        // formManager.SetGlidingSprite(true); // 스프라이트 강제 교체 비활성화
     }
     
     /// <summary>
@@ -634,7 +634,7 @@ public class PlayerController : MonoBehaviour, ISaveable
         IsGliding = false;
         PlayerEvents.RaiseGlideEnd();
         
-        formManager.SetGlidingSprite(false);
+        // formManager.SetGlidingSprite(false); // 스프라이트 강제 교체 비활성화
     }
     
     private void OnDestroy()

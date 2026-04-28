@@ -228,6 +228,12 @@ public class PlayerInAirState : PlayerState
     {
         base.PhysicsUpdate();
         
+        // [Fix] 반동(Recoil) 중이면 물리 엔진에 맡기고 이동/중력 로직을 스킵하여 X 넉백 보존
+        if (player.IsRecoiling)
+        {
+            return;
+        }
+        
         // 1. 더블 점프 지연 (Anticipation) 처리
         if (isDoubleJumpDelaying)
         {

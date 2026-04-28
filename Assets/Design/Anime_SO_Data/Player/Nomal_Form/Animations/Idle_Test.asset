@@ -13,4 +13,7 @@ MonoBehaviour:
   m_Name: Idle_Test
   m_EditorClassIdentifier: Assembly-CSharp::SpriteAnimationClip
   isLoop: 1
-  frames: []
+  frames:
+  - sprite: {fileID: 21300000, guid: 5f3d472c5684b7a4380fef4f89335e9a, type: 3}
+    duration: 0.08
+    eventName: 

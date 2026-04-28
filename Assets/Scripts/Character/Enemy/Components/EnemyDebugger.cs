@@ -30,6 +30,43 @@ public class EnemyDebugger : MonoBehaviour
         {
             DrawColliders();
         }
+
+#if UNITY_EDITOR
+        // [Scene View 전용] 디버그 텍스트 표시
+        if (showDebugInfo && entity != null)
+        {
+            string movModule = entity.Brain?.CurrentMovement?.ModuleName ?? "None";
+            string movStatus = entity.Brain?.CurrentMovement?.GetStatus();
+            if (!string.IsNullOrEmpty(movStatus)) movModule += $" ({movStatus})";
+
+            string actModule = entity.Brain?.CurrentAction?.ModuleName ?? "None";
+            string actStatus = entity.Brain?.CurrentAction?.GetStatus();
+            if (!string.IsNullOrEmpty(actStatus)) actModule += $" ({actStatus})";
+
+            string intModule = entity.Brain?.CurrentInterrupt?.ModuleName ?? "-";
+            
+            string stateInfo;
+            if (entity.Brain != null && entity.Brain.IsInterrupted)
+            {
+                stateInfo = $"[INT] {intModule}";
+            }
+            else
+            {
+                stateInfo = $"Mov:{movModule} | Act:{actModule}";
+            }
+
+            string debugText = $"HP: {health.CurrentHealth:F0}/{health.MaxHealth:F0}\n" +
+                               $"Poise: {health.CurrentPoise:F0}/{health.MaxPoise:F0}\n" +
+                               $"State: {stateInfo}\n" +
+                               $"Recovering: {(health.IsRecoveringPoise ? "Yes" : "No")}";
+
+            GUIStyle style = new GUIStyle();
+            style.normal.textColor = Color.white;
+            style.fontSize = 12;
+            
+            UnityEditor.Handles.Label(transform.position + Vector3.up * 2.5f, debugText, style);
+        }
+#endif
     }
 
     private void DrawPoiseBar()
@@ -67,52 +104,5 @@ public class EnemyDebugger : MonoBehaviour
             Gizmos.color = Color.cyan;
             Gizmos.DrawWireCube(col.bounds.center, col.bounds.size);
         }
-    }
-
-    private void OnGUI()
-    {
-        if (!showDebugInfo) return;
-        if (health == null || entity == null) return;
-
-        Vector3 screenPos = Camera.main.WorldToScreenPoint(transform.position + Vector3.up * 2.5f);
-        // Check if behind camera
-        if (screenPos.z < 0) return;
-        
-        // Flip Y for GUI
-        float guiY = Screen.height - screenPos.y;
-
-        // Brain 상태 표시
-        string movModule = entity.Brain?.CurrentMovement?.ModuleName ?? "None";
-        string movStatus = entity.Brain?.CurrentMovement?.GetStatus();
-        if (!string.IsNullOrEmpty(movStatus)) movModule += $" ({movStatus})";
-
-        string actModule = entity.Brain?.CurrentAction?.ModuleName ?? "None";
-        string actStatus = entity.Brain?.CurrentAction?.GetStatus();
-        if (!string.IsNullOrEmpty(actStatus)) actModule += $" ({actStatus})";
-
-        string intModule = entity.Brain?.CurrentInterrupt?.ModuleName ?? "-";
-        
-        string stateInfo;
-        if (entity.Brain != null && entity.Brain.IsInterrupted)
-        {
-            stateInfo = $"[INT] {intModule}";
-        }
-        else
-        {
-            stateInfo = $"Mov:{movModule} | Act:{actModule}";
-        }
-
-        string debugText = $"HP: {health.CurrentHealth:F0}/{health.MaxHealth:F0}\n" +
-                           $"Poise: {health.CurrentPoise:F0}/{health.MaxPoise:F0}\n" +
-                           $"State: {stateInfo}\n" +
-                           $"Recovering: {(health.IsRecoveringPoise ? "Yes" : "No")}";
-
-        // Shadow
-        GUI.color = Color.black;
-        GUI.Label(new Rect(screenPos.x + 1, guiY + 1, 300, 80), debugText);
-
-        // Text
-        GUI.color = Color.white;
-        GUI.Label(new Rect(screenPos.x, guiY, 300, 80), debugText);
     }
 }
