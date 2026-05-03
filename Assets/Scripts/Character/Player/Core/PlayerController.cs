@@ -150,6 +150,13 @@ public class PlayerController : MonoBehaviour, ISaveable
         actionController = GetComponent<PlayerActionController>();
         RB = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+
+        // [Fix] 타일 경계선(Seam) 걸림 방지: 모서리를 미세하게 둥글게 깎음
+        var boxCol = GetComponent<BoxCollider2D>();
+        if (boxCol != null)
+        {
+            boxCol.edgeRadius = 0.015f;
+        }
         
         AnimationController = GetComponent<Mado.Character.Animation.CharacterAnimationController>(); 
         LedgeDetector = GetComponentInChildren<LedgeDetector>(); 
@@ -478,18 +485,29 @@ public class PlayerController : MonoBehaviour, ISaveable
 
     public void SwitchForm(int formIndex) => formManager.SwitchForm(formIndex);
 
+    private Collider2D GetSolidColliderInBox(Vector2 point, Vector2 size, LayerMask mask)
+    {
+        // 트리거(isTrigger = true)를 무시하고 실체하는 콜라이더만 반환
+        Collider2D[] hits = Physics2D.OverlapBoxAll(point, size, 0, mask);
+        foreach (var hit in hits)
+        {
+            if (!hit.isTrigger) return hit;
+        }
+        return null;
+    }
+
     public bool IsGrounded()
     {
         // DimensionManager.CurrentWorldMask만 사용
         LayerMask groundMask = DimensionManager.Instance.CurrentWorldMask;
-        return Physics2D.OverlapBox(groundCheckPoint.position, groundCheckSize, 0, groundMask);
+        return GetSolidColliderInBox(groundCheckPoint.position, groundCheckSize, groundMask) != null;
     }
 
     public bool IsTouchingWall()
     {
         LayerMask mask = DimensionManager.Instance.CurrentWorldMask;
 
-        Collider2D hit = Physics2D.OverlapBox(wallCheckPoint.position, wallCheckSize, 0, mask);
+        Collider2D hit = GetSolidColliderInBox(wallCheckPoint.position, wallCheckSize, mask);
         if (hit == null) return false;
 
         // SurfaceType.Wall 검증
@@ -516,13 +534,13 @@ public class PlayerController : MonoBehaviour, ISaveable
         Vector2 origin = (Vector2)transform.position + new Vector2(0, 1.0f);
         // 플레이어 너비(약 0.8)보다 약간 작게(0.5) 설정하여 벽에 밀착했을 때 벽을 천장으로 오인하지 않도록 함
         Vector2 size = new Vector2(0.5f, 0.2f);
-        return Physics2D.OverlapBox(origin, size, 0, mask);
+        return GetSolidColliderInBox(origin, size, mask) != null;
     }
 
     public bool IsTouchingGroundOnSide()
     {
         LayerMask mask = DimensionManager.Instance.CurrentWorldMask;
-        return Physics2D.OverlapBox(wallCheckPoint.position, wallCheckSize, 0, mask);
+        return GetSolidColliderInBox(wallCheckPoint.position, wallCheckSize, mask) != null;
     }
 
     public bool CanDash() => DashCountLeft > 0 && Time.time >= lastDashTime + ActiveFormData.ability.dashCooldown;

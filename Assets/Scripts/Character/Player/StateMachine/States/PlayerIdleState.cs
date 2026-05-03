@@ -23,10 +23,11 @@ public class PlayerIdleState : PlayerState
     {
         base.LogicUpdate();
         
-        // C 키(스프린트)를 꾹 누르고 있으면 즉시 전환
-        if (player.SprintInputHeld)
+        // DashInput 체크 (대쉬가 모든 스프린트의 시작점)
+        if (player.LastPressedDashTime > 0 && player.CanDash())
         {
-            stateMachine.ChangeState(player.SprintState);
+            player.LastPressedDashTime = 0f;
+            stateMachine.ChangeState(player.DashState);
             return;
         }
         
@@ -44,12 +45,7 @@ public class PlayerIdleState : PlayerState
             return;
         }
         
-        if (player.LastPressedDashTime > 0 && player.CanDash())
-        {
-            player.LastPressedDashTime = 0f;
-            stateMachine.ChangeState(player.DashState);
-        }
-        else if (player.LastPressedJumpTime > 0)
+        if (player.LastPressedJumpTime > 0)
         {
             stateMachine.ChangeState(player.InAirState);
         }

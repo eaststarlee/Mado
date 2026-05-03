@@ -15,10 +15,10 @@ MonoBehaviour:
   detectionRadius: 1.25
   grappleTargetLayer:
     serializedVersion: 2
-    m_Bits: 8192
+    m_Bits: 0
   losBlockerLayer:
     serializedVersion: 2
-    m_Bits: 7168
+    m_Bits: 0
   coyoteTime: 0.1
   inputBufferTime: 0.15
   dashSpeed: 35

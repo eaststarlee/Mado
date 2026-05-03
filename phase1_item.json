@@ -1,0 +1,32 @@
+{
+  "parent": {
+    "database_id": "35214490-6c2d-81ef-9b62-fce8d71e017a"
+  },
+  "properties": {
+    "항목명": {
+      "title": [
+        {
+          "text": {
+            "content": "Phase 1: Foundation & Workflow"
+          }
+        }
+      ]
+    },
+    "단계": {
+      "select": {
+        "name": "Phase 1: Foundation"
+      }
+    },
+    "기간": {
+      "date": {
+        "start": "2026-05-01",
+        "end": "2026-10-31"
+      }
+    },
+    "상태": {
+      "status": {
+        "name": "Not started"
+      }
+    }
+  }
+}

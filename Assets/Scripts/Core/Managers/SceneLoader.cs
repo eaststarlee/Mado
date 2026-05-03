@@ -174,6 +174,9 @@ public class SceneLoader : MonoBehaviour
         // 물리 엔진에 위치 변경을 즉시 알림
         Physics2D.SyncTransforms();
 
+        // [중요] 씬 로드 후 오브젝트(RoomBoundary 등)가 완전히 초기화될 때까지 1프레임 대기
+        yield return null;
+
         RefreshCamera();
         RaiseRoomEnteredEvent();
 

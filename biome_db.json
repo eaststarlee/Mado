@@ -1,0 +1,43 @@
+{
+  "parent": {
+    "type": "page_id",
+    "page_id": "35214490-6c2d-816e-9969-ca8dda94a64b"
+  },
+  "title": [
+    {
+      "type": "text",
+      "text": {
+        "content": "[DB] 바이옴 트래커"
+      }
+    }
+  ],
+  "properties": {
+    "바이옴 명": {
+      "title": {}
+    },
+    "담당 디자이너": {
+      "select": {
+        "options": [
+          { "name": "조은비", "color": "purple" },
+          { "name": "박현우", "color": "blue" },
+          { "name": "디자이너A", "color": "green" },
+          { "name": "디자이너B", "color": "yellow" }
+        ]
+      }
+    },
+    "진행 단계": {
+      "status": {}
+    },
+    "컨셉": {
+      "select": {
+        "options": [
+          { "name": "자연계 (정령)", "color": "green" },
+          { "name": "마계 (악마)", "color": "red" },
+          { "name": "화산", "color": "orange" },
+          { "name": "대감옥", "color": "gray" },
+          { "name": "천계", "color": "blue" }
+        ]
+      }
+    }
+  }
+}

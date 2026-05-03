@@ -94,11 +94,7 @@ public class PlayerGlideState : PlayerState
         // 착지
         if (player.IsGrounded() && player.RB.linearVelocity.y < 0.01f)
         {
-            if (player.SprintInputHeld)
-            {
-                stateMachine.ChangeState(player.SprintState);
-            }
-            else if (player.InputX != 0)
+            if (player.InputX != 0)
             {
                 stateMachine.ChangeState(player.MoveState);
             }

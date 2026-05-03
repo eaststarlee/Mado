@@ -1,0 +1,38 @@
+{
+  "parent": {
+    "type": "page_id",
+    "page_id": "35214490-6c2d-816e-9969-ca8dda94a64b"
+  },
+  "title": [
+    {
+      "type": "text",
+      "text": {
+        "content": "[DB] 태스크"
+      }
+    }
+  ],
+  "properties": {
+    "할 일": {
+      "title": {}
+    },
+    "담당자": {
+      "people": {}
+    },
+    "마감일": {
+      "date": {}
+    },
+    "우선순위": {
+      "select": {
+        "options": [
+          { "name": "Urgent", "color": "red" },
+          { "name": "High", "color": "orange" },
+          { "name": "Normal", "color": "blue" },
+          { "name": "Low", "color": "gray" }
+        ]
+      }
+    },
+    "상태": {
+      "status": {}
+    }
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "parent": {
+    "type": "page_id",
+    "page_id": "35214490-6c2d-816e-9969-ca8dda94a64b"
+  },
+  "title": [
+    {
+      "type": "text",
+      "text": {
+        "content": "[DB] 마일스톤"
+      }
+    }
+  ],
+  "properties": {
+    "목표명": {
+      "title": {}
+    },
+    "우선순위": {
+      "select": {
+        "options": [
+          { "name": "High", "color": "red" },
+          { "name": "Medium", "color": "orange" },
+          { "name": "Low", "color": "blue" }
+        ]
+      }
+    },
+    "목표 날짜": {
+      "date": {}
+    },
+    "상태": {
+      "status": {}
+    }
+  }
+}

@@ -37,8 +37,17 @@ public class PlayerDashState : PlayerState
             }
             else if (player.IsGrounded())
             {
-                player.RB.linearVelocity = new Vector2(0, player.RB.linearVelocity.y); // 대시 종료 시 지상에서 즉시 정지
-                stateMachine.ChangeState(player.IdleState);
+                if (player.InputX != 0)
+                {
+                    // 이동 입력이 있으면 자연스럽게 MoveState로 전환
+                    stateMachine.ChangeState(player.MoveState);
+                }
+                else
+                {
+                    // 입력이 없으면 즉시 정지하여 쫀득한 느낌 부여
+                    player.RB.linearVelocity = new Vector2(0, player.RB.linearVelocity.y);
+                    stateMachine.ChangeState(player.IdleState);
+                }
             }
             else
             {

@@ -1,0 +1,44 @@
+{
+  "parent": {
+    "type": "page_id",
+    "page_id": "35214490-6c2d-816e-9969-ca8dda94a64b"
+  },
+  "title": [
+    {
+      "type": "text",
+      "text": {
+        "content": "[DB] AI 패턴 도감"
+      }
+    }
+  ],
+  "properties": {
+    "패턴 명": {
+      "title": {}
+    },
+    "복잡도": {
+      "select": {
+        "options": [
+          { "name": "High", "color": "red" },
+          { "name": "Mid", "color": "yellow" },
+          { "name": "Low", "color": "green" }
+        ]
+      }
+    },
+    "개발 상태": {
+      "select": {
+        "options": [
+          { "name": "Ready", "color": "blue" },
+          { "name": "In Progress", "color": "orange" },
+          { "name": "Planning", "color": "gray" }
+        ]
+      }
+    },
+    "담당자": {
+      "select": {
+        "options": [
+          { "name": "이동규", "color": "purple" }
+        ]
+      }
+    }
+  }
+}

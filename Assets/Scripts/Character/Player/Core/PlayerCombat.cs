@@ -121,6 +121,12 @@ public class PlayerCombat : MonoBehaviour
         {
             Debug.LogWarning("[PlayerCombat] HitResolver를 찾을 수 없습니다. 공격 판정이 작동하지 않습니다.");
         }
+
+        // [New] 가시(Spike) 포고 자동 지원 등록
+        if (recoilTriggerSurfaces != null && !recoilTriggerSurfaces.Contains(SurfaceType.Spike))
+        {
+            recoilTriggerSurfaces.Add(SurfaceType.Spike);
+        }
     }
     
     private void Update()

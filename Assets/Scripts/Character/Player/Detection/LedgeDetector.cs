@@ -29,6 +29,27 @@ public class LedgeDetector : MonoBehaviour
         playerCollider = player.GetComponent<BoxCollider2D>();
     }
 
+    private RaycastHit2D GetSolidBoxCast(Vector2 origin, Vector2 size, float angle, Vector2 direction, float distance, LayerMask mask)
+    {
+        var hits = Physics2D.BoxCastAll(origin, size, angle, direction, distance, mask);
+        foreach(var hit in hits) if (!hit.collider.isTrigger) return hit;
+        return default(RaycastHit2D);
+    }
+
+    private RaycastHit2D GetSolidRaycast(Vector2 origin, Vector2 direction, float distance, LayerMask mask)
+    {
+        var hits = Physics2D.RaycastAll(origin, direction, distance, mask);
+        foreach(var hit in hits) if (!hit.collider.isTrigger) return hit;
+        return default(RaycastHit2D);
+    }
+
+    private bool CheckSolidOverlapBox(Vector2 point, Vector2 size, float angle, LayerMask mask)
+    {
+        var hits = Physics2D.OverlapBoxAll(point, size, angle, mask);
+        foreach(var hit in hits) if (!hit.isTrigger) return true;
+        return false;
+    }
+
     /// <summary>
     /// 렛지 감지 및 착지 목표 지점 반환 (실패 시 null)
     /// L-Shape Scan: Wall Check + Ledge Check + Clearance Check
@@ -49,7 +70,7 @@ public class LedgeDetector : MonoBehaviour
         // ========================================================
         // 1. [Wall Check] 앞에 벽이 있는가? + SurfaceInfo.Climbable 검증
         // ========================================================
-        RaycastHit2D wallHit = Physics2D.BoxCast(
+        RaycastHit2D wallHit = GetSolidBoxCast(
             center,
             boxSize * 0.9f,
             0f,
@@ -58,7 +79,7 @@ public class LedgeDetector : MonoBehaviour
             worldMask
         );
 
-        if (!wallHit) return null; // 벽 없음
+        if (wallHit.collider == null) return null; // 벽 없음
 
         // SurfaceInfo.type 검증: ClimbGround 속성이 아니면 렛지 클라임 불가
         SurfaceInfo wallSurface = GetCachedSurfaceInfo(wallHit.collider);
@@ -72,14 +93,14 @@ public class LedgeDetector : MonoBehaviour
             pos.y + ledgeScanHeight
         );
 
-        RaycastHit2D ledgeHit = Physics2D.Raycast(
+        RaycastHit2D ledgeHit = GetSolidRaycast(
             ledgeRayOrigin,
             Vector2.down,
             ledgeScanHeight + 0.5f,
             worldMask
         );
 
-        if (!ledgeHit) return null; // 윗면 없음 (무한 벽)
+        if (ledgeHit.collider == null) return null; // 윗면 없음 (무한 벽)
 
         // ========================================================
         // 3. [Clearance Check] 착지할 공간(머리 위)이 비었는가?
@@ -88,7 +109,7 @@ public class LedgeDetector : MonoBehaviour
         Vector2 clearanceCenter = targetFloor + Vector2.up * (boxSize.y * 0.5f);
         Vector2 clearanceSize = new Vector2(boxSize.x * 0.8f, boxSize.y * 0.9f);
 
-        bool hitCeiling = Physics2D.OverlapBox(
+        bool hitCeiling = CheckSolidOverlapBox(
             clearanceCenter,
             clearanceSize,
             0f,

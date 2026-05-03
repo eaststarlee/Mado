@@ -1,0 +1,36 @@
+{
+  "parent": {
+    "type": "page_id",
+    "page_id": "35214490-6c2d-816e-9969-ca8dda94a64b"
+  },
+  "title": [
+    {
+      "type": "text",
+      "text": {
+        "content": "[DB] 로드맵"
+      }
+    }
+  ],
+  "properties": {
+    "항목명": {
+      "title": {}
+    },
+    "단계": {
+      "select": {
+        "options": [
+          { "name": "Phase 1: Foundation", "color": "blue" },
+          { "name": "Phase 2: Prototype", "color": "green" },
+          { "name": "Phase 3: Production", "color": "yellow" },
+          { "name": "Phase 4: Boss & Combat", "color": "orange" },
+          { "name": "Phase 5: Polish & Launch", "color": "red" }
+        ]
+      }
+    },
+    "기간": {
+      "date": {}
+    },
+    "상태": {
+      "status": {}
+    }
+  }
+}

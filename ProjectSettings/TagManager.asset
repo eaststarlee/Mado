@@ -42,14 +42,38 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Pet
+  - name: Background_Far
     uniqueID: 1201186773
     locked: 0
-  - name: Player
+  - name: Background_Mid
     uniqueID: 3352513383
     locked: 0
-  - name: Platform
+  - name: Background_Near
     uniqueID: 3650333003
+    locked: 0
+  - name: Decorate
+    uniqueID: 61485267
+    locked: 0
+  - name: Platform
+    uniqueID: 1633091753
+    locked: 0
+  - name: Interactable
+    uniqueID: 962880445
+    locked: 0
+  - name: Enemy
+    uniqueID: 3537739009
+    locked: 0
+  - name: Player
+    uniqueID: 2399096135
+    locked: 0
+  - name: Pet
+    uniqueID: 3160080007
+    locked: 0
+  - name: Foreground
+    uniqueID: 3777257795
+    locked: 0
+  - name: VFX
+    uniqueID: 1359937025
     locked: 0
   m_RenderingLayers:
   - Default

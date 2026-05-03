@@ -209,7 +209,8 @@ public class PlayerInAirState : PlayerState
             // [ActionSystem] 착지 확정 이벤트 발생 (SlamAction 등에서 구독)
             player.RaiseGroundedConfirmed();
             
-            if (player.SprintInputHeld)
+            // 스프린트 점프/낙하 중이었고, 여전히 스프린트 키(C)를 누르고 있다면 다시 스프린트로 이어짐
+            if (player.IsSprintJumping && player.SprintInputHeld)
             {
                 stateMachine.ChangeState(player.SprintState);
             }
