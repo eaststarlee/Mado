@@ -65,6 +65,10 @@ public class RoomData : MonoBehaviour
     [Tooltip("아래쪽 출구와 연결된 씬 이름")]
     public string connectedScene_Down;
 
+    [Header("카메라 설정")]
+    [Tooltip("이 방에서 카메라의 Y축 추적을 고정할지 여부")]
+    public bool lockCameraY = false;
+
     // ── Unity Lifecycle ────────────────────────────────────
     private void Start()
     {

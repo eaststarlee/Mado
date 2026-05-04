@@ -159,6 +159,12 @@ public class PlayerCamera : MonoBehaviour
         if (Mathf.Approximately(targetDamping.y, 0)) currentDamping.y = 0;
         else currentDamping.y = Mathf.Lerp(currentDamping.y, targetDamping.y, Time.deltaTime * dampingChangeSpeed);
         
+        // [New] 룸 데이터에서 Y축 고정을 요청한 경우, 수직 추적을 차단하기 위해 댐핑을 높게 유지
+        if (CameraManager.Instance != null && CameraManager.Instance.CurrentRoomData != null && CameraManager.Instance.CurrentRoomData.lockCameraY)
+        {
+            currentDamping.y = 20f;
+        }
+
         m_PositionComposer.Damping = currentDamping;
 
         // --- Offset 처리 ---

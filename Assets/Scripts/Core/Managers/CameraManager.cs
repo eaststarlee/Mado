@@ -11,6 +11,8 @@ public class CameraManager : MonoBehaviour
     private List<CinemachineCamera> cameras = new List<CinemachineCamera>();
     private const int defaultPriority = 0;
     private const int activePriority = 10;
+    
+    public RoomData CurrentRoomData { get; private set; }
 
     private void Awake()
     {
@@ -71,6 +73,9 @@ public class CameraManager : MonoBehaviour
 
         if (roomCam != null)
         {
+            CurrentRoomData = FindRoomDataInScene(activeScene);
+            if (CurrentRoomData == null) CurrentRoomData = FindRoomDataInAnyScene();
+
             SwitchCamera(roomCam);
 
             Collider2D boundary = FindRoomBoundaryInScene(activeScene);
@@ -80,7 +85,32 @@ public class CameraManager : MonoBehaviour
             {
                 RebindConfiner2D(roomCam, boundary);
             }
+
+            // 방 설정 적용 및 워프
+            ApplyRoomSettings(roomCam, CurrentRoomData);
+            if (roomCam.Follow != null)
+            {
+                WarpCamera(roomCam, roomCam.Follow);
+            }
         }
+    }
+
+    private void ApplyRoomSettings(CinemachineCamera roomCam, RoomData data)
+    {
+        if (data == null) return;
+        var composer = roomCam.GetCinemachineComponent(CinemachineCore.Stage.Body) as CinemachinePositionComposer;
+        if (composer == null) return;
+
+        // lockCameraY가 켜져 있으면 Y축 댐핑을 높여서 고정함
+        composer.Damping.y = data.lockCameraY ? 20f : 0.5f;
+        Debug.Log($"[CameraManager] Applied settings for {data.roomId} (LockY: {data.lockCameraY})");
+    }
+
+    public void WarpCamera(CinemachineCamera roomCam, Transform target)
+    {
+        if (roomCam == null || target == null) return;
+        roomCam.OnTargetObjectWarped(target, target.position - roomCam.transform.position);
+        roomCam.ForceCameraPosition(target.position, roomCam.transform.rotation);
     }
 
     private void RebindConfiner2D(CinemachineCamera roomCam, Collider2D boundary)
@@ -152,6 +182,29 @@ public class CameraManager : MonoBehaviour
             if (!s.isLoaded || s.name == "Master") continue;
             var col = FindRoomBoundaryInScene(s);
             if (col != null) return col;
+        }
+        return null;
+    }
+
+    private RoomData FindRoomDataInScene(Scene scene)
+    {
+        if (!scene.IsValid() || !scene.isLoaded) return null;
+        foreach (GameObject root in scene.GetRootGameObjects())
+        {
+            var data = root.GetComponentInChildren<RoomData>(true);
+            if (data != null) return data;
+        }
+        return null;
+    }
+
+    private RoomData FindRoomDataInAnyScene()
+    {
+        for (int i = 0; i < SceneManager.sceneCount; i++)
+        {
+            Scene s = SceneManager.GetSceneAt(i);
+            if (!s.isLoaded || s.name == "Master") continue;
+            var data = FindRoomDataInScene(s);
+            if (data != null) return data;
         }
         return null;
     }

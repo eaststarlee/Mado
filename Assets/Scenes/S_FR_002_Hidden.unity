@@ -675,7 +675,7 @@ Transform:
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -10.395927, y: -4.339396, z: 2.975543}
+  m_LocalPosition: {x: -5.3959284, y: -4.339396, z: 2.975543}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -957,7 +957,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -10, y: 0, z: 0}
-  m_LocalScale: {x: 30, y: 11.06, z: 1}
+  m_LocalScale: {x: 30, y: 12, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -2710,6 +2710,7 @@ MonoBehaviour:
   connectedScene_Right: S_FR_001_Start
   connectedScene_Up: 
   connectedScene_Down: 
+  lockCameraY: 1
 --- !u!4 &717278438
 Transform:
   m_ObjectHideFlags: 0
