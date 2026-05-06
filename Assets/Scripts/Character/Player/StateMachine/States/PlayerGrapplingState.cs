@@ -1,9 +1,14 @@
 using UnityEngine;
 
 /// <summary>
-/// 그래플링 대쉬 상태.
-/// 그래플링 포인트는 방향만 결정하며, 포인트 도달 후에도 dashSpeed로 계속 관통 진행.
-/// maxDashDuration 이후 InAirState로 전환.
+/// 그래플링 대쉬 실행 상태.
+/// 
+/// [설계 의도]
+/// - 그래플링 포인트는 "감지 구역" 역할만 함. 포인트 위치로 이동하지 않음.
+/// - PlayerGrappleAimState에서 8방향으로 정규화된 방향 벡터를 SetDirection()으로 전달받아,
+///   그 방향으로 dashSpeed만큼 직선 대시.
+/// - 포인트와의 거리, 포인트 도달 여부는 완전히 무관.
+/// - maxDashDuration 이후 InAirState로 전환.
 /// </summary>
 public class PlayerGrapplingState : PlayerState
 {

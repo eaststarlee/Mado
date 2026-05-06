@@ -57,21 +57,20 @@ public class PlayerGrappleAimState : PlayerState
     {
         base.LogicUpdate();
 
-        // unscaledDeltaTime을 사용하여 시간 감속에 영향받지 않는 실제 시간 경과 측정
         aimTimer += Time.unscaledDeltaTime;
 
         float limit = data != null ? data.aimDurationLimit : 3f;
         bool isTimeOut = aimTimer >= limit;
-        
-        // PlayerController에서 매 프레임 업데이트되는 S키 유지 상태
         bool isKeyReleased = !player.IsGrappleHeld;
 
-        // V키 조준 중 실시간 화살표 입력 캐싱 (손 떼기 직전까지 기억)
+        // V키 조준 중 실시간 화살표 입력 캐싱
+        // 입력이 있을 때만 lastValidAimDir 갱신 (손 떼기 직전 마지막 방향 기억)
         Vector2 currentInput = new Vector2(player.InputX, player.InputY);
         if (currentInput.sqrMagnitude >= 0.1f)
         {
             lastValidAimDir = currentInput;
         }
+        // 입력이 없으면 lastValidAimDir는 Enter()에서 설정한 Vector2.up 유지
 
         if (isTimeOut || isKeyReleased)
         {
@@ -81,29 +80,37 @@ public class PlayerGrappleAimState : PlayerState
 
     private void ExecuteDash()
     {
-        // 최후 순간까지 유효했던 방향 사용 (손 떼는 찰나에 입력이 풀려도 보정됨)
+        // 마지막 유효 방향을 8방향으로 정규화 (입력 없으면 up이 기본)
         Vector2 dashDir = QuantizeTo8Directions(lastValidAimDir);
 
-        // 2. 쿨타임 등록
+        // 쿨타임 등록
         player.GrappleDetector?.RegisterKey(nearestKeyToRegister);
 
-        // 3. 상태 전환 및 대쉬 방향 설정
+        // 상태 전환 및 방향 설정
         player.GrapplingState.SetDirection(dashDir);
         stateMachine.ChangeState(player.GrapplingState);
     }
 
     /// <summary>
-    /// 입력 벡터를 제일 가까운 8방향 벡터로 변환 (정규화된 Vector2 반환)
+    /// 입력 벡터를 8방향 중 가장 가까운 방향으로 정규화하여 반환.
+    /// zero 벡터가 들어올 경우 Vector2.up으로 안전하게 처리.
     /// </summary>
     private Vector2 QuantizeTo8Directions(Vector2 input)
     {
+        // 안전 처리: zero 벡터 또는 너무 작은 입력이면 위쪽 반환
+        if (input.sqrMagnitude < 0.001f)
+            return Vector2.up;
+
         input.Normalize();
         float angle = Mathf.Atan2(input.y, input.x) * Mathf.Rad2Deg;
 
-        // 45도 단위로 반올림
+        // 45도 단위로 반올림하여 8방향으로 스냅
         float step = 45f;
         float roundedAngle = Mathf.Round(angle / step) * step;
 
-        return new Vector2(Mathf.Cos(roundedAngle * Mathf.Deg2Rad), Mathf.Sin(roundedAngle * Mathf.Deg2Rad));
+        return new Vector2(
+            Mathf.Cos(roundedAngle * Mathf.Deg2Rad),
+            Mathf.Sin(roundedAngle * Mathf.Deg2Rad)
+        );
     }
 }

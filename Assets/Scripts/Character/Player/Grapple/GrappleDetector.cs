@@ -26,17 +26,21 @@ public class GrappleDetector : MonoBehaviour
 
     // ==================== 공개 상태 ====================
 
-    /// <summary>유효한 그래플 목적지 좌표 (없으면 null)</summary>
+    /// <summary>
+    /// 감지된 가장 가까운 그래플 포인트의 위치.
+    /// [주의] 이 위치로 이동하는 것이 아님. 포인트 존재 여부(HasTarget) 확인 및
+    ///        GrappleVisualizer 등 시각 요소에만 사용.
+    ///        실제 이동 방향은 PlayerGrappleAimState에서 화살표 입력으로 결정됨.
+    /// </summary>
     public Vector2? NearestTargetPosition { get; private set; }
 
     /// <summary>
-    /// 가장 가까운 유효 포인트의 안정적인 쿨타임 키 (int).
-    /// Tilemap → 셀 좌표 해시, 일반 Collider → GetInstanceID().
+    /// 가장 가까운 유효 포인트의 쿨타임 키 (int).
     /// RegisterKey()에 전달하여 포인트별 쿨타임 등록에 사용.
     /// </summary>
     public int NearestKey { get; private set; }
 
-    /// <summary>유효한 그래플링 포인트가 감지 중인지 여부</summary>
+    /// <summary>유효한 그래플링 포인트가 감지 중인지 여부 (그래플링 발동 조건)</summary>
     public bool HasTarget => NearestTargetPosition.HasValue;
 
     // ==================== 내부 ====================
@@ -147,11 +151,15 @@ public class GrappleDetector : MonoBehaviour
 
             Vector2 closestPoint = col.ClosestPoint(myPos);
 
-            // 목적지가 너무 가까운 경우 건너뜀
-            if ((closestPoint - myPos).sqrMagnitude < 0.1f) continue;
+            // [수정] 밀착 차단 로직 제거
+            // 현재 그래플링은 포인트로 끌려가는 방식이 아니라 8방향 대시 방식이므로
+            // 플레이어가 포인트에 완전히 겹쳐 있어도 감지되어야 함.
 
             // LOS 체크
-            Vector2 dirToTarget = (closestPoint - losOrigin).normalized;
+            // losOrigin이 myPos + 오프셋이므로, 포인트와 완전히 겹친 경우 dirToTarget이 zero가 될 수 있음.
+            // 이때는 LOS 방해 없이 통과로 처리 (빈 방향 = 막힌 것 없음)
+            Vector2 toClosest = closestPoint - losOrigin;
+            Vector2 dirToTarget = toClosest.sqrMagnitude > 0.001f ? toClosest.normalized : Vector2.up;
             Vector2 checkPoint  = closestPoint - dirToTarget * 0.2f;
             RaycastHit2D hit    = Physics2D.Linecast(losOrigin, checkPoint, data.losBlockerLayer);
 
