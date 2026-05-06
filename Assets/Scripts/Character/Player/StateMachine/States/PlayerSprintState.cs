@@ -68,8 +68,16 @@ public class PlayerSprintState : PlayerState
         // 점프 또는 낙하 조건 확인 (착지 쿨타임 및 선딜레이 적용)
         if (player.LastPressedJumpTime > 0 && player.timeSinceLanded >= player.ActiveFormData.jump.sprintJumpLandCooldown)
         {
-            player.SprintJumpVelocityX = player.RB.linearVelocity.x; // 점프 직전 속도를 미리 저장
-            stateMachine.ChangeState(player.SprintJumpPrepareState); // InAirState 대신 PrepareState로 전환
+            // [New] Sprint Turn 이후 점프 제한 조건 체크
+            float timeSinceTurn = Time.time - player.lastSprintTurnTime;
+            float currentAbsSpeed = Mathf.Abs(player.RB.linearVelocity.x);
+            float speedThreshold = player.ActiveFormData.ability.sprintSpeed * player.ActiveFormData.ability.sprintTurnJumpSpeedThreshold;
+
+            if (timeSinceTurn >= player.ActiveFormData.ability.sprintTurnJumpLockDuration && currentAbsSpeed >= speedThreshold)
+            {
+                player.SprintJumpVelocityX = player.RB.linearVelocity.x; // 점프 직전 속도를 미리 저장
+                stateMachine.ChangeState(player.SprintJumpPrepareState); // InAirState 대신 PrepareState로 전환
+            }
         }
         else if (!player.IsGrounded())
         {

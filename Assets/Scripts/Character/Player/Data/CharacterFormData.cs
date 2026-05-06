@@ -195,6 +195,12 @@ public class CharacterFormData : ScriptableObject
 		[HideInInspector] public float sprintTurnDeccelAmount; // 실제 감속 힘
 		public float sprintTurnCooldown; // 스프린트 턴 재사용 대기시간 (작을수록 자주 턴 가능)
 
+		[Header("Sprint Turn Jump Restrictions")]
+		[Tooltip("스프린트 턴 이후 다시 점프가 가능해지기까지 필요한 최소 속도 비율 (0.0~1.0)")]
+		[Range(0f, 1f)] public float sprintTurnJumpSpeedThreshold = 0.8f;
+		[Tooltip("스프린트 턴 이후 무조건 점프가 불가능한 최소 시간 (속도 조건보다 우선함)")]
+		public float sprintTurnJumpLockDuration = 0.2f;
+
 
 
 

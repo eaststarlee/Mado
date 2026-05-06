@@ -69,13 +69,16 @@ TagManager:
   - name: Enemy
     uniqueID: 2399096135
     locked: 0
+  - name: Foreground_Fixed
+    uniqueID: 269257365
+    locked: 0
   - name: Battle_VFX
     uniqueID: 1359937025
     locked: 0
   - name: Pet
     uniqueID: 3160080007
     locked: 0
-  - name: Foreground
+  - name: Foreground_Dynamic
     uniqueID: 3777257795
     locked: 0
   - name: Effect_VFX

@@ -655,7 +655,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -1134887289
-  m_SortingLayer: 11
+  m_SortingLayer: 12
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 2059965350, guid: b7c1fc49d358bf940b9b67c3529128e6, type: 3}
@@ -1830,35 +1830,35 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerController: {fileID: 0}
-  dampingChangeSpeed: 30
+  dampingChangeSpeed: 10
   lookOffsetChangeSpeed: 5
-  dynamicStateCooldown: 1
+  dynamicStateCooldown: 0.2
   IdleSettings:
-    Damping: {x: 0, y: 0.5}
+    Damping: {x: 0.3, y: 0.5}
     LookOffset: 1
   MoveSettings:
-    Damping: {x: 0, y: 0.5}
+    Damping: {x: 0.3, y: 0.5}
     LookOffset: 1
   RisingSettings:
-    Damping: {x: 0, y: 0.5}
+    Damping: {x: 0.3, y: 0.5}
     LookOffset: 1
   FallingSettings:
-    Damping: {x: 0, y: 0.2}
+    Damping: {x: 0.3, y: 0.8}
     LookOffset: 1
   DashSettings:
-    Damping: {x: 0, y: 0.1}
+    Damping: {x: 0.3, y: 0.3}
     LookOffset: 1
   SprintSettings:
-    Damping: {x: 0, y: 0.1}
+    Damping: {x: 0.3, y: 0.3}
     LookOffset: 1.5
   WallSlideSettings:
-    Damping: {x: 0, y: 0.1}
+    Damping: {x: 0.3, y: 0.2}
     LookOffset: 0.5
   WallJumpSettings:
-    Damping: {x: 0, y: 0.1}
+    Damping: {x: 0.3, y: 0.2}
     LookOffset: 0.5
   SprintJumpSettings:
-    Damping: {x: 0, y: 0.3}
+    Damping: {x: 0.3, y: 0.3}
     LookOffset: 2
   verticalLookOffset: 2
   verticalLookActivateDelay: 1

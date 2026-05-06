@@ -87,7 +87,7 @@ public class CameraManager : MonoBehaviour
             }
 
             // 방 설정 적용 및 워프
-            ApplyRoomSettings(roomCam, CurrentRoomData);
+            ApplyRoomSettings(roomCam, CurrentRoomData, boundary);
             if (roomCam.Follow != null)
             {
                 WarpCamera(roomCam, roomCam.Follow);
@@ -95,15 +95,62 @@ public class CameraManager : MonoBehaviour
         }
     }
 
-    private void ApplyRoomSettings(CinemachineCamera roomCam, RoomData data)
+
+    private void ApplyRoomSettings(CinemachineCamera roomCam, RoomData data, Collider2D boundary)
     {
         if (data == null) return;
-        var composer = roomCam.GetCinemachineComponent(CinemachineCore.Stage.Body) as CinemachinePositionComposer;
-        if (composer == null) return;
 
-        // lockCameraY가 켜져 있으면 Y축 댐핑을 높여서 고정함
-        composer.Damping.y = data.lockCameraY ? 20f : 0.5f;
-        Debug.Log($"[CameraManager] Applied settings for {data.roomId} (LockY: {data.lockCameraY})");
+        // 1. 기존 Damping 값 초기화 (0.5f가 기본 댐핑 값)
+        var composer = roomCam.GetCinemachineComponent(CinemachineCore.Stage.Body) as CinemachinePositionComposer;
+        if (composer != null)
+        {
+            composer.Damping.y = 0.5f;
+        }
+
+        // 2. CinemachineAxisLock 확장 컴포넌트 가져오기 및 동적 생성
+        var axisLock = roomCam.GetComponent<CinemachineAxisLock>();
+        if (axisLock == null)
+        {
+            axisLock = roomCam.gameObject.AddComponent<CinemachineAxisLock>();
+            axisLock.useCurrentYAsLock = true;
+        }
+
+        // 3. RoomData의 설정에 따라 잠금 활성화/비활성화
+        if (data.lockCameraY)
+        {
+            axisLock.lockY = true;
+            // useCurrentYAsLock가 켜져있다면, 룸 진입 시점의 카메라(혹은 룸 설정) Y축으로 기준 고정
+            if (axisLock.useCurrentYAsLock)
+            {
+                float targetY = roomCam.transform.position.y;
+
+                // RoomBoundary가 존재한다면, 바운더리 밖을 비추지 않도록 Y값을 Clamp(제한) 처리
+                if (boundary != null)
+                {
+                    float orthoSize = roomCam.Lens.OrthographicSize;
+                    float minY = boundary.bounds.min.y + orthoSize;
+                    float maxY = boundary.bounds.max.y - orthoSize;
+
+                    // 만약 룸 높이가 카메라 렌즈 높이보다 작다면 중앙에 맞춤
+                    if (minY > maxY)
+                    {
+                        targetY = boundary.bounds.center.y;
+                    }
+                    else
+                    {
+                        targetY = Mathf.Clamp(targetY, minY, maxY);
+                    }
+                }
+
+                axisLock.lockedYPosition = targetY;
+            }
+        }
+        else
+        {
+            axisLock.lockY = false;
+        }
+
+        Debug.Log($"[CameraManager] Applied settings for {data.roomId} (LockY: {data.lockCameraY}, LockedPos: {axisLock.lockedYPosition})");
     }
 
     public void WarpCamera(CinemachineCamera roomCam, Transform target)

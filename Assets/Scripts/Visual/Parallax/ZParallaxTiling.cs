@@ -55,7 +55,7 @@ namespace Mado.Visual.Parallax
 
         private Renderer   _renderer;
         private MaterialPropertyBlock _propBlock;
-        private Camera     _mainCamera;
+        private UnityEngine.Camera _mainCamera;
         private Vector3    _camStartPosition;
         private int        _texSTPropertyID; // 셰이더 _MainTex_ST 프로퍼티 ID
 
@@ -79,7 +79,7 @@ namespace Mado.Visual.Parallax
 
         private void Start()
         {
-            _mainCamera = Camera.main;
+            _mainCamera = UnityEngine.Camera.main;
             if (_mainCamera == null)
             {
                 Debug.LogError("[ZParallaxTiling] Main Camera를 찾을 수 없습니다. Camera에 MainCamera 태그를 설정하세요.", this);

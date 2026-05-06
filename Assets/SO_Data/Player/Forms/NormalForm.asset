@@ -73,12 +73,14 @@ MonoBehaviour:
     dashEndYMultiplier: 0.05
     canDashToSprint: 1
     sprintSpeed: 13
-    sprintStopDeceleration: 7
-    sprintStopDeccelAmount: 26.923077
+    sprintStopDeceleration: 15
+    sprintStopDeccelAmount: 57.692307
     sprintTurnDuration: 0.7
     sprintTurnDeceleration: 7
     sprintTurnDeccelAmount: 26.923077
     sprintTurnCooldown: 0.5
+    sprintTurnJumpSpeedThreshold: 1
+    sprintTurnJumpLockDuration: 0.2
     glideFallSpeed: 3
     glideSmoothTime: 0.01
     glideHorizontalMultiplier: 0.8
