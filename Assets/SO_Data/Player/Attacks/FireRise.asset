@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a4a741d8bcfdb674aab57542231980e4, type: 3}
-  m_Name: RisingAttack
+  m_Name: FireRise
   m_EditorClassIdentifier: Assembly-CSharp::RisingAttackData
-  attackName: RisingAttack
+  attackName: FireRise
   direction: 0
   baseDamage: 2
-  baseKnockback: {x: 1, y: 1}
-  hitboxOffset: {x: 1, y: 1}
-  hitboxSize: {x: 1.5, y: 4}
+  baseKnockback: {x: 0, y: 0}
+  hitboxOffset: {x: 0, y: 0}
+  hitboxSize: {x: 1, y: 1.5}
   recoilType: 0
   recoilForce: {x: 0, y: 0}
   knockbackMode: 0
@@ -30,4 +30,8 @@ MonoBehaviour:
   lockMovementOnGround: 0
   lockDuration: 0.1
   risingAnticipationDelay: 0.2
-  risingForce: 22
+  dashSpeed: 25
+  dashDuration: 0.25
+  diagonalMultiplier: 0.8
+  isInvincibleDuringDash: 1
+  momentumRetention: 0.2

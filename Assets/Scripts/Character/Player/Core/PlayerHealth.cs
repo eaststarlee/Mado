@@ -10,7 +10,7 @@ using System.Linq;
 public class PlayerHealth : MonoBehaviour, IDamageable, ISaveable
 {
     // 무적 소스 정의 (확장 가능)
-    public enum InvincibilitySource { None, Hit, SlamImpact, SlamDescent, Dash, Cutscene }
+    public enum InvincibilitySource { None, Hit, SlamImpact, SlamDescent, Dash, RisingAttack, Cutscene }
 
     [Header("References")]
     [SerializeField] private HealthData healthData;

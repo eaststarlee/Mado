@@ -17,13 +17,13 @@ MonoBehaviour:
   baseDamage: 3
   baseKnockback: {x: 20, y: 10}
   hitboxOffset: {x: 0, y: 0}
-  hitboxSize: {x: 3.5, y: 2}
+  hitboxSize: {x: 6, y: 2}
   recoilType: 0
   recoilForce: {x: 0, y: 0}
   knockbackMode: 1
-  stunDuration: 0.4
+  stunDuration: 0.15
   hitStopDuration: 0
-  screenShakeMagnitude: 0.1
+  screenShakeMagnitude: 0
   animationName: 
   baseAnimDuration: 0
   hitActiveNormalized: 0.2

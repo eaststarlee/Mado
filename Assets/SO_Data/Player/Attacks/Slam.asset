@@ -21,6 +21,7 @@ MonoBehaviour:
   recoilType: 0
   recoilForce: {x: 0, y: 0}
   knockbackMode: 0
+  stunDuration: 0.4
   hitStopDuration: 0
   screenShakeMagnitude: 0
   animationName: 
@@ -31,6 +32,6 @@ MonoBehaviour:
   slamAnticipationDuration: 0.5
   slamDescentSpeed: 40
   slamPostInvincibilityDuration: 1
-  slamRecoveryDuration: 2
+  slamRecoveryDuration: 1
   slamImpactAttack: {fileID: 11400000, guid: 94007ad40e6591c47bb732a24a9479ce, type: 2}
   slamImpactVFXPrefab: {fileID: 0}
