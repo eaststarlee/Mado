@@ -99,6 +99,11 @@ public class PlayerCombat : MonoBehaviour
     public bool IsSpecialActionActive => currentSpecialAction != null;
 
     /// <summary>
+    /// 현재 진행 중인 특수 행동 객체
+    /// </summary>
+    public ISpecialAction CurrentSpecialAction => currentSpecialAction;
+
+    /// <summary>
     /// ?뱀닔 ?됰룞 以??낅젰 ?좉툑 ?щ?
     /// </summary>
     public bool IsSpecialActionLocked => currentSpecialAction != null && currentSpecialAction.LocksInput;

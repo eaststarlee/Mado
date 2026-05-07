@@ -522,8 +522,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   petData: {fileID: 11400000, guid: 81f9098e4b3e863429c44db2db8f5614, type: 2}
   currentStateName: 
-  distanceToPlayer: 0
-  isTeleporting: 0
 --- !u!95 &91013343
 Animator:
   serializedVersion: 7
@@ -1860,6 +1858,12 @@ MonoBehaviour:
   SprintJumpSettings:
     Damping: {x: 0.3, y: 0.3}
     LookOffset: 2
+  SlamSettings:
+    Damping: {x: 0.3, y: 0.1}
+    LookOffset: 1
+  FireDashSettings:
+    Damping: {x: 0.3, y: 0.1}
+    LookOffset: 1
   verticalLookOffset: 2
   verticalLookActivateDelay: 1
 --- !u!114 &2060501648

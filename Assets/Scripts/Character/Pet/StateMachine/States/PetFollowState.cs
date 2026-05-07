@@ -136,7 +136,15 @@ public class PetFollowState : PetState
 
     private void UpdateAnchor()
     {
-        anchorPosition = Vector2.Lerp(anchorPosition, pet.DesiredAnchor, pet.PetData.anchorUpdateSpeed * Time.fixedDeltaTime);
+        // [Option A] 특수 행동 중에는 앵커를 즉시 동기화하여 목표 지점의 지연을 제거
+        if (pet.Player.Combat != null && pet.Player.Combat.IsSpecialActionActive)
+        {
+            anchorPosition = pet.DesiredAnchor;
+        }
+        else
+        {
+            anchorPosition = Vector2.Lerp(anchorPosition, pet.DesiredAnchor, pet.PetData.anchorUpdateSpeed * Time.fixedDeltaTime);
+        }
     }
 
     private Vector2 CalculateElasticTarget()
@@ -167,6 +175,10 @@ public class PetFollowState : PetState
 
     private float CalculateDynamicSmoothTime(float distance)
     {
+        // [Optimization] 플레이어가 하강 공격(Slam) 등 특수 행동 중일 때는 즉각 추적
+        if (pet.Player.Combat != null && pet.Player.Combat.IsSpecialActionActive) 
+            return 0.01f;
+
         if (distance <= pet.PetData.safeZoneRadius) return pet.PetData.hoverSmoothTime;
         
         float t = Mathf.InverseLerp(pet.PetData.safeZoneRadius, pet.PetData.elasticZoneRadius, distance);
@@ -185,15 +197,21 @@ public class PetFollowState : PetState
             return;
         }
         
-        float currentMaxSpeed = Mathf.Max(pet.PetData.followMaxSpeed, pet.Player.RB.linearVelocity.magnitude + 5f);
+        float currentMaxSpeed = Mathf.Max(pet.PetData.followMaxSpeed, pet.Player.RB.linearVelocity.magnitude + 10f);
 
         Vector2 newPosition = Vector2.SmoothDamp(pet.RB.position, target, ref velocity, smoothTime, currentMaxSpeed, Time.fixedDeltaTime);
         
-        // 하드 세이프티
-        float runawayThresholdSqr = pet.PetData.runawayVelocityThreshold * pet.PetData.runawayVelocityThreshold;
+        // 하드 세이프티 (특수 행동 중에는 임계값 대폭 상향하여 끊김 방지)
+        float runawayThreshold = pet.PetData.runawayVelocityThreshold;
+        if (pet.Player.Combat != null && pet.Player.Combat.IsSpecialActionActive)
+        {
+            runawayThreshold = 100f; // 슬램 속도(40)보다 충분히 큰 값
+        }
+
+        float runawayThresholdSqr = runawayThreshold * runawayThreshold;
         if (velocity.sqrMagnitude > runawayThresholdSqr)
         {
-            velocity = velocity.normalized * pet.PetData.runawayVelocityThreshold;
+            velocity = velocity.normalized * runawayThreshold;
         }
         
         if (pet.RB.bodyType != RigidbodyType2D.Static)

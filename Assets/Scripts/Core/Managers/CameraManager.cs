@@ -13,6 +13,7 @@ public class CameraManager : MonoBehaviour
     private const int activePriority = 10;
     
     public RoomData CurrentRoomData { get; private set; }
+    private float defaultYDamping = 0.5f;
 
     private void Awake()
     {
@@ -104,7 +105,7 @@ public class CameraManager : MonoBehaviour
         var composer = roomCam.GetCinemachineComponent(CinemachineCore.Stage.Body) as CinemachinePositionComposer;
         if (composer != null)
         {
-            composer.Damping.y = 0.5f;
+            composer.Damping.y = defaultYDamping;
         }
 
         // 2. CinemachineAxisLock 확장 컴포넌트 가져오기 및 동적 생성
@@ -158,6 +159,29 @@ public class CameraManager : MonoBehaviour
         if (roomCam == null || target == null) return;
         roomCam.OnTargetObjectWarped(target, target.position - roomCam.transform.position);
         roomCam.ForceCameraPosition(target.position, roomCam.transform.rotation);
+    }
+
+    /// <summary>
+    /// 하강 공격 등 급격한 이동 시 카메라 추적 속도를 높이기 위해 Y 댐핑을 조절합니다.
+    /// </summary>
+    public void SetYDamping(float damping)
+    {
+        foreach (var cam in cameras)
+        {
+            var composer = cam.GetCinemachineComponent(CinemachineCore.Stage.Body) as CinemachinePositionComposer;
+            if (composer != null)
+            {
+                composer.Damping.y = damping;
+            }
+        }
+    }
+
+    /// <summary>
+    /// 변경된 댐핑 값을 기본값으로 복구합니다.
+    /// </summary>
+    public void RestoreYDamping()
+    {
+        SetYDamping(defaultYDamping);
     }
 
     private void RebindConfiner2D(CinemachineCamera roomCam, Collider2D boundary)

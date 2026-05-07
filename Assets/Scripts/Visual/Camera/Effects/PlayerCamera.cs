@@ -34,6 +34,8 @@ public class PlayerCamera : MonoBehaviour
     public CameraStateSettings WallSlideSettings = new CameraStateSettings { Damping = new Vector2(0f, 0.1f), LookOffset = 3f };
     public CameraStateSettings WallJumpSettings = new CameraStateSettings { Damping = new Vector2(0f, 0.1f), LookOffset = 4f };
     public CameraStateSettings SprintJumpSettings = new CameraStateSettings { Damping = new Vector2(0f, 0.1f), LookOffset = 5f };
+    public CameraStateSettings SlamSettings = new CameraStateSettings { Damping = new Vector2(0f, 0f), LookOffset = 4f };
+    public CameraStateSettings FireDashSettings = new CameraStateSettings { Damping = new Vector2(0f, 0f), LookOffset = 4f };
     
     [Header("수직 시선 설정 (고정 값)")]
     [Tooltip("카메라가 상하로 얼마나 치우쳐서 보여줄지 결정합니다.")]
@@ -84,8 +86,24 @@ public class PlayerCamera : MonoBehaviour
         
         m_DynamicStateCooldownTimer -= Time.deltaTime;
 
-        // 1. 현재 플레이어 상태에 맞는 목표 카메라 설정(Damping, Look Offset)을 결정합니다.
-        CameraStateSettings targetSettings = GetTargetCameraState();
+        // 1. 특수 행동 중이면 최우선적으로 해당 설정을 사용합니다.
+        CameraStateSettings targetSettings;
+        if (playerController.Combat != null && playerController.Combat.IsSpecialActionActive)
+        {
+            // 행동 타입에 따라 설정 분리
+            var currentAction = playerController.Combat.CurrentSpecialAction;
+            if (currentAction is SlamAction) targetSettings = SlamSettings;
+            else if (currentAction is RisingAction) targetSettings = FireDashSettings;
+            else targetSettings = SlamSettings; // 기본값
+
+            m_DynamicStateCooldownTimer = dynamicStateCooldown;
+            m_LastDynamicSettings = targetSettings;
+        }
+        else
+        {
+            // 일반 상태 목표 결정
+            targetSettings = GetTargetCameraState();
+        }
 
         // 2. 결정된 목표 설정을 향해 카메라 속성들을 부드럽게 변경합니다.
         ApplyCameraSettings(targetSettings);

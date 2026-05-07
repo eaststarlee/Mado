@@ -74,6 +74,12 @@ public class SlamAction : ISpecialAction
         // [Invincibility] 하강 무적 설정 (무제한)
         player.Health.SetInvincible(PlayerHealth.InvincibilitySource.SlamDescent, -1f);
         
+        // [Camera] 하강 속도에 맞춰 카메라 즉각 반응 (댐핑 제거)
+        if (CameraManager.Instance != null)
+        {
+            CameraManager.Instance.SetYDamping(0f);
+        }
+        
         Debug.Log("[SlamAction] Phase: Descent");
     }
     
@@ -218,6 +224,12 @@ public class SlamAction : ISpecialAction
             
             // [Safety] 무적 해제
             player.Health.RemoveInvincible(PlayerHealth.InvincibilitySource.SlamDescent);
+
+            // [Camera] 카메라 댐핑 복구
+            if (CameraManager.Instance != null)
+            {
+                CameraManager.Instance.RestoreYDamping();
+            }
         }
     }
     

@@ -45,6 +45,17 @@ public class PetGhostState : PetState
         if (pet.Player == null) return;
         
         float distanceToAnchor = Vector2.Distance(pet.transform.position, pet.DesiredAnchor);
+
+        // [특수 행동 중] 플레이어가 슬램/파이어대시 등 특수 행동 중이면 LOS 체크 없이 즉시 복귀
+        // 이동 속도가 너무 빠르면 HasLOS 레이캐스트가 실패하여 GhostState에서 빠져나오지 못하는 문제 해결
+        if (pet.Player.Combat != null && pet.Player.Combat.IsSpecialActionActive)
+        {
+            if (pet.DistanceToPlayer < pet.PetData.ghostTransitionRadius)
+            {
+                stateMachine.ChangeState(pet.GetDefaultPetState());
+                return;
+            }
+        }
         
         // Follow로 복귀 (캐시된 데이터 사용)
         if (distanceToAnchor <= 0.1f || pet.DistanceToPlayer < pet.PetData.ghostToFollowDistance)
@@ -71,6 +82,12 @@ public class PetGhostState : PetState
         else if (pet.CurrentGhostReason == GhostReason.FarAway)
         {
             moveSpeed = pet.PetData.ghostFastSpeed; 
+        }
+
+        // [특수 행동 중] 플레이어 속도보다 빠르게 이동하여 확실히 추격
+        if (pet.Player.Combat != null && pet.Player.Combat.IsSpecialActionActive)
+        {
+            moveSpeed = Mathf.Max(moveSpeed, pet.Player.RB.linearVelocity.magnitude * 1.5f + 10f);
         }
 
         // 목표를 캐시된 앵커로 설정
