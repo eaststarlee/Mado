@@ -15,7 +15,6 @@ public class PlayerController : MonoBehaviour, ISaveable
     public PlayerSprintStopState SprintStopState { get; private set; }
     public PlayerSprintTurnState SprintTurnState { get; private set; }
     public PlayerSprintJumpPrepareState SprintJumpPrepareState { get; private set; }
-    public PlayerSprintImpactState SprintImpactState { get; private set; }
     public PlayerWallSlideState WallSlideState { get; private set; }
     public PlayerWallJumpState WallJumpState { get; private set; }
     public PlayerWallClimbState WallClimbState { get; private set; }
@@ -23,23 +22,23 @@ public class PlayerController : MonoBehaviour, ISaveable
     public PlayerGlideState GlideState { get; private set; }
     public PlayerTransformState TransformState { get; private set; }
     public PlayerHitState HitState { get; private set; }
-    public PlayerParryState ParryState { get; private set; } // [New]
+    public PlayerParryState ParryState { get; private set; }
     public PlayerDeathState DeathState { get; private set; }
-    public PlayerGrappleAimState GrappleAimState { get; private set; } // [Grapple] Aim
-    public PlayerGrapplingState GrapplingState { get; private set; } // [Grapple] Dash
+    public PlayerGrappleAimState GrappleAimState { get; private set; }
+    public PlayerGrapplingState GrapplingState { get; private set; }
     #endregion
 
     #region State Variables
     public bool CanDoubleJump { get; set; }
     public bool IsSprintJumping { get; set; }
     public float SprintJumpVelocityX { get; set; }
-    public int DashCountLeft { get; set; } // 남은 대쉬 횟수
-    public float GlideHoldTime { get; set; } // Z키 유지 시간 (활공 진입 조건)
-    public bool IsGliding { get; private set; } // 활공 상태 플래그
-    public bool CanRisingAttack { get; set; } = true; // [New] 라이징 공격 가능 여부 (공중 1회 제한)
-    private float ledgeFailCooldownTimer = 0f; // 렛지 클라임 실패 쿨타임
-    private float grappleBufferTimer = 0f; // [New] 그래플링 선입력 타이머
-    public bool IsInDimensionZone { get; set; } // [New] 차원 전환 가능 구역 여부
+    public int DashCountLeft { get; set; }
+    public float GlideHoldTime { get; set; }
+    public bool IsGliding { get; private set; }
+    public bool CanRisingAttack { get; set; } = true;
+    private float ledgeFailCooldownTimer = 0f;
+    private float grappleBufferTimer = 0f;
+    public bool IsInDimensionZone { get; set; }
     #endregion
 
     #region Input Variables
@@ -58,7 +57,7 @@ public class PlayerController : MonoBehaviour, ISaveable
     public bool IsGrappleHeld => inputReader.IsGrappleHeld;
     public bool IsSwitchHeld => inputReader.IsSwitchHeld;
     
-    // [World Switch] 차원 전환 타이머
+    // 李⑥썝 ?꾪솚 ?€?대㉧
     private float switchHoldTimer = 0f;
     [SerializeField] private float targetSwitchHoldTime = 0.8f;
     private bool isSwitchInterrupted = false;
@@ -85,7 +84,7 @@ public class PlayerController : MonoBehaviour, ISaveable
     #region Component Variables
     public Rigidbody2D RB { get; private set; }
     public PetController Pet { get; set; }
-    public PlayerHealth Health { get; private set; } // Awake에서 캐싱
+    public PlayerHealth Health { get; private set; } // Awake?먯꽌 罹먯떛
     public LedgeDetector LedgeDetector { get; private set; }
     public PlayerCombat Combat { get; private set; }
     public GrappleDetector GrappleDetector { get; private set; }
@@ -93,10 +92,10 @@ public class PlayerController : MonoBehaviour, ISaveable
     public GrappleData GrappleData => grappleData;
 
     private SpriteRenderer spriteRenderer;
-    // [Removed] Animator 의존성
+
     public Mado.Character.Animation.CharacterAnimationController AnimationController { get; private set; } 
 
-    // ── 신규 전담 컴포넌트 참조 ──
+    // ?€?€ ?좉퇋 ?꾨떞 而댄룷?뚰듃 李몄“ ?€?€
     public PlayerInputReader inputReader { get; private set; }
     public PlayerFormManager formManager { get; private set; }
     public PlayerActionController actionController { get; private set; }
@@ -104,7 +103,7 @@ public class PlayerController : MonoBehaviour, ISaveable
     public FormType CurrentForm => formManager.CurrentForm;
     public CharacterFormData ActiveFormData => formManager.ActiveFormData;
 
-    // [Removed] private Dictionary<int, int> currentAnimHashes = new Dictionary<int, int>();
+
 
     public event System.Action OnGroundedConfirmed;
     public void RaiseGroundedConfirmed() => OnGroundedConfirmed?.Invoke();
@@ -117,7 +116,7 @@ public class PlayerController : MonoBehaviour, ISaveable
     public void StartHitStop(float duration)
     {
         actionController.StartHitStop(duration);
-        AnimationController?.PauseForHitStop(); // [New] 역경직 시 애니메이션 정지
+        AnimationController?.PauseForHitStop(); // ??꼍吏????좊땲硫붿씠???뺤?
         Invoke(nameof(ResumeAnimation), duration);
     }
     
@@ -143,7 +142,7 @@ public class PlayerController : MonoBehaviour, ISaveable
     #region Unity Callback Functions
     private void Awake()
     {
-        // 1. 필수 컴포넌트 캐싱
+        // 1. ?꾩닔 而댄룷?뚰듃 罹먯떛
         Health = GetComponent<PlayerHealth>();
         inputReader = GetComponent<PlayerInputReader>();
         formManager = GetComponent<PlayerFormManager>();
@@ -151,7 +150,7 @@ public class PlayerController : MonoBehaviour, ISaveable
         RB = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
 
-        // [Fix] 타일 경계선(Seam) 걸림 방지: 모서리를 미세하게 둥글게 깎음
+
         var boxCol = GetComponent<BoxCollider2D>();
         if (boxCol != null)
         {
@@ -163,17 +162,17 @@ public class PlayerController : MonoBehaviour, ISaveable
         Combat = GetComponent<PlayerCombat>(); 
         GrappleDetector = GetComponent<GrappleDetector>(); 
 
-        // 2. [Build Optimization] 물리 보간 및 프레임 안정화
+        // 2. [Build Optimization] 臾쇰━ 蹂닿컙 諛??꾨젅???덉젙??
         if (RB != null) RB.interpolation = RigidbodyInterpolation2D.Interpolate;
         QualitySettings.vSyncCount = 1;
         Application.targetFrameRate = -1;
 
-        // 3. 시스템 초기화
+        // 3. ?쒖뒪??珥덇린??
         StateMachine = new PlayerStateMachine();
         IsFacingRight = true;
         InitializeStates();
 
-        // ISaveable 등록 (Awake에서 등록 — 타이밍 계약)
+        // ISaveable ?깅줉 (Awake?먯꽌 ?깅줉 ???€?대컢 怨꾩빟)
         SaveManager.Instance?.Register(this);
     }
 
@@ -189,7 +188,6 @@ public class PlayerController : MonoBehaviour, ISaveable
         SprintStopState = new PlayerSprintStopState(this, StateMachine, Mado.Character.Animation.PlayerAnimType.SprintStop);
         SprintTurnState = new PlayerSprintTurnState(this, StateMachine, Mado.Character.Animation.PlayerAnimType.SprintTurn);
         SprintJumpPrepareState = new PlayerSprintJumpPrepareState(this, StateMachine, Mado.Character.Animation.PlayerAnimType.Jump);
-        SprintImpactState = new PlayerSprintImpactState(this, StateMachine, Mado.Character.Animation.PlayerAnimType.Hit);
         WallSlideState = new PlayerWallSlideState(this, StateMachine, Mado.Character.Animation.PlayerAnimType.WallSlide);
         WallJumpState = new PlayerWallJumpState(this, StateMachine, Mado.Character.Animation.PlayerAnimType.Jump);
         WallClimbState = new PlayerWallClimbState(this, StateMachine, Mado.Character.Animation.PlayerAnimType.WallClimb);
@@ -210,18 +208,18 @@ public class PlayerController : MonoBehaviour, ISaveable
 
     private void OnEnable()
     {
-        // [Removed] currentAnimHashes.Clear();
+
     }
 
     private void Start()
     {
-        // 펫 자동 찾기
+        // ???먮룞 李얘린
         if (Pet == null)
         {
             Pet = FindFirstObjectByType<PetController>();
         }
         
-        // GameManager에 자신을 등록
+        // GameManager???먯떊???깅줉
         if (GameManager.Instance != null)
         {
             GameManager.Instance.RegisterPlayer(this);
@@ -230,7 +228,7 @@ public class PlayerController : MonoBehaviour, ISaveable
         StateMachine.Initialize(IdleState);
     }
 
-    // ── ISaveable ──────────────────────────────────────────
+    // ?? ISaveable ??????????????????????????????????????????
 
     public void OnSave(SaveData data)
     {
@@ -239,15 +237,15 @@ public class PlayerController : MonoBehaviour, ISaveable
 
     public void OnLoad(SaveData data)
     {
-        // 1. 차원에 따른 폼 강제 동기화
+        // 1. 李⑥썝???곕Ⅸ ??媛뺤젣 ?숆린??
         FormType targetForm = data.currentWorld == "Devil" ? FormType.Devil : FormType.Normal;
         if (formManager != null)
         {
-            formManager.InitializeFormData(); // 안전장치
+            formManager.InitializeFormData(); // ?덉쟾?μ튂
             formManager.TransformTo(targetForm);
         }
 
-        // 2. 상태 초기화
+        // 2. ?곹깭 珥덇린??
         if (StateMachine != null && IdleState != null)
             StateMachine.ChangeState(IdleState);
     }
@@ -268,41 +266,41 @@ public class PlayerController : MonoBehaviour, ISaveable
             timeSinceLanded = 0;
         }
         
-        // [Grapple] 1순위: V키 그래플링 발동 로직 (선입력 지원)
+        // Grapple: 1?쒖쐞: V??洹몃옒?뚮쭅 諛쒕룞 濡쒖쭅 (?좎엯??吏??
         if (inputReader.GrappleInput)
         {
             grappleBufferTimer = GrappleData != null ? GrappleData.inputBufferTime : 0.15f;
         }
 
-        // 포인트 감지가 되었고, 버퍼가 남아있으면 즉각 발동 (다른 모든 상태 인터럽트)
+        // ?ъ씤??媛먯?媛 ?섏뿀怨? 踰꾪띁媛 ?⑥븘?덉쑝硫?利됯컖 諛쒕룞 (?ㅻⅨ 紐⑤뱺 ?곹깭 ?명꽣?쏀듃)
         if (grappleBufferTimer > 0f && CanGrapple())
         {
-            grappleBufferTimer = 0f; // 버퍼 소모
+            grappleBufferTimer = 0f; // 踰꾪띁 ?뚮え
             
-            // 진행 중이던 공격 특수 행동 강제 종료 (어퍼컷, 슬램 등)
+            // 吏꾪뻾 以묒씠??怨듦꺽 ?뱀닔 ?됰룞 媛뺤젣 醫낅즺 (?댄띁而? ?щ옩 ??
             Combat?.CancelSpecialAction();
             
-            int capturedKey = GrappleDetector.NearestKey; // 콜라이더 안정 키 (int)
+            int capturedKey = GrappleDetector.NearestKey; // 肄쒕씪?대뜑 ?덉젙 ??(int)
             GrappleAimState.SetKey(capturedKey);
             StateMachine.ChangeState(GrappleAimState);
-            return; // 다른 상태 로직 스킵 (확실한 전환 보장)
+            return; // ?ㅻⅨ ?곹깭 濡쒖쭅 ?ㅽ궢 (?뺤떎???꾪솚 蹂댁옣)
         }
         
-        // [New] 2순위: 패링 입력 감지 및 상태 전이
+        // 2?쒖쐞: ?⑤쭅 ?낅젰 媛먯? 諛??곹깭 ?꾩씠
         if (ButtonAInput && CanParry())
         {
             StateMachine.ChangeState(ParryState);
         }
         else
         {
-            // 공격 선입력 소비
+            // 怨듦꺽 ?좎엯???뚮퉬
             if (Combat != null && !Combat.IsAttacking && !Combat.IsSpecialActionLocked && LastPressedAttackTime > 0)
             {
                 LastPressedAttackTime = 0f;
                 ProcessAttackInput();
             }
 
-            // 3순위: 기본 상태 로직 업데이트 (Move, InAir, Glide, Attack 등)
+            // 3?쒖쐞: 湲곕낯 ?곹깭 濡쒖쭅 ?낅뜲?댄듃 (Move, InAir, Glide, Attack ??
             StateMachine.CurrentState?.LogicUpdate();
         }
         
@@ -323,13 +321,13 @@ public class PlayerController : MonoBehaviour, ISaveable
         LastPressedDashTime -= dt;
         LastPressedAttackTime -= dt;
         LastOnGroundTime -= dt;
-        LastOnWallTime -= dt; // Wall Coyote Time 감소
+        LastOnWallTime -= dt; // Wall Coyote Time 媛먯냼
         
-        // 렛지 클라임 쿨타임 감소
+        // ?쏆? ?대씪??荑⑦???媛먯냼
         if (ledgeFailCooldownTimer > 0f)
             ledgeFailCooldownTimer -= dt;
             
-        // 그래플링 선입력 버퍼 감소
+        // 洹몃옒?뚮쭅 ?좎엯??踰꾪띁 媛먯냼
         if (grappleBufferTimer > 0f)
             grappleBufferTimer -= dt;
     }
@@ -369,12 +367,12 @@ public class PlayerController : MonoBehaviour, ISaveable
 
     private AttackDirection GetAttackDirection()
     {
-        // [Modified] Use InputY instead of Input.GetAxisRaw("Vertical")
+
         float vertical = InputY;
         if (vertical > 0.5f) 
         {
-            // 업 어택이 RisingAttack(공중 전용 어퍼컷)일 경우, 
-            // 에어 스테이트가 아니면(예: 지상) Up 입력을 무시하고 일반 정면 공격(Normal)으로 변환
+            // ???댄깮??RisingAttack(怨듭쨷 ?꾩슜 ?댄띁而???寃쎌슦, 
+            // ?먯뼱 ?ㅽ뀒?댄듃媛 ?꾨땲硫??? 吏?? Up ?낅젰??臾댁떆?섍퀬 ?쇰컲 ?뺣㈃ 怨듦꺽(Normal)?쇰줈 蹂??
             if (ActiveFormData?.attackProfile?.upAttack is RisingAttackData)
             {
                 if (StateMachine.CurrentState == InAirState)
@@ -389,14 +387,14 @@ public class PlayerController : MonoBehaviour, ISaveable
     }
 
     /// <summary>
-    /// 차원 전환(D키 홀드) 로직 시퀀스
+    /// 李⑥썝 ?꾪솚(D????? 濡쒖쭅 ?쒗??
     /// </summary>
     private void HandleWorldSwitch()
     {
-        // 1. 타이머 증가 판정 (조작 중이거나 Idle이 아니면 타이머 초기화)
+        // 1. ??대㉧ 利앷? ?먯젙 (議곗옉 以묒씠嫄곕굹 Idle???꾨땲硫???대㉧ 珥덇린??
         bool isMoving = Mathf.Abs(InputX) > 0.01f;
         bool isAnyAction = isMoving || JumpInputDown || DashInput || ButtonAInput;
-        // [Modified] 구역(IsInDimensionZone) 내에서만 충전 가능
+        // 援ъ뿭(IsInDimensionZone) ?댁뿉?쒕쭔 異⑹쟾 媛??
         bool canCharge = StateMachine.CurrentState == IdleState && !isAnyAction && IsInDimensionZone;
 
         if (IsSwitchHeld && DimensionManager.Instance != null)
@@ -407,34 +405,34 @@ public class PlayerController : MonoBehaviour, ISaveable
 
                 if (switchHoldTimer >= targetSwitchHoldTime)
                 {
-                    // SceneLoader를 통한 씬 교체 방식으로 위임
+                    // SceneLoader瑜??듯븳 ??援먯껜 諛⑹떇?쇰줈 ?꾩엫
                     DimensionManager.Instance.RequestDimensionSwitch();
 
-                    // 연속 발동 방지 (D키 완전히 뗄 때까지 재발동 차단)
+                    // ?곗냽 諛쒕룞 諛⑹? (D???꾩쟾?????뚭퉴吏 ?щ컻??李⑤떒)
                     switchHoldTimer = -0.5f;
                     isSwitchInterrupted = true;
                 }
             }
             else if (!canCharge && switchHoldTimer > 0f)
             {
-                // 충전 중 조작 등이 들어오면 타이머 리셋 및 재입력 유도
+                // 異⑹쟾 以?議곗옉 ?깆씠 ?ㅼ뼱?ㅻ㈃ ??대㉧ 由ъ뀑 諛??ъ엯???좊룄
                 switchHoldTimer = 0f;
                 isSwitchInterrupted = true;
             }
         }
         else
         {
-            // 입력 떼기 감지하여 타이머 초기화
+            // ?낅젰 ?쇨린 媛먯??섏뿬 ??대㉧ 珥덇린??
             if (switchHoldTimer > 0f)
             {
                 switchHoldTimer = 0f;
             }
             else if (switchHoldTimer < 0f && !IsSwitchHeld)
             {
-                switchHoldTimer = 0f; // 쿨타임 해제
+                switchHoldTimer = 0f; // 荑⑦????댁젣
             }
 
-            // 키를 떼면 중단 상태 해제
+            // ?ㅻ? ?쇰㈃ 以묐떒 ?곹깭 ?댁젣
             if (!IsSwitchHeld)
             {
                 isSwitchInterrupted = false;
@@ -447,19 +445,19 @@ public class PlayerController : MonoBehaviour, ISaveable
         if (IsGrounded())
         {
             LastOnGroundTime = ActiveFormData.assist.coyoteTime;
-            RefillAirAbilities(); // [New] 땅에 닿으면 공중 능력 초기화
+            RefillAirAbilities();
         }
         else if (IsTouchingWall())
         {
-            LastOnWallTime = ActiveFormData.wall.coyoteTime; // Wall Coyote Time 갱신
-            LastWallDirection = IsFacingRight ? 1 : -1; // 벽 방향 저장
-            RefillAirAbilities(); // [New] 벽에 닿아도 공중 능력 초기화
+            LastOnWallTime = ActiveFormData.wall.coyoteTime; // Wall Coyote Time 媛깆떊
+            LastWallDirection = IsFacingRight ? 1 : -1; // 踰?諛⑺뼢 ???
+            RefillAirAbilities(); // ?낆뿉 ?우븘??怨듭쨷 ?λ젰 珥덇린??
         }
     }
 
     /// <summary>
-    /// 대쉬, 더블 점프, 라이징 공격 등 공중 체공 능력을 초기화합니다.
-    /// (지상/벽 착지 또는 포고/그래플링 시 호출)
+    /// ??? ?붾툝 ?먰봽, ?쇱씠吏?怨듦꺽 ??怨듭쨷 泥닿났 ?λ젰??珥덇린?뷀빀?덈떎.
+    /// (吏??踰?李⑹? ?먮뒗 ?ш퀬/洹몃옒?뚮쭅 ???몄텧)
     /// </summary>
     public void RefillAirAbilities()
     {
@@ -487,7 +485,7 @@ public class PlayerController : MonoBehaviour, ISaveable
 
     private Collider2D GetSolidColliderInBox(Vector2 point, Vector2 size, LayerMask mask)
     {
-        // 트리거(isTrigger = true)를 무시하고 실체하는 콜라이더만 반환
+        // ?몃━嫄?isTrigger = true)瑜?臾댁떆?섍퀬 ?ㅼ껜?섎뒗 肄쒕씪?대뜑留?諛섑솚
         Collider2D[] hits = Physics2D.OverlapBoxAll(point, size, 0, mask);
         foreach (var hit in hits)
         {
@@ -498,7 +496,7 @@ public class PlayerController : MonoBehaviour, ISaveable
 
     public bool IsGrounded()
     {
-        // DimensionManager.CurrentWorldMask만 사용
+        // DimensionManager.CurrentWorldMask留??ъ슜
         LayerMask groundMask = DimensionManager.Instance.CurrentWorldMask;
         return GetSolidColliderInBox(groundCheckPoint.position, groundCheckSize, groundMask) != null;
     }
@@ -510,29 +508,29 @@ public class PlayerController : MonoBehaviour, ISaveable
         Collider2D hit = GetSolidColliderInBox(wallCheckPoint.position, wallCheckSize, mask);
         if (hit == null) return false;
 
-        // SurfaceType.Wall 검증
-        // 1) 콜라이더 자신에서 직접 탐색
-        // 2) 타일맵의 경우 루트 오브젝트에 SurfaceInfo가 있으므로 부모 탐색
+        // SurfaceType.Wall 寃利?
+        // 1) 肄쒕씪?대뜑 ?먯떊?먯꽌 吏곸젒 ?먯깋
+        // 2) ??쇰㏊??寃쎌슦 猷⑦듃 ?ㅻ툕?앺듃??SurfaceInfo媛 ?덉쑝誘濡?遺紐??먯깋
         SurfaceInfo surface = null;
         if (!hit.TryGetComponent(out surface) && hit.transform.parent != null)
             hit.transform.parent.TryGetComponent(out surface);
 
-        // SurfaceInfo가 있으면 정의된 type 속성 사용 (Wall인 경우만 벽으로 인정)
+        // SurfaceInfo媛 ?덉쑝硫??뺤쓽??type ?띿꽦 ?ъ슜 (Wall??寃쎌슦留?踰쎌쑝濡??몄젙)
         if (surface != null)
             return surface.type == SurfaceType.Wall;
 
-        // SurfaceInfo가 없는 지형은 밟을 수는 있되 벽타기는 불가
+        // SurfaceInfo媛 ?녿뒗 吏?뺤? 諛잛쓣 ?섎뒗 ?덈릺 踰쏀?湲곕뒗 遺덇?
         return false; 
     }
 
     /// <summary>
-    /// 천장 감지 (Pogo 중 머리 충돌 체크용)
+    /// 泥쒖옣 媛먯? (Pogo 以?癒몃━ 異⑸룎 泥댄겕??
     /// </summary>
     public bool IsCeilinged()
     {
         LayerMask mask = DimensionManager.Instance.CurrentWorldMask;
         Vector2 origin = (Vector2)transform.position + new Vector2(0, 1.0f);
-        // 플레이어 너비(약 0.8)보다 약간 작게(0.5) 설정하여 벽에 밀착했을 때 벽을 천장으로 오인하지 않도록 함
+        // ?뚮젅?댁뼱 ?덈퉬(??0.8)蹂대떎 ?쎄컙 ?묎쾶(0.5) ?ㅼ젙?섏뿬 踰쎌뿉 諛李⑺뻽????踰쎌쓣 泥쒖옣?쇰줈 ?ㅼ씤?섏? ?딅룄濡???
         Vector2 size = new Vector2(0.5f, 0.2f);
         return GetSolidColliderInBox(origin, size, mask) != null;
     }
@@ -547,7 +545,7 @@ public class PlayerController : MonoBehaviour, ISaveable
     public void OnDash()
     {
         lastDashTime = Time.time;
-        DashCountLeft--; // 대쉬 횟수 차감
+        DashCountLeft--; // ????잛닔 李④컧
     }
     public bool CanWallJump() => Time.time >= lastWallJumpTime + ActiveFormData.wall.jumpCooldown;
     public void OnWallJump() => lastWallJumpTime = Time.time;
@@ -563,8 +561,8 @@ public class PlayerController : MonoBehaviour, ISaveable
     #endregion
     
     /// <summary>
-    /// 현재 벽 방향을 반환 (1 = 오른쪽, -1 = 왼쪽, 0 = 벽 없음)
-    /// WallSlide/WallJump에서 Facing 대신 벽 기준 판정에 사용
+    /// ?꾩옱 踰?諛⑺뼢??諛섑솚 (1 = ?ㅻⅨ履? -1 = ?쇱そ, 0 = 踰??놁쓬)
+    /// WallSlide/WallJump?먯꽌 Facing ???踰?湲곗? ?먯젙???ъ슜
     /// </summary>
     public int WallDirection
     {
@@ -573,14 +571,14 @@ public class PlayerController : MonoBehaviour, ISaveable
             if (IsTouchingWall())
                 return IsFacingRight ? 1 : -1;
             else if (LastOnWallTime > 0)
-                return LastWallDirection; // Coyote Time 중에는 마지막 벽 방향 사용
+                return LastWallDirection; // Coyote Time 以묒뿉??留덉?留?踰?諛⑺뼢 ?ъ슜
             return 0;
         }
     }
     
     /// <summary>
-    /// 벽점프 가능한 Jump Buffer가 활성화되어 있는지 체크
-    /// (Jump Buffer + Wall Contact + 쿨타임 통합)
+    /// 踰쎌젏??媛?ν븳 Jump Buffer媛 ?쒖꽦?붾릺???덈뒗吏 泥댄겕
+    /// (Jump Buffer + Wall Contact + 荑⑦????듯빀)
     /// </summary>
     public bool HasBufferedWallJump()
     {
@@ -588,71 +586,62 @@ public class PlayerController : MonoBehaviour, ISaveable
     }
 
     /// <summary>
-    /// 벽점프 시도 (Try 패턴) - 성공 시 true 반환 및 상태 전환
-    /// WallSlide, InAir에서 호출하여 벽점프 의도를 우선 처리
+    /// 踰쎌젏???쒕룄 (Try ?⑦꽩) - ?깃났 ??true 諛섑솚 諛??곹깭 ?꾪솚
+    /// WallSlide, InAir?먯꽌 ?몄텧?섏뿬 踰쎌젏???섎룄瑜??곗꽑 泥섎━
     /// </summary>
     public bool TryWallJump()
     {
-        // Jump Buffer + WallContact + 쿨타임 체크
+        // Jump Buffer + WallContact + 荑⑦???泥댄겕
         if (!HasBufferedWallJump())
             return false;
         
-        // 벽 방향으로 입력하고 있는지 확인 (벽 기준, Facing 무시)
+        // 踰?諛⑺뼢?쇰줈 ?낅젰?섍퀬 ?덈뒗吏 ?뺤씤 (踰?湲곗?, Facing 臾댁떆)
         bool isHoldingTowardsWall = InputX != 0 && Mathf.Sign(InputX) == WallDirection;
         
         if (isHoldingTowardsWall)
         {
-            // 수직 벽 타기 (WallClimbState)
+            // ?섏쭅 踰??湲?(WallClimbState)
             StateMachine.ChangeState(WallClimbState);
         }
         else
         {
-            // 벽 반대 점프 (WallJumpState)
+            // 踰?諛섎? ?먰봽 (WallJumpState)
             StateMachine.ChangeState(WallJumpState);
         }
         
-        // Jump Buffer 및 Coyote Time 소진
+        // Jump Buffer 諛?Coyote Time ?뚯쭊
         LastPressedJumpTime = 0;
         LastOnWallTime = 0;
         
-        return true; // 벽점프 성공
-    }
-    
-    /// <summary>
-    /// [Legacy] 하위 호환용 - TryWallJump() 사용 권장
-    /// </summary>
-    [System.Obsolete("Use TryWallJump() instead", false)]
-    public void CheckForWallJump()
-    {
-        TryWallJump();
+        return true; // 踰쎌젏???깃났
     }
     
     public void TransformTo(FormType targetForm) => formManager.TransformTo(targetForm);
     
     /// <summary>
-    /// 활공 시작 (Single Source of Truth)
+    /// ?쒓났 ?쒖옉 (Single Source of Truth)
     /// </summary>
     public void BeginGlide()
     {
-        if (IsGliding) return; // 중복 호출 안전
+        if (IsGliding) return; // 以묐났 ?몄텧 ?덉쟾
         
         IsGliding = true;
         PlayerEvents.RaiseGlideStart();
         
-        // formManager.SetGlidingSprite(true); // 스프라이트 강제 교체 비활성화
+        // formManager.SetGlidingSprite(true); // ?ㅽ봽?쇱씠??媛뺤젣 援먯껜 鍮꾪솢?깊솕
     }
     
     /// <summary>
-    /// 활공 강제 종료 (Fail-safe)
+    /// ?쒓났 媛뺤젣 醫낅즺 (Fail-safe)
     /// </summary>
     public void ForceEndGlide()
     {
-        if (!IsGliding) return; // 중복 호출 안전
+        if (!IsGliding) return; // 以묐났 ?몄텧 ?덉쟾
         
         IsGliding = false;
         PlayerEvents.RaiseGlideEnd();
         
-        // formManager.SetGlidingSprite(false); // 스프라이트 강제 교체 비활성화
+        // formManager.SetGlidingSprite(false); // ?ㅽ봽?쇱씠??媛뺤젣 援먯껜 鍮꾪솢?깊솕
     }
     
     private void OnDestroy()
@@ -664,20 +653,20 @@ public class PlayerController : MonoBehaviour, ISaveable
     // ==================== Health Callbacks ====================
     
     /// <summary>
-    /// PlayerHealth에서 피격 시 호출되는 콜백
+    /// PlayerHealth?먯꽌 ?쇨꺽 ???몄텧?섎뒗 肄쒕갚
     /// </summary>
     public void OnDamaged(DamageInfo damageInfo)
     {
-        // 공격 중이면 강제 중단 (Animator.speed 복구 포함)
+        // 怨듦꺽 以묒씠硫?媛뺤젣 以묐떒 (Animator.speed 蹂듦뎄 ?ы븿)
         Combat?.InterruptAttack();
         
-        // 특수 행동 중이면 강제 취소 (Slam 등)
+        // ?뱀닔 ?됰룞 以묒씠硫?媛뺤젣 痍⑥냼 (Slam ??
         Combat?.CancelSpecialAction();
         
-        // 변신 중이면 변신 취소
+        // 蹂??以묒씠硫?蹂??痍⑥냼
         if (StateMachine.CurrentState == TransformState)
         {
-            // 변신 실패 - 지상/공중 상태로 복귀
+            // 蹂???ㅽ뙣 - 吏??怨듭쨷 ?곹깭濡?蹂듦?
             if (IsGrounded())
             {
                 StateMachine.ChangeState(IdleState);
@@ -687,39 +676,39 @@ public class PlayerController : MonoBehaviour, ISaveable
                 StateMachine.ChangeState(InAirState);
             }
             
-            // 중력 복구 (TransformState.Exit()가 호출되므로 자동 처리됨)
+            // 以묐젰 蹂듦뎄 (TransformState.Exit()媛 ?몄텧?섎?濡??먮룞 泥섎━??
         }
         
-        // HitState에 데미지 정보 전달
+        // HitState???곕?吏 ?뺣낫 ?꾨떖
         HitState.SetDamageInfo(damageInfo);
         
-        // HitState로 전환 (현재 State와 관계없이 즉시 전환)
+        // HitState濡??꾪솚 (?꾩옱 State? 愿怨꾩뾾??利됱떆 ?꾪솚)
         StateMachine.ChangeState(HitState);
     }
     
     /// <summary>
-    /// PlayerHealth에서 사망 시 호출되는 콜백
+    /// PlayerHealth?먯꽌 ?щ쭩 ???몄텧?섎뒗 肄쒕갚
     /// </summary>
     public void OnDeath()
     {
-        // DeathState로 전환
+        // DeathState濡??꾪솚
         StateMachine.ChangeState(DeathState);
     }
     
     // ==================== Grapple Logic ====================
 
     /// <summary>
-    /// 그래플링 가능 여부 체크.
-    /// GrappleDetector에 유효 타겟이 있고 불가 상태가 아닐 때만 true.
+    /// 洹몃옒?뚮쭅 媛???щ? 泥댄겕.
+    /// GrappleDetector???좏슚 ?寃잛씠 ?덇퀬 遺덇? ?곹깭媛 ?꾨땺 ?뚮쭔 true.
     /// </summary>
     public bool CanGrapple()
     {
         if (GrappleDetector == null || !GrappleDetector.HasTarget)
             return false;
 
-        // (프리즈 코루틴은 Time-Slow 조준 상태로 대체되어 제거됨)
+        // (?꾨━利?肄붾（?댁? Time-Slow 議곗? ?곹깭濡??泥대릺???쒓굅??
 
-        // 전역 쿨타임 체크
+        // ?꾩뿭 荑⑦???泥댄겕
         if (grappleData != null && Time.time < lastGrappleTime + grappleData.globalCooldown)
             return false;
 
@@ -741,15 +730,15 @@ public class PlayerController : MonoBehaviour, ISaveable
     public float LastParryEndTime { get; set; } = -10f;
     
     /// <summary>
-    /// 현재 패링 시도가 가능한 상태인지 확인 (쿨다운, 현재 상태 등 체크)
+    /// ?꾩옱 ?⑤쭅 ?쒕룄媛 媛?ν븳 ?곹깭?몄? ?뺤씤 (荑⑤떎?? ?꾩옱 ?곹깭 ??泥댄겕)
     /// </summary>
     public bool CanParry()
     {
-        // 쿨다운 체크
+        // 荑⑤떎??泥댄겕
         if (Time.time < LastParryEndTime + ActiveFormData.parry.cooldown)
             return false;
             
-        // 패링 불가 상태 제한
+        // ?⑤쭅 遺덇? ?곹깭 ?쒗븳
         var state = StateMachine.CurrentState;
         if (state == ParryState || state == HitState || state == DeathState || state == TransformState || 
             state == LedgeClimbState || state == WallClimbState)
@@ -757,11 +746,11 @@ public class PlayerController : MonoBehaviour, ISaveable
             return false;
         }
         
-        // 특수 행동 (Slam 등) 중이면 불가
+        // ?뱀닔 ?됰룞 (Slam ?? 以묒씠硫?遺덇?
         if (Combat != null && Combat.IsSpecialActionActive)
             return false;
             
-        // 위 방향키와 함께 눌렀을 때는 폼 변신이 우선되어야 함
+        // ??諛⑺뼢?ㅼ? ?④퍡 ?뚮????뚮뒗 ??蹂?좎씠 ?곗꽑?섏뼱????
         if (InputY > 0.5f)
             return false;
 
@@ -769,8 +758,8 @@ public class PlayerController : MonoBehaviour, ISaveable
     }
     
     /// <summary>
-    /// 공격을 받았을 때 패링 가능한 공격인지 판정하고 성공 시 처리
-    /// PlayerHealth.TakeDamage() 에서 호출됨
+    /// 怨듦꺽??諛쏆븯?????⑤쭅 媛?ν븳 怨듦꺽?몄? ?먯젙?섍퀬 ?깃났 ??泥섎━
+    /// PlayerHealth.TakeDamage() ?먯꽌 ?몄텧??
     /// </summary>
     public bool TryParry(DamageInfo info)
     {
@@ -778,27 +767,27 @@ public class PlayerController : MonoBehaviour, ISaveable
         if (!ParryState.IsActiveWindow) return false;
         if (!info.canBeParried) return false;
         
-        // 방향 체크 (Directional Check)
-        // 플레이어 시선 반대 방향에서 다가오는 공격만 패링 (Dot > 0 이면 같은 방향 = 등 뒤)
-        // hitDirection이 원점에서 플레이어 방향을 향한다고 가정
+        // 諛⑺뼢 泥댄겕 (Directional Check)
+        // ?뚮젅?댁뼱 ?쒖꽑 諛섎? 諛⑺뼢?먯꽌 ?ㅺ??ㅻ뒗 怨듦꺽留??⑤쭅 (Dot > 0 ?대㈃ 媛숈? 諛⑺뼢 = ????
+        // hitDirection???먯젏?먯꽌 ?뚮젅?댁뼱 諛⑺뼢???ν븳?ㅺ퀬 媛??
         Vector2 facingVector = new Vector2(IsFacingRight ? 1 : -1, 0);
         if (Vector2.Dot(facingVector, info.hitDirection) > 0)
         {
-            // 공격자가 내 등 뒤에서 때림 -> 패링 실패
+            // 怨듦꺽?먭? ?????ㅼ뿉???뚮┝ -> ?⑤쭅 ?ㅽ뙣
             return false;
         }
         
-        // 패링 성공! 플래그 설정
+        // ?⑤쭅 ?깃났! ?뚮옒洹??ㅼ젙
         ParryState.SetSuccess();
 
-        // [New] 패링 성공 시 스킬 게이지(소울) 획득
+        // ?⑤쭅 ?깃났 ???ㅽ궗 寃뚯씠吏(?뚯슱) ?띾뱷
         var skillResource = GetComponent<PlayerSkillResource>();
         if (skillResource != null)
         {
             skillResource.AddGauge(ActiveFormData.skillResource.gainOnParry);
         }
         
-        // 넉백 강도 및 방향 계산
+        // ?됰갚 媛뺣룄 諛?諛⑺뼢 怨꾩궛
         float knockbackDirX = Mathf.Sign(transform.position.x - info.damageSource.x);
         if (knockbackDirX == 0) knockbackDirX = IsFacingRight ? -1f : 1f;
 
@@ -807,20 +796,20 @@ public class PlayerController : MonoBehaviour, ISaveable
             ActiveFormData.parry.successKnockbackForce.y
         );
 
-        // 넉백 실행 (Snappy Recoil)
+        // ?됰갚 ?ㅽ뻾 (Snappy Recoil)
         if (ActiveFormData.parry.successKnockbackForce != Vector2.zero && ActiveFormData.parry.successKnockbackDuration > 0)
         {
             StartRecoil(finalKnockback, ActiveFormData.parry.successKnockbackDuration);
         }
         
-        // 피드백 및 이벤트 트리거
+        // ?쇰뱶諛?諛??대깽???몃━嫄?
         PlayerEvents.RaiseParrySuccess(info);
         
-        return true; // TakeDamage 취소
+        return true; // TakeDamage 痍⑥냼
     }
 
     /// <summary>
-    /// 렛지 클라임 실패 쿨타임 시작
+    /// ?쏆? ?대씪???ㅽ뙣 荑⑦????쒖옉
     /// </summary>
     public void StartLedgeFailCooldown(float duration)
     {
@@ -828,8 +817,8 @@ public class PlayerController : MonoBehaviour, ISaveable
     }
 
     /// <summary>
-    /// 점프 버퍼를 즉시 소모하여 무효화합니다.
-    /// Sprint Turn, 피격 상태 등 점프가 절대 불가능해야 하는 상태에서 호출합니다.
+    /// ?먰봽 踰꾪띁瑜?利됱떆 ?뚮え?섏뿬 臾댄슚?뷀빀?덈떎.
+    /// Sprint Turn, ?쇨꺽 ?곹깭 ???먰봽媛 ?덈? 遺덇??ν빐???섎뒗 ?곹깭?먯꽌 ?몄텧?⑸땲??
     /// </summary>
     public void ConsumeJumpBuffer()
     {
@@ -850,11 +839,11 @@ public class PlayerController : MonoBehaviour, ISaveable
         }
         
         
-        // Ledge Climb Gizmo는 LedgeDetector에서 표시
+        // Ledge Climb Gizmo??LedgeDetector?먯꽌 ?쒖떆
     }
     
     /// <summary>
-    /// 커스텀 애니메이션 플레이어에게 클립 재생을 요청합니다.
+    /// 而ㅼ뒪? ?좊땲硫붿씠???뚮젅?댁뼱?먭쾶 ?대┰ ?ъ깮???붿껌?⑸땲??
     /// </summary>
     public void PlayAnimation(Mado.Character.Animation.PlayerAnimType animType, bool force = false)
     {

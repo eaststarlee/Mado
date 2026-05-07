@@ -42,7 +42,7 @@ MonoBehaviour:
     sprintJumpForce: 25
     sprintJumpLandCooldown: 0.1
     sprintJumpPrepareTime: 0.1
-    sprintJumpAirControlLockDuration: 1
+    sprintJumpAirControlLockDuration: 2
     jumpCutGravityMult: 3
     jumpHangGravityMult: 0.3
     jumpHangTimeThreshold: 0.1

@@ -159,7 +159,7 @@ public class PlayerCamera : MonoBehaviour
         if (Mathf.Approximately(targetDamping.y, 0)) currentDamping.y = 0;
         else currentDamping.y = Mathf.Lerp(currentDamping.y, targetDamping.y, Time.deltaTime * dampingChangeSpeed);
         
-        // [New] 룸 데이터에서 Y축 고정을 요청한 경우, 수직 추적을 차단하기 위해 댐핑을 높게 유지
+        // 룸 데이터에서 Y축 고정을 요청한 경우, 수직 추적을 차단하기 위해 댐핑을 높게 유지
         if (CameraManager.Instance != null && CameraManager.Instance.CurrentRoomData != null && CameraManager.Instance.CurrentRoomData.lockCameraY)
         {
             currentDamping.y = 20f;
@@ -173,7 +173,7 @@ public class PlayerCamera : MonoBehaviour
         
         HandleVerticalLook();
 
-        // [New] Screen Shake 적용
+        // Screen Shake 적용
         Vector3 finalOffset = m_TargetTrackedOffset;
         if (m_ShakeTimer > 0)
         {
@@ -202,7 +202,7 @@ public class PlayerCamera : MonoBehaviour
         // Combat이 null일 수 있으므로 null 체크 필수
         bool isAttacking = (playerController.Combat != null && playerController.Combat.IsAttacking);
         // 키 설정이 하드코딩 되어 있다면 Input Manager나 KeyCode 변수를 사용하는 것이 좋지만, 현재는 X키로 가정
-        bool isAttackInput = playerController.IsAttackHeld; // [Modified] Use IsAttackHeld
+        bool isAttackInput = playerController.IsAttackHeld; // Use IsAttackHeld
 
         // 위 조건 중 하나라도 해당되면 시선 이동 취소
         if (isMovingHorizontally || isAttacking || isAttackInput)
@@ -212,7 +212,7 @@ public class PlayerCamera : MonoBehaviour
         }
 
         // 3. 수직 입력 체크 (Vertical Input)
-        float verticalInput = playerController.InputY; // [Modified] Use InputY
+        float verticalInput = playerController.InputY; // Use InputY
 
         if (Mathf.Abs(verticalInput) > 0.1f)
         {

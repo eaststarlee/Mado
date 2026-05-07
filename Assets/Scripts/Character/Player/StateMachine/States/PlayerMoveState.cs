@@ -9,7 +9,7 @@ public class PlayerMoveState : PlayerState
     public override void Enter()
     {
         base.Enter();
-        player.IsSprintJumping = false; // 스프린트 점프 상태 초기화
+        player.IsSprintJumping = false;
     }
 
     public override void LogicUpdate()
@@ -26,8 +26,8 @@ public class PlayerMoveState : PlayerState
 
         // 변신 입력 체크 (↑ + A)
         if (stateMachine.CurrentState != player.TransformState 
-            && player.InputY > 0.5f // [Modified] Use InputY
-            && player.ButtonAInput) // [Modified] Use ButtonAInput
+            && player.InputY > 0.5f 
+            && player.ButtonAInput) 
         {
             FormType nextForm = player.CurrentForm == FormType.Normal 
                 ? FormType.Devil 

@@ -2,34 +2,34 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// 공격 행동 관리자 (상태가 아닌 행동 레이어)
+/// 怨듦꺽 ?됰룞 愿由ъ옄 (?곹깭媛 ?꾨땶 ?됰룞 ?덉씠??
 /// 
-/// 책임:
-/// - 공격 요청 수신 및 조율
-/// - 세션 생성 및 수명 관리
-/// - 제약(Constraint) 플래그 관리
-/// - 반동(Recoil) 요청 전달
+/// 梨낆엫:
+/// - 怨듦꺽 ?붿껌 ?섏떊 諛?議곗쑉
+/// - ?몄뀡 ?앹꽦 諛??섎챸 愿由?
+/// - ?쒖빟(Constraint) ?뚮옒洹?愿由?
+/// - 諛섎룞(Recoil) ?붿껌 ?꾨떖
 /// 
-/// 책임 분리:
-/// - 히트 판정: HitResolver
-/// - 피드백: CombatFeedback
-/// - 타이밍은 AttackData.baseAnimDuration 기준
+/// 梨낆엫 遺꾨━:
+/// - ?덊듃 ?먯젙: HitResolver
+/// - ?쇰뱶諛? CombatFeedback
+/// - ??대컢? AttackData.baseAnimDuration 湲곗?
 /// </summary>
 [RequireComponent(typeof(PlayerController))]
 public class PlayerCombat : MonoBehaviour
 {
-    [Header("설정")]
+    [Header("?ㅼ젙")]
     [SerializeField] private CombatConfig config;
     [SerializeField] private LayerMask enemyLayer;
     
-    [Header("반동(Recoil) 설정")]
-    [Tooltip("공격 시 플레이어를 뒤로 밀려나게 할 대상 레이어 (예: Enemy, Ground 등)")]
+    [Header("諛섎룞(Recoil) ?ㅼ젙")]
+    [Tooltip("怨듦꺽 ???뚮젅?댁뼱瑜??ㅻ줈 諛?ㅻ굹寃???????덉씠??(?? Enemy, Ground ??")]
     public LayerMask recoilTriggerLayers;
     
-    [Tooltip("공격 시 플레이어를 뒤로 밀려나게 할 표면(Surface) 타입들")]
+    [Tooltip("怨듦꺽 ???뚮젅?댁뼱瑜??ㅻ줈 諛?ㅻ굹寃????쒕㈃(Surface) ??낅뱾")]
     public List<SurfaceType> recoilTriggerSurfaces;
     
-    [Tooltip("반동 힘의 배율 (1.0 = AttackData의 기본값)")]
+    [Tooltip("諛섎룞 ?섏쓽 諛곗쑉 (1.0 = AttackData??湲곕낯媛?")]
     [Range(0.1f, 5.0f)]
     public float recoilForceMultiplier = 1.0f;
     
@@ -39,23 +39,23 @@ public class PlayerCombat : MonoBehaviour
     #region Properties
     
     /// <summary>
-    /// 현재 폼의 공격 프로필
+    /// ?꾩옱 ?쇱쓽 怨듦꺽 ?꾨줈??
     /// </summary>
     private FormAttackProfile CurrentProfile => player.ActiveFormData?.attackProfile;
     
     /// <summary>
-    /// 공격 중 여부
+    /// 怨듦꺽 以??щ?
     /// </summary>
     public bool IsAttacking { get; private set; }
     
     /// <summary>
-    /// 이동 잠금 플래그 (Constraint)
-    /// MoveState 및 ActionSystem에서 참조
+    /// ?대룞 ?좉툑 ?뚮옒洹?(Constraint)
+    /// MoveState 諛?ActionSystem?먯꽌 李몄“
     /// </summary>
     public bool LockMovement { get; set; }
     
     /// <summary>
-    /// Enemy Layer (SlamAction 등에서 참조)
+    /// Enemy Layer (SlamAction ?깆뿉??李몄“)
     /// </summary>
     public LayerMask EnemyLayer => enemyLayer;
     
@@ -63,43 +63,43 @@ public class PlayerCombat : MonoBehaviour
     
     #region Private State
     
-    // 현재 공격 세션
+    // ?꾩옱 怨듦꺽 ?몄뀡
     private AttackSession currentSession;
     private AttackData currentAttack;
     private float attackTimer;
     private float cooldownTimer;
     private bool hasHit;
     
-    // 방향 스냅샷 (공격 시작 순간 고정)
+    // 諛⑺뼢 ?ㅻ깄??(怨듦꺽 ?쒖옉 ?쒓컙 怨좎젙)
     private int snapshotFacing;
     private AttackDirection snapshotDirection;
     
     
-    // 입력 버퍼
+    // ?낅젰 踰꾪띁
     private float inputBufferTimer;
     private bool hasBufferedAttack;
     private AttackDirection bufferedDirection;
     
-    // Pogo 관리
+    // Pogo 愿由?
     private Coroutine pogoCoroutine;
     private bool isPogoActive;
     
-    // [New] Special Action Runner (Slam 등)
+    // Special Action Runner (Slam ??
     private ISpecialAction currentSpecialAction;
     private ActionHandle currentActionHandle;
     
     /// <summary>
-    /// Pogo 활성 상태 (외부 참조용)
+    /// Pogo ?쒖꽦 ?곹깭 (?몃? 李몄“??
     /// </summary>
     public bool IsPogoActive => isPogoActive;
     
     /// <summary>
-    /// [New] 특수 행동 활성 여부
+    /// ?뱀닔 ?됰룞 ?쒖꽦 ?щ?
     /// </summary>
     public bool IsSpecialActionActive => currentSpecialAction != null;
 
     /// <summary>
-    /// [New] 특수 행동 중 입력 잠금 여부
+    /// ?뱀닔 ?됰룞 以??낅젰 ?좉툑 ?щ?
     /// </summary>
     public bool IsSpecialActionLocked => currentSpecialAction != null && currentSpecialAction.LocksInput;
     
@@ -116,13 +116,13 @@ public class PlayerCombat : MonoBehaviour
     {
         hitResolver = HitResolver.Instance ?? FindFirstObjectByType<HitResolver>();
         
-        // HitResolver가 씬에 없으면 경고
+        // HitResolver媛 ?ъ뿉 ?놁쑝硫?寃쎄퀬
         if (hitResolver == null)
         {
-            Debug.LogWarning("[PlayerCombat] HitResolver를 찾을 수 없습니다. 공격 판정이 작동하지 않습니다.");
+            Debug.LogWarning("[PlayerCombat] HitResolver瑜?李얠쓣 ???놁뒿?덈떎. 怨듦꺽 ?먯젙???묐룞?섏? ?딆뒿?덈떎.");
         }
 
-        // [New] 가시(Spike) 포고 자동 지원 등록
+        // 媛??Spike) ?ш퀬 ?먮룞 吏???깅줉
         if (recoilTriggerSurfaces != null && !recoilTriggerSurfaces.Contains(SurfaceType.Spike))
         {
             recoilTriggerSurfaces.Add(SurfaceType.Spike);
@@ -135,24 +135,21 @@ public class PlayerCombat : MonoBehaviour
         ProcessAttack();
         ProcessBufferedAttack();
         
-        // [New] Special Action Update
+        // Special Action Update
         currentSpecialAction?.Update(Time.deltaTime);
     }
     
-    private void FixedUpdate()
-    {
-        // Pogo는 이제 코루틴 기반이므로 물리 업데이트 불필요
-    }
+    // FixedUpdate ?쒓굅??(Pogo???댁젣 肄붾（??湲곕컲?대?濡?臾쇰━ ?낅뜲?댄듃 遺덊븘??
     
     // ...
 
     /// <summary>
-    /// 공격 요청 (PlayerController.GatherInput에서 호출)
+    /// 怨듦꺽 ?붿껌 (PlayerController.GatherInput?먯꽌 ?몄텧)
     /// </summary>
-    /// <param name="direction">공격 방향</param>
+    /// <param name="direction">怨듦꺽 諛⑺뼢</param>
     public void RequestAttack(AttackDirection direction)
     {
-        // [Build Fix] 데이터가 없으면 즉시 초기화 시도
+        // ?곗씠?곌? ?놁쑝硫?利됱떆 珥덇린???쒕룄
         if (CurrentProfile == null)
         {
             var formManager = player.GetComponent<PlayerFormManager>();
@@ -160,20 +157,20 @@ public class PlayerCombat : MonoBehaviour
             
             if (CurrentProfile == null)
             {
-                Debug.LogError("[PlayerCombat] 공격 프로필 NULL - 인스펙터에서 FormAttackProfile 할당 확인 필요");
+                Debug.LogError("[PlayerCombat] 怨듦꺽 ?꾨줈??NULL - ?몄뒪?숉꽣?먯꽌 FormAttackProfile ?좊떦 ?뺤씤 ?꾩슂");
                 return;
             }
         }
         
-        // 1. 즉시 공격 가능하면 실행
+        // 1. 利됱떆 怨듦꺽 媛?ν븯硫??ㅽ뻾
         if (CanAttack())
         {
             StartAttack(direction);
         }
-        // 2. 공격 중이거나 쿨타임 중이면 버퍼링
+        // 2. 怨듦꺽 以묒씠嫄곕굹 荑⑦???以묒씠硫?踰꾪띁留?
         else if (IsAttacking || cooldownTimer > 0f)
         {
-            // 입력 버퍼에 저장
+            // ?낅젰 踰꾪띁?????
             hasBufferedAttack = true;
             bufferedDirection = direction;
             inputBufferTimer = config != null ? config.inputBufferTime : 0.15f;
@@ -183,7 +180,7 @@ public class PlayerCombat : MonoBehaviour
 
     private void ProcessBufferedAttack()
     {
-        // 버퍼된 공격이 있고, 지금 당장 수행 가능하다면 실행
+        // 踰꾪띁??怨듦꺽???덇퀬, 吏湲??뱀옣 ?섑뻾 媛?ν븯?ㅻ㈃ ?ㅽ뻾
         if (hasBufferedAttack && CanAttack())
         {
             hasBufferedAttack = false;
@@ -192,15 +189,15 @@ public class PlayerCombat : MonoBehaviour
     }
     
     /// <summary>
-    /// 공격 가능 여부
+    /// 怨듦꺽 媛???щ?
     /// </summary>
     public bool CanAttack()
     {
-        // 공격 중이 아니고 쿨다운 끝남
+        // 怨듦꺽 以묒씠 ?꾨땲怨?荑⑤떎???앸궓
         if (IsAttacking) return false;
         if (cooldownTimer > 0) return false;
         
-        // 특정 상태에서는 공격 불가 (WallSlide, LedgeClimb 등)
+        // ?뱀젙 ?곹깭?먯꽌??怨듦꺽 遺덇? (WallSlide, LedgeClimb ??
         var currentState = player.StateMachine.CurrentState;
         if (currentState == player.WallSlideState ||
             currentState == player.WallClimbState ||
@@ -216,12 +213,12 @@ public class PlayerCombat : MonoBehaviour
     }
     
     /// <summary>
-    /// 공격 강제 중단 (피격, 컷신 등)
-    /// Animator.speed 안전 복구 포함
+    /// 怨듦꺽 媛뺤젣 以묐떒 (?쇨꺽, 而룹떊 ??
+    /// Animator.speed ?덉쟾 蹂듦뎄 ?ы븿
     /// </summary>
     public void InterruptAttack()
     {
-        // 일반 공격 중단
+        // ?쇰컲 怨듦꺽 以묐떒
         if (IsAttacking)
         {
             IsAttacking = false;
@@ -229,18 +226,18 @@ public class PlayerCombat : MonoBehaviour
             hasBufferedAttack = false;
             currentSession = null;
             
-            // 이벤트 발생
+            // ?대깽??諛쒖깮
             CombatEvents.RaiseAttackInterrupt();
         }
         
-        // [New] 특수 행동 중단
+        // ?뱀닔 ?됰룞 以묐떒
         CancelSpecialAction();
         
-        // Pogo 안전 중단
+        // Pogo ?덉쟾 以묐떒
         ForceStopPogo();
         
-        // [TODO] 추후 공격 애니메이션 에셋 제작 후 주석 해제
-        // 중요: Animator 속도 복구
+        // [TODO] 異뷀썑 怨듦꺽 ?좊땲硫붿씠???먯뀑 ?쒖옉 ??二쇱꽍 ?댁젣
+        // 以묒슂: Animator ?띾룄 蹂듦뎄
         // if (player.Animator != null)
         // {
         //     player.Animator.speed = 1f;
@@ -248,20 +245,20 @@ public class PlayerCombat : MonoBehaviour
     }
     
     /// <summary>
-    /// [New] 특수 행동 시작 (Slam 등)
+    /// ?뱀닔 ?됰룞 ?쒖옉 (Slam ??
     /// </summary>
     public ActionHandle StartSpecialAction(ISpecialAction action)
     {
-        // 기존 행동 취소
+        // 湲곗〈 ?됰룞 痍⑥냼
         CancelSpecialAction();
         
-        // 일반 공격 중단
+        // ?쇰컲 怨듦꺽 以묐떒
         InterruptAttack();
         
         currentSpecialAction = action;
         currentActionHandle = new ActionHandle();
         
-        // 종료 콜백 연결
+        // 醫낅즺 肄쒕갚 ?곌껐
         currentActionHandle.SetOnEndedCallback(OnSpecialActionEnded);
         
         action.Begin(currentActionHandle);
@@ -269,7 +266,7 @@ public class PlayerCombat : MonoBehaviour
     }
     
     /// <summary>
-    /// [New] 특수 행동 강제 취소
+    /// ?뱀닔 ?됰룞 媛뺤젣 痍⑥냼
     /// </summary>
     public void CancelSpecialAction()
     {
@@ -283,7 +280,7 @@ public class PlayerCombat : MonoBehaviour
     }
     
     /// <summary>
-    /// [New] Action 종료 콜백 (Action 내에서 호출 필요 시)
+    /// Action 醫낅즺 肄쒕갚 (Action ?댁뿉???몄텧 ?꾩슂 ??
     /// </summary>
     internal void OnSpecialActionEnded()
     {
@@ -298,27 +295,26 @@ public class PlayerCombat : MonoBehaviour
     
     private void StartAttack(AttackDirection dir)
     {
-        // 1. 방향 스냅샷 (이 순간 고정, 이후 입력 무시)
+        // 1. 諛⑺뼢 ?ㅻ깄??(???쒓컙 怨좎젙, ?댄썑 ?낅젰 臾댁떆)
         snapshotFacing = player.IsFacingRight ? 1 : -1;
         snapshotDirection = dir;
         
-        // 2. 현재 폼의 공격 데이터 로드
+        // 2. ?꾩옱 ?쇱쓽 怨듦꺽 ?곗씠??濡쒕뱶
         currentAttack = CurrentProfile.GetAttack(dir);
         
-        // [Build Fix] 만약 특정 방향 공격 데이터가 없으면 일반 공격 데이터로 대체 시도
         if (currentAttack == null)
         {
             currentAttack = CurrentProfile.normalAttack;
-            Debug.LogWarning($"[PlayerCombat] {dir} 공격 데이터가 없어 기본 공격으로 대체합니다.");
+            Debug.LogWarning($"[PlayerCombat] {dir} 怨듦꺽 ?곗씠?곌? ?놁뼱 湲곕낯 怨듦꺽?쇰줈 ?泥댄빀?덈떎.");
         }
 
         if (currentAttack == null)
         {
-            Debug.LogError("[PlayerCombat] 빌드본 오류: 모든 공격 데이터가 누락되었습니다.");
+            Debug.LogError("[PlayerCombat] 鍮뚮뱶蹂??ㅻ쪟: 紐⑤뱺 怨듦꺽 ?곗씠?곌? ?꾨씫?섏뿀?듬땲??");
             return;
         }
         
-        // 3. 공격 세션 생성
+        // 3. 怨듦꺽 ?몄뀡 ?앹꽦
         currentSession = new AttackSession
         {
             attack = currentAttack,
@@ -332,22 +328,22 @@ public class PlayerCombat : MonoBehaviour
             recoilTargetSurfaces = recoilTriggerSurfaces
         };
         
-        // 4. 상태 초기화
+        // 4. ?곹깭 珥덇린??
         IsAttacking = true;
         hasHit = false;
         attackTimer = 0f;
         
-        // 5. 이동 제약 (지상 공격 시)
+        // 5. ?대룞 ?쒖빟 (吏??怨듦꺽 ??
         if (currentAttack.lockMovementOnGround && player.IsGrounded())
         {
             LockMovement = true;
         }
         
-        // 6. [New] 커스텀 애니메이션 재생
+        // 6. 而ㅼ뒪? ?좊땲硫붿씠???ъ깮
         Mado.Character.Animation.PlayerAnimType animType = GetAnimType(dir);
         player.PlayAnimation(animType, force: true);
         
-        // 7. 이벤트 발생 (로직은 정상 작동)
+        // 7. ?대깽??諛쒖깮 (濡쒖쭅? ?뺤긽 ?묐룞)
         CombatEvents.RaiseAttackStart(currentAttack);
     }
     
@@ -355,25 +351,25 @@ public class PlayerCombat : MonoBehaviour
     {
         if (!IsAttacking || currentAttack == null) return;
         
-        // [Build Fix] 공격이 어떤 이유로든 끝나지 않는 현상 방지 (안전 타이머 2초)
+        // 怨듦꺽???대뼡 ?댁쑀濡쒕뱺 ?앸굹吏 ?딅뒗 ?꾩긽 諛⑹? (?덉쟾 ??대㉧ 2珥?
         if (attackTimer > 2.0f)
         {
-            Debug.LogWarning("[PlayerCombat] 공격이 너무 오래 지속되어 강제 종료합니다.");
+            Debug.LogWarning("[PlayerCombat] 怨듦꺽???덈Т ?ㅻ옒 吏?띾릺??媛뺤젣 醫낅즺?⑸땲??");
             EndAttack();
             return;
         }
 
-        // 속도 배율 적용된 타이머
+        // ?띾룄 諛곗쑉 ?곸슜????대㉧
         float speedMult = (CurrentProfile != null) ? CurrentProfile.attackSpeedMultiplier : 1f;
         attackTimer += Time.deltaTime * speedMult;
         
-        // 이동 잠금 해제 체크
+        // ?대룞 ?좉툑 ?댁젣 泥댄겕
         if (LockMovement && attackTimer >= currentAttack.lockDuration)
         {
             LockMovement = false;
         }
         
-        // 히트 프레임 체크
+        // ?덊듃 ?꾨젅??泥댄겕
         float hitTime = currentAttack.baseAnimDuration * currentAttack.hitActiveNormalized;
         if (!hasHit && attackTimer >= hitTime)
         {
@@ -381,7 +377,7 @@ public class PlayerCombat : MonoBehaviour
             hasHit = true;
         }
         
-        // 공격 종료 체크
+        // 怨듦꺽 醫낅즺 泥댄겕
         if (attackTimer >= currentAttack.baseAnimDuration)
         {
             EndAttack();
@@ -392,28 +388,28 @@ public class PlayerCombat : MonoBehaviour
     {
         if (currentSession == null) return;
         
-        // [Fix] 캐싱된 참조가 null이면 매번 다시 찾기 (씬 로드 순서 문제 해결)
+        // 罹먯떛??李몄“媛 null?대㈃ 留ㅻ쾲 ?ㅼ떆 李얘린 (??濡쒕뱶 ?쒖꽌 臾몄젣 ?닿껐)
         if (hitResolver == null)
             hitResolver = HitResolver.Instance ?? FindFirstObjectByType<HitResolver>();
         
         if (hitResolver == null) return;
         
-        // 현재 위치 갱신
+        // ?꾩옱 ?꾩튂 媛깆떊
         currentSession.origin = transform.position;
         
-        // 히트 판정
+        // ?덊듃 ?먯젙
         HitResult result = hitResolver.ProcessAttack(currentSession);
         
-        // [반동] 설정된 레이어나 표면에 적중했는지 확인하여 반동 적용
+        // [諛섎룞] ?ㅼ젙???덉씠?대굹 ?쒕㈃???곸쨷?덈뒗吏 ?뺤씤?섏뿬 諛섎룞 ?곸슜
         if (result.TriggerRecoil)
         {
             ApplyRecoil();
         }
         
-        // 적중(데미지 판정) 시 피드백 처리
+        // ?곸쨷(?곕?吏 ?먯젙) ???쇰뱶諛?泥섎━
         if (result.HasHit)
         {
-            // 타격감: 역경직(HitStop)
+            // ?寃⑷컧: ??꼍吏?HitStop)
             if (currentAttack.hitStopDuration > 0f)
             {
                 player.StartHitStop(currentAttack.hitStopDuration);
@@ -425,13 +421,13 @@ public class PlayerCombat : MonoBehaviour
     {
         if (currentAttack == null) return;
         
-        // 인스펙터에 설정된 배율(Multiplier)을 적용
+        // ?몄뒪?숉꽣???ㅼ젙??諛곗쑉(Multiplier)???곸슜
         Vector2 recoil = currentAttack.recoilForce * recoilForceMultiplier;
         
         switch (currentAttack.recoilType)
         {
             case RecoilType.ReplaceY:
-                // 포고 점프 (Normal 폼 하강 공격) - 레거시
+                // ?ш퀬 ?먰봽 (Normal ???섍컯 怨듦꺽) - ?덇굅??
                 if (recoil.y > 0)
                 {
                     player.RB.linearVelocity = new Vector2(
@@ -442,36 +438,36 @@ public class PlayerCombat : MonoBehaviour
                 break;
                 
             case RecoilType.AddImpulse:
-                // 충격 추가 (X축은 바라보는 방향 반대)
+                // 異⑷꺽 異붽? (X異뺤? 諛붾씪蹂대뒗 諛⑺뼢 諛섎?)
                 float recoilX = Mathf.Abs(recoil.x) * -snapshotFacing;
                 Vector2 finalRecoil = new Vector2(recoilX, recoil.y);
                 
-                // PlayerController의 RecoilRoutine 위임 (Snappy Recoil)
-                // 지속 시간은 LockDuration을 사용
+                // PlayerController??RecoilRoutine ?꾩엫 (Snappy Recoil)
+                // 吏???쒓컙? LockDuration???ъ슜
                 player.StartRecoil(finalRecoil, currentAttack.lockDuration);
                 break;
                 
             case RecoilType.Slam:
-                // Devil 폼 Slam (충격파 생성)
+                // Devil ??Slam (異⑷꺽???앹꽦)
                 SpawnSlamEffect();
                 break;
                 
             case RecoilType.PogoJump:
-                // Hollow Knight 스타일 Pogo (물리 기반)
-                // 1. 물리 속도 적용
+                // Hollow Knight ?ㅽ???Pogo (臾쇰━ 湲곕컲)
+                // 1. 臾쇰━ ?띾룄 ?곸슜
                 float bounceVel = 14f; // Default fallback
                 if (currentAttack is PogoAttackData pogoData)
                 {
                     bounceVel = pogoData.pogoBounceVelocity;
                 }
                 
-                // Pogo 바운스에도 배율 적용
+                // Pogo 諛붿슫?ㅼ뿉??諛곗쑉 ?곸슜
                 player.PogoBounce(bounceVel * recoilForceMultiplier);
                 
-                // 2. 히트 스톱 (Game Feel) - Pogo는 약간 길게
+                // 2. ?덊듃 ?ㅽ넲 (Game Feel) - Pogo???쎄컙 湲멸쾶
                 CombatFeedback.Instance?.RequestHitStop(0.08f);
                 
-                // 3. 스크린 쉐이크 (옵션)
+                // 3. ?ㅽ겕由??먯씠??(?듭뀡)
                 CombatFeedback.Instance?.RequestScreenShake(currentAttack.screenShakeMagnitude);
                 break;
         }
@@ -480,18 +476,17 @@ public class PlayerCombat : MonoBehaviour
     private void SpawnSlamEffect()
     {
         // TODO: Devil 폼 전용 충격파/착지 이펙트 생성
-        // 추후 구현
     }
     
     // PogoRoutine 제거됨 (Legacy)
     
     /// <summary>
-    /// Pogo 강제 중단 및 중력 복구 (안전장치)
+    /// Pogo 媛뺤젣 以묐떒 諛?以묐젰 蹂듦뎄 (?덉쟾?μ튂)
     /// </summary>
     private void ForceStopPogo()
     {
-        // Pogo가 이제 물리 기반이므로 특별한 코루틴 중단은 필요 없음
-        // 다만 낙하 속도 제한 해제 등 안전장치는 유지
+        // Pogo媛€ ?댁젣 臾쇰━ 湲곕컲?대?濡??밸퀎??肄붾（??以묐떒?€ ?꾩슂 ?놁쓬
+        // ?ㅻ쭔 ?숉븯 ?띾룄 ?쒗븳 ?댁젣 ???덉쟾?μ튂???좎?
         player.ClearFallSpeedClamp();
     }
     
@@ -501,25 +496,25 @@ public class PlayerCombat : MonoBehaviour
         LockMovement = false;
         currentSession = null;
         
-        // [TODO] 추후 공격 애니메이션 에셋 제작 후 주석 해제
-        // Animator 속도 복구
+        // [TODO] 異뷀썑 怨듦꺽 ?좊땲硫붿씠???먯뀑 ?쒖옉 ??二쇱꽍 ?댁쑙
+        // Animator ?띾룄 蹂듦뎄
         // if (player.Animator != null)
         // {
         //     player.Animator.speed = 1f;
         // }
         
-        // 버퍼 확인 (쿨타임보다 우선!)
+        // 踰꾪띁 ?뺤씤 (荑⑦??꾨낫???곗꽑!)
         if (hasBufferedAttack && inputBufferTimer > 0)
         {
             Debug.Log("[PlayerCombat] Executing buffered attack!");
             hasBufferedAttack = false;
-            cooldownTimer = 0f;  // ⚠️ 버퍼 공격은 쿨타임 무시!
+            cooldownTimer = 0f;  // ?좑툘 踰꾪띁 怨듦꺽?€ 荑⑦???臾댁떆!
             StartAttack(bufferedDirection);
         }
         else
         {
-            // 쿨다운 시작 (버퍼 없을 때만)
-            // ⭐ 쿨타임 적용 (CombatConfig 기준)
+            // 荑⑤떎???쒖옉 (踰꾪띁 ?놁쑣 ?뚮쭔)
+            // 狩?荑⑦????곸슜 (CombatConfig 湲곗?)
             cooldownTimer = config != null ? config.baseAttackCooldown : 0.25f;
         }
     }
@@ -554,7 +549,7 @@ public class PlayerCombat : MonoBehaviour
     {
         if (currentAttack == null || !IsAttacking) return;
         
-        // 현재 공격 히트박스 표시
+        // ?꾩옱 怨듦꺽 ?덊듃諛뺤뒪 ?쒖떆
         Vector2 center = (Vector2)transform.position + new Vector2(
             currentAttack.hitboxOffset.x * snapshotFacing,
             currentAttack.hitboxOffset.y

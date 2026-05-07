@@ -1,14 +1,14 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 /// <summary>
-/// 히트 판정의 단일 책임자 (3단계 파이프라인)
-/// 1. Detection: OverlapBox로 대상 수집
-/// 2. Validation: 무적/패링/슈퍼아머 체크
-/// 3. Application: 데미지 적용 및 반응 호출
+/// ?�트 ?�정???�일 책임??(3?�계 ?�이?�라??
+/// 1. Detection: OverlapBox�??�???�집
+/// 2. Validation: 무적/?�링/?�퍼?�머 체크
+/// 3. Application: ?��?지 ?�용 �?반응 ?�출
 /// 
-/// Stateless 설계: AlreadyHit은 AttackSession이 소유
+/// Stateless ?�계: AlreadyHit?� AttackSession???�유
 /// </summary>
 public class HitResolver : MonoBehaviour
 {
@@ -29,7 +29,7 @@ public class HitResolver : MonoBehaviour
             Destroy(gameObject);
         }
         
-        // 피드백 자동 찾기
+        // ?�드�??�동 찾기
         if (feedback == null)
         {
             feedback = FindFirstObjectByType<CombatFeedback>();
@@ -37,10 +37,10 @@ public class HitResolver : MonoBehaviour
     }
     
     /// <summary>
-    /// 공격 판정 처리 (단일 진입점)
+    /// 공격 ?�정 처리 (?�일 진입??
     /// </summary>
-    /// <param name="session">공격 세션 (수명 관리 단위)</param>
-    /// <returns>적중 결과</returns>
+    /// <param name="session">공격 ?�션 (?�명 관�??�위)</param>
+    /// <returns>?�중 결과</returns>
     public HitResult ProcessAttack(AttackSession session)
     {
         // Stage 1: Detection
@@ -52,13 +52,13 @@ public class HitResolver : MonoBehaviour
         // Stage 3: Application
         var result = ApplyDamage(validTargets, session);
         
-        // [Environment] 환경 오브젝트 스캔 및 가격 (BreakableWall 등)
+        // [Environment] ?�경 ?�브?�트 ?�캔 �?가�?(BreakableWall ??
         CheckEnvironmentHits(session);
         
-        // [Recoil] 반동(넉백) 여부 검사
+        // [Recoil] 반동(?�백) ?��? 검??
         result.TriggerRecoil = CheckRecoilTriggers(session);
         
-        // 피드백 트리거
+        // ?�드�??�리�?
         if (result.hitCount > 0 && feedback != null)
         {
             feedback.TriggerHitFeedback(session.attack);
@@ -68,7 +68,7 @@ public class HitResolver : MonoBehaviour
     }
 
     /// <summary>
-    /// 설정된 Layer 또는 SurfaceInfo를 기반으로 넉백 발생 여부를 판정합니다.
+    /// ?�정??Layer ?�는 SurfaceInfo�?기반?�로 ?�백 발생 ?��?�??�정?�니??
     /// </summary>
     private bool CheckRecoilTriggers(AttackSession session)
     {
@@ -78,19 +78,19 @@ public class HitResolver : MonoBehaviour
         );
         Vector2 boxSize = session.attack.hitboxSize * session.rangeMultiplier;
 
-        // 1. 지정된 레이어(recoilTargetLayer) 충돌 검사
+        // 1. 지?�된 ?�이??recoilTargetLayer) 충돌 검??
         if (session.recoilTargetLayer != 0)
         {
             Collider2D col = Physics2D.OverlapBox(boxCenter, boxSize, 0f, session.recoilTargetLayer);
             if (col != null) return true;
         }
 
-        // 2. 지정된 SurfaceInfo 검사
+        // 2. 지?�된 SurfaceInfo 검??
         if (session.recoilTargetSurfaces != null && session.recoilTargetSurfaces.Count > 0)
         {
             LayerMask worldMask = DimensionManager.Instance != null
                 ? DimensionManager.Instance.CurrentWorldMask
-                : ~0; // 모든 레이어
+                : ~0; // 모든 ?�이??
                 
             Collider2D[] hits = Physics2D.OverlapBoxAll(boxCenter, boxSize, 0f, worldMask);
             foreach (var col in hits)
@@ -109,90 +109,90 @@ public class HitResolver : MonoBehaviour
     #region Stage 1: Detection
     
     /// <summary>
-    /// OverlapBox로 충돌 대상 수집
+    /// OverlapBox�?충돌 ?�???�집
     /// </summary>
     private List<Collider2D> DetectTargets(AttackSession session)
     {
-        // 방향 적용된 히트박스 중심 계산
+        // 방향 ?�용???�트박스 중심 계산
         Vector2 boxCenter = session.origin + new Vector2(
             session.attack.hitboxOffset.x * session.facing * session.rangeMultiplier,
             session.attack.hitboxOffset.y
         );
         
-        // 범위 배율 적용
+        // 범위 배율 ?�용
         Vector2 boxSize = session.attack.hitboxSize * session.rangeMultiplier;
         
-        // OverlapBox로 충돌 검사
+        // OverlapBox�?충돌 검??
         Collider2D[] hits = Physics2D.OverlapBoxAll(boxCenter, boxSize, 0f, session.targetLayer);
         
 #if UNITY_EDITOR
-        // 디버그: 히트박스 시각화
+        // ?�버�? ?�트박스 ?�각??
         DebugDrawHitbox(boxCenter, boxSize, hits.Length > 0 ? Color.red : Color.yellow);
 #endif
         
-        // Game 뷰 히트박스 시각화 (런타임)
+        // Game �??�트박스 ?�각??(?��???
         HitboxDebugRenderer.Instance?.RegisterPlayerHitbox(boxCenter, boxSize, 0.1f);
         
         return hits.ToList();
     }
     
     /// <summary>
-    /// 환경 오브젝트(BreakableWall 등) 스캔 및 타격 처리
+    /// ?�경 ?�브?�트(BreakableWall ?? ?�캔 �??��?처리
     /// </summary>
     private void CheckEnvironmentHits(AttackSession session)
     {
-        // 공격 주체가 플레이어인지 확인
+        // 공격 주체가 ?�레?�어?��? ?�인
         if (session.attacker == null) return;
         PlayerController player = session.attacker.GetComponent<PlayerController>();
         if (player == null) return;
         
-        // 폼 체크 로직 삭제: 폼 검증은 개별 환경 오브젝트(DestructibleEntity 등)가 스스로 판단하도록 위임
+        // ??체크 로직 ??��: ??검증�? 개별 ?�경 ?�브?�트(DestructibleEntity ??가 ?�스�??�단?�도�??�임
         
-        // 히트박스 계산 (DetectTargets와 동일)
+        // ?�트박스 계산 (DetectTargets?� ?�일)
         Vector2 boxCenter = session.origin + new Vector2(
             session.attack.hitboxOffset.x * session.facing * session.rangeMultiplier,
             session.attack.hitboxOffset.y
         );
         Vector2 boxSize = session.attack.hitboxSize * session.rangeMultiplier;
         
-        // 현재 세계 레이어마스크 (DimensionManager가 없으면 전체 레이어)
+        // ?�재 ?�계 ?�이?�마?�크 (DimensionManager가 ?�으�??�체 ?�이??
         LayerMask worldMask = DimensionManager.Instance != null
             ? DimensionManager.Instance.CurrentWorldMask
             : ~0;
             
         Collider2D[] hits = Physics2D.OverlapBoxAll(boxCenter, boxSize, 0f, worldMask);
         
-        // 환경 타격 후보군 수집
+        // ?�경 ?��??�보�??�집
         List<Collider2D> environmentTargets = new List<Collider2D>();
         
         foreach (var col in hits)
         {
-            // 부모까지 포함해 SurfaceInfo 탐색
+            // 부모까지 ?�함??SurfaceInfo ?�색
             SurfaceInfo surface = col.GetComponentInParent<SurfaceInfo>();
             if (surface == null) continue;
 
-            // 파괴 가능한 벽 감지 시 후보군 추가 (추후 다른 파괴 가능 오브젝트 추가 시 확장 가능)
+            // ?�괴 가?�한 �?감�? ???�보�?추�? (추후 ?�른 ?�괴 가???�브?�트 추�? ???�장 가??
             if (surface.type == SurfaceType.BreakableWall || surface.type == SurfaceType.Devil_BreakableWall)
             {
                 environmentTargets.Add(col);
             }
         }
 
-        // 우선순위 정렬 및 단일 타격 처리
+        // ?�선?�위 ?�렬 �??�일 ?��?처리
         if (environmentTargets.Count > 0)
         {
-            // 플레이어(공격 원점)로부터 가장 가까운 순서로 정렬
+            // ?�레?�어(공격 ?�점)로�???가??가까운 ?�서�??�렬
             environmentTargets.Sort((a, b) => 
                 Vector2.Distance(session.origin, a.transform.position)
                 .CompareTo(Vector2.Distance(session.origin, b.transform.position)));
 
-            // [핵심] 가장 가까운 1개의 오브젝트만 타격하여 한 번의 스윙에 여러 벽이 부서지는 현상 방지
+            // [?�심] 가??가까운 1개의 ?�브?�트�??�격하????번의 ?�윙???�러 벽이 부?��????�상 방�?
             var closestHit = environmentTargets[0];
             
             IDamageable damageable = closestHit.GetComponentInParent<IDamageable>();
             if (damageable != null && !damageable.IsInvincible)
             {
-                // 이미 맞은 대상인지 체크
+                // ?��? 맞�? ?�?�인지 체크
                 if (!session.alreadyHit.Contains(closestHit.gameObject))
                 {
                     int finalDamage = Mathf.RoundToInt(session.attack.baseDamage * session.damageMultiplier);
@@ -215,7 +215,7 @@ public class HitResolver : MonoBehaviour
 
                     damageable.TakeDamage(info);
                     
-                    // 중복 히트 방지
+                    // 중복 ?�트 방�?
                     session.alreadyHit.Add(closestHit.gameObject);
                 }
             }
@@ -227,7 +227,7 @@ public class HitResolver : MonoBehaviour
     #region Stage 2: Validation
     
     /// <summary>
-    /// 유효한 대상 필터링 (무적, 중복 등)
+    /// ?�효???�???�터�?(무적, 중복 ??
     /// </summary>
     private List<ValidatedTarget> ValidateTargets(List<Collider2D> candidates, AttackSession session)
     {
@@ -235,13 +235,13 @@ public class HitResolver : MonoBehaviour
         
         foreach (var col in candidates)
         {
-            // 이미 이번 공격에 맞은 대상 스킵
+            // ?��? ?�번 공격??맞�? ?�???�킵
             if (session.alreadyHit.Contains(col.gameObject))
             {
                 continue;
             }
             
-            // IDamageable 확인
+            // IDamageable ?�인
             var damageable = col.GetComponent<IDamageable>();
             if (damageable == null)
             {
@@ -254,10 +254,10 @@ public class HitResolver : MonoBehaviour
                 continue;
             }
             
-            // IEnemyReaction 확인 (선택적)
+            // IEnemyReaction ?�인 (?�택??
             var reaction = col.GetComponent<IEnemyReaction>();
             
-            // 유효 대상 추가
+            // ?�효 ?�??추�?
             validTargets.Add(new ValidatedTarget
             {
                 gameObject = col.gameObject,
@@ -265,7 +265,7 @@ public class HitResolver : MonoBehaviour
                 reaction = reaction
             });
             
-            // 중복 히트 방지
+            // 중복 ?�트 방�?
             session.alreadyHit.Add(col.gameObject);
         }
         
@@ -277,7 +277,7 @@ public class HitResolver : MonoBehaviour
     #region Stage 3: Application
     
     /// <summary>
-    /// 데미지 적용 및 반응 호출
+    /// ?��?지 ?�용 �?반응 ?�출
     /// </summary>
     private HitResult ApplyDamage(List<ValidatedTarget> targets, AttackSession session)
     {
@@ -286,31 +286,31 @@ public class HitResolver : MonoBehaviour
         
         foreach (var target in targets)
         {
-            // 최종 데미지 계산 (폼 보정 적용)
+            // 최종 ?��?지 계산 (??보정 ?�용)
             int finalDamage = Mathf.RoundToInt(session.attack.baseDamage * session.damageMultiplier);
             
-            // 넉백 방향 계산
+            // ?�백 방향 계산
             Vector2 knockbackDir;
             
             if (session.attack.knockbackMode == KnockbackMode.RadialFromOrigin)
             {
-                // 방사형 (Origin -> Target)
+                // 방사??(Origin -> Target)
                 knockbackDir = (target.gameObject.transform.position - (Vector3)session.origin).normalized;
                 
-                // Z축 노이즈 제거 및 안전장치
+                // Z�??�이�??�거 �??�전?�치
                 if (knockbackDir == Vector2.zero)
                 {
-                    // 위치가 겹치면 랜덤 또는 Facing 방향으로 밀어냄
+                    // ?�치가 겹치�??�덤 ?�는 Facing 방향?�로 밀?�냄
                     knockbackDir = new Vector2(session.facing, 0);
                 }
             }
             else
             {
-                // 고정 방향 (Facing 기준)
+                // 고정 방향 (Facing 기�?)
                 knockbackDir = new Vector2(session.facing, 0);
             }
             
-            // DamageInfo 생성
+            // DamageInfo ?�성
             DamageInfo info = new DamageInfo
             {
                 damage = finalDamage,
@@ -320,16 +320,16 @@ public class HitResolver : MonoBehaviour
                 stunDuration = session.attack.stunDuration, // Pass stun duration
                 damageType = DamageType.Physical,
                 hitType = HitType.Light, // Defaulting for now
-                source = session.attacker, // [Fix] Source 할당 (Aggro 시스템 핵심)
+                source = session.attacker,
                 ignoreArmor = false,
                 ignoreInvincibility = false,
                 canBeParried = true
             };
             
-            // 데미지 적용
+            // ?��?지 ?�용
             target.damageable.TakeDamage(info);
             
-            // Reaction 호출 (attacker 포함)
+            // Reaction ?�출 (attacker ?�함)
             target.reaction?.OnHitReaction(info, session.attacker);
             
             // 결과 기록
@@ -337,7 +337,7 @@ public class HitResolver : MonoBehaviour
             result.hitTargets.Add(target.gameObject);
         }
         
-        // [New] 플레이어 공격 명중 시 스킬 게이지(소울) 획득
+        // [New] ?�레?�어 공격 명중 ???�킬 게이지(?�울) ?�득
         if (result.hitCount > 0 && session.attacker != null)
         {
             var skillResource = session.attacker.GetComponent<PlayerSkillResource>();
@@ -380,34 +380,34 @@ public class HitResolver : MonoBehaviour
 }
 
 /// <summary>
-/// 공격 세션: 단일 공격의 수명 관리 단위
-/// HitResolver는 Stateless, 상태는 Session이 소유
+/// 공격 ?�션: ?�일 공격???�명 관�??�위
+/// HitResolver??Stateless, ?�태??Session???�유
 /// </summary>
 public class AttackSession
 {
     public AttackData attack;
     public Vector2 origin;
-    public int facing;  // 1: 오른쪽, -1: 왼쪽
+    public int facing;  // 1: ?�른�? -1: ?�쪽
     public LayerMask targetLayer;
     public GameObject attacker;
     
-    // 폼 보정값
+    // ??보정�?
     public float damageMultiplier = 1f;
     public float rangeMultiplier = 1f;
     
-    // 반동(Recoil) 감지용
+    // 반동(Recoil) 감�???
     public LayerMask recoilTargetLayer;
     public List<SurfaceType> recoilTargetSurfaces;
     
-    // 중복 히트 방지 (세션이 소유)
+    // 중복 ?�트 방�? (?�션???�유)
     public HashSet<GameObject> alreadyHit = new HashSet<GameObject>();
     
-    // 수명 관리
+    // ?�명 관�?
     public float lifetime;
 }
 
 /// <summary>
-/// 검증된 대상 정보
+/// 검증된 ?�???�보
 /// </summary>
 public struct ValidatedTarget
 {
@@ -417,7 +417,7 @@ public struct ValidatedTarget
 }
 
 /// <summary>
-/// 적중 결과
+/// ?�중 결과
 /// </summary>
 public struct HitResult
 {
@@ -427,3 +427,5 @@ public struct HitResult
     
     public bool HasHit => hitCount > 0;
 }
+
+

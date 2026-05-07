@@ -11,7 +11,7 @@ public class PetGhostState : PetState
     {
         base.Enter();
         
-        // 콜라이더 완전 비활성화 (제미나이 개선: Trigger보다 안전)
+        // 콜라이더 완전 비활성화
         pet.Collider.enabled = false;
         
         // 투명도 감소
@@ -34,7 +34,7 @@ public class PetGhostState : PetState
         // 둥실거림 활성화
         pet.SetFloating(true);
         
-        // [개선] 탈출 시간 기록 및 이유 초기화
+        // 탈출 시간 기록 및 이유 초기화
         pet.LastGhostExitTime = Time.time;
         pet.CurrentGhostReason = GhostReason.None;
     }
