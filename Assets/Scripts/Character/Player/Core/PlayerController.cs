@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 
-public class PlayerController : MonoBehaviour, ISaveable
+public class PlayerController : MonoBehaviour
 {
     #region State Machine Variables
     public PlayerStateMachine StateMachine { get; private set; }
@@ -11,10 +11,11 @@ public class PlayerController : MonoBehaviour, ISaveable
     public PlayerMoveState MoveState { get; private set; }
     public PlayerInAirState InAirState { get; private set; }
     public PlayerDashState DashState { get; private set; }
-    public PlayerSprintState SprintState { get; private set; }
-    public PlayerSprintStopState SprintStopState { get; private set; }
-    public PlayerSprintTurnState SprintTurnState { get; private set; }
-    public PlayerSprintJumpPrepareState SprintJumpPrepareState { get; private set; }
+    // [SPRINT_DISABLED] Sprint 관련 상태 비활성화
+    // public PlayerSprintState SprintState { get; private set; }
+    // public PlayerSprintStopState SprintStopState { get; private set; }
+    // public PlayerSprintTurnState SprintTurnState { get; private set; }
+    // public PlayerSprintJumpPrepareState SprintJumpPrepareState { get; private set; }
     public PlayerWallSlideState WallSlideState { get; private set; }
     public PlayerWallJumpState WallJumpState { get; private set; }
     public PlayerWallClimbState WallClimbState { get; private set; }
@@ -30,8 +31,9 @@ public class PlayerController : MonoBehaviour, ISaveable
 
     #region State Variables
     public bool CanDoubleJump { get; set; }
-    public bool IsSprintJumping { get; set; }
-    public float SprintJumpVelocityX { get; set; }
+    // [SPRINT_DISABLED]
+    // public bool IsSprintJumping { get; set; }
+    // public float SprintJumpVelocityX { get; set; }
     public int DashCountLeft { get; set; }
     public float GlideHoldTime { get; set; }
     public bool IsGliding { get; private set; }
@@ -45,7 +47,7 @@ public class PlayerController : MonoBehaviour, ISaveable
     public float InputX => inputReader.InputX;
     public float InputY => inputReader.InputY;
     public bool DashInput => inputReader.DashInput;
-    public bool SprintInputHeld => inputReader.SprintInputHeld;
+    // [SPRINT_DISABLED] public bool SprintInputHeld => inputReader.SprintInputHeld;
     public float LastPressedJumpTime { get; set; }
     public float LastPressedDashTime { get; set; }
     public float LastPressedAttackTime { get; set; }
@@ -72,7 +74,7 @@ public class PlayerController : MonoBehaviour, ISaveable
     public bool WasLongWallJump { get; set; }
     public float timeSinceLanded = Mathf.Infinity;
 
-    public float lastSprintTurnTime = -10f;
+    // [SPRINT_DISABLED] public float lastSprintTurnTime = -10f;
     private float lastDashTime = -10f;
     private float lastWallJumpTime = -10f;
     private float lastGrappleTime = -10f;
@@ -171,9 +173,6 @@ public class PlayerController : MonoBehaviour, ISaveable
         StateMachine = new PlayerStateMachine();
         IsFacingRight = true;
         InitializeStates();
-
-        // ISaveable ?깅줉 (Awake?먯꽌 ?깅줉 ???€?대컢 怨꾩빟)
-        SaveManager.Instance?.Register(this);
     }
 
 
@@ -184,10 +183,11 @@ public class PlayerController : MonoBehaviour, ISaveable
         MoveState = new PlayerMoveState(this, StateMachine, Mado.Character.Animation.PlayerAnimType.Move);
         InAirState = new PlayerInAirState(this, StateMachine, Mado.Character.Animation.PlayerAnimType.InAir);
         DashState = new PlayerDashState(this, StateMachine, Mado.Character.Animation.PlayerAnimType.Dash);
-        SprintState = new PlayerSprintState(this, StateMachine, Mado.Character.Animation.PlayerAnimType.Sprint);
-        SprintStopState = new PlayerSprintStopState(this, StateMachine, Mado.Character.Animation.PlayerAnimType.SprintStop);
-        SprintTurnState = new PlayerSprintTurnState(this, StateMachine, Mado.Character.Animation.PlayerAnimType.SprintTurn);
-        SprintJumpPrepareState = new PlayerSprintJumpPrepareState(this, StateMachine, Mado.Character.Animation.PlayerAnimType.Jump);
+        // [SPRINT_DISABLED]
+        // SprintState = new PlayerSprintState(this, StateMachine, Mado.Character.Animation.PlayerAnimType.Sprint);
+        // SprintStopState = new PlayerSprintStopState(this, StateMachine, Mado.Character.Animation.PlayerAnimType.SprintStop);
+        // SprintTurnState = new PlayerSprintTurnState(this, StateMachine, Mado.Character.Animation.PlayerAnimType.SprintTurn);
+        // SprintJumpPrepareState = new PlayerSprintJumpPrepareState(this, StateMachine, Mado.Character.Animation.PlayerAnimType.Jump);
         WallSlideState = new PlayerWallSlideState(this, StateMachine, Mado.Character.Animation.PlayerAnimType.WallSlide);
         WallJumpState = new PlayerWallJumpState(this, StateMachine, Mado.Character.Animation.PlayerAnimType.Jump);
         WallClimbState = new PlayerWallClimbState(this, StateMachine, Mado.Character.Animation.PlayerAnimType.WallClimb);
@@ -213,41 +213,28 @@ public class PlayerController : MonoBehaviour, ISaveable
 
     private void Start()
     {
-        // ???먮룞 李얘린
         if (Pet == null)
         {
             Pet = FindFirstObjectByType<PetController>();
         }
         
-        // GameManager???먯떊???깅줉
         if (GameManager.Instance != null)
         {
             GameManager.Instance.RegisterPlayer(this);
         }
+
+        if (GameProgressManager.Instance != null && GameProgressManager.Instance.CurrentData != null)
+        {
+            var data = GameProgressManager.Instance.CurrentData;
+            FormType targetForm = data.currentWorld == "Devil" ? FormType.Devil : FormType.Normal;
+            if (formManager != null)
+            {
+                formManager.InitializeFormData(); 
+                formManager.TransformTo(targetForm);
+            }
+        }
         
         StateMachine.Initialize(IdleState);
-    }
-
-    // ?? ISaveable ??????????????????????????????????????????
-
-    public void OnSave(SaveData data)
-    {
-        data.lastSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
-    }
-
-    public void OnLoad(SaveData data)
-    {
-        // 1. 李⑥썝???곕Ⅸ ??媛뺤젣 ?숆린??
-        FormType targetForm = data.currentWorld == "Devil" ? FormType.Devil : FormType.Normal;
-        if (formManager != null)
-        {
-            formManager.InitializeFormData(); // ?덉쟾?μ튂
-            formManager.TransformTo(targetForm);
-        }
-
-        // 2. ?곹깭 珥덇린??
-        if (StateMachine != null && IdleState != null)
-            StateMachine.ChangeState(IdleState);
     }
 
     private void Update()
@@ -646,7 +633,6 @@ public class PlayerController : MonoBehaviour, ISaveable
     
     private void OnDestroy()
     {
-        SaveManager.Instance?.Unregister(this);
         ForceEndGlide();
     }
     

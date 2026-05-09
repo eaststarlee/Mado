@@ -183,23 +183,22 @@ public class CharacterFormData : ScriptableObject
 		public float dashCooldown; // 연속 대쉬 방지용 쿨타임
 		public float dashEndYMultiplier; // 대시가 끝날 때 y축 속도에 곱해질 값
 
-		[Space(20)]
-		[Header("Sprint")]
-		public bool canDashToSprint;
-		public float sprintSpeed;
-		public float sprintStopDeceleration; // 스프린트 정지 시 감속도
-		[HideInInspector] public float sprintStopDeccelAmount; // 실제 감속 힘
-		[Space(5)]
-		public float sprintTurnDuration; // 스프린트 중 방향 전환에 걸리는 시간 (짧을수록 빠릿함)
-		public float sprintTurnDeceleration; // 스프린트 방향 전환 시 감속도 (높을수록 덜 미끄러짐)
-		[HideInInspector] public float sprintTurnDeccelAmount; // 실제 감속 힘
-		public float sprintTurnCooldown; // 스프린트 턴 재사용 대기시간 (작을수록 자주 턴 가능)
+        [Space(20)]
+        [Header("Sprint")] // [SPRINT_DISABLED] - 인스펙터 노출은 유지하되 HideInInspector로 숨김
+        [HideInInspector] public bool canDashToSprint;
+        [HideInInspector] public float sprintSpeed;
+        [HideInInspector] public float sprintStopDeceleration; // 스프린트 정지 시 감속도
+        [HideInInspector] public float sprintStopDeccelAmount; // 실제 감속 힘 (원래도 HideInInspector)
+        [Space(5)]
+        [HideInInspector] public float sprintTurnDuration; // 스프린트 중 방향 전환에 걸리는 시간
+        [HideInInspector] public float sprintTurnDeceleration; // 스프린트 방향 전환 시 감속도
+        [HideInInspector] public float sprintTurnDeccelAmount; // 실제 감속 힘 (원래도 HideInInspector)
+        [HideInInspector] public float sprintTurnCooldown; // 스프린트 턴 재사용 대기시간
 
-		[Header("Sprint Turn Jump Restrictions")]
-		[Tooltip("스프린트 턴 이후 다시 점프가 가능해지기까지 필요한 최소 속도 비율 (0.0~1.0)")]
-		[Range(0f, 1f)] public float sprintTurnJumpSpeedThreshold = 0.8f;
-		[Tooltip("스프린트 턴 이후 무조건 점프가 불가능한 최소 시간 (속도 조건보다 우선함)")]
-		public float sprintTurnJumpLockDuration = 0.2f;
+        // [SPRINT_DISABLED] Sprint Turn Jump Restrictions
+        [HideInInspector] public float sprintTurnJumpSpeedThreshold;
+        [HideInInspector] public float sprintTurnJumpLockDuration;
+
 
 
 

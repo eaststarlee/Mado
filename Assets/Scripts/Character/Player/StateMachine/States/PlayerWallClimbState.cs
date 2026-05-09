@@ -16,7 +16,7 @@ public class PlayerWallClimbState : PlayerState
     {
         base.Enter();
         player.OnWallJump(); // 벽 점프 쿨타임 설정
-        player.IsSprintJumping = false;
+        // [SPRINT_DISABLED] player.IsSprintJumping = false;
         
         // 플래그 및 타이머 초기화
         isCeilingHit = false;

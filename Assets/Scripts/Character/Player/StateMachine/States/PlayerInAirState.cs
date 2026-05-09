@@ -53,16 +53,16 @@ public class PlayerInAirState : PlayerState
         // 그렇지 않으면 일반적인 공중 상태(낙하 등)로 시작
         if (player.LastPressedJumpTime > 0 && player.LastOnGroundTime > 0)
         {
-            // SprintJumpPrepareState를 거쳐서 왔다면 SprintJump를 실행
-            if (stateMachine.PreviousState == player.SprintJumpPrepareState)
-            {
-
-                SprintJump();
-            }
-            else
-            {
-                Jump();
-            }
+            // [SPRINT_DISABLED] SprintJumpPrepareState 경유 스프린트 점프 비활성화
+            // if (stateMachine.PreviousState == player.SprintJumpPrepareState)
+            // {
+            //     SprintJump();
+            // }
+            // else
+            // {
+            //     Jump();
+            // }
+            Jump();
             player.LastPressedJumpTime = 0; // 초기 점프에 사용된 버퍼를 소모
         }
         else
@@ -209,12 +209,13 @@ public class PlayerInAirState : PlayerState
             // [ActionSystem] 착지 확정 이벤트 발생 (SlamAction 등에서 구독)
             player.RaiseGroundedConfirmed();
             
-            // 스프린트 점프/낙하 중이었고, 여전히 스프린트 키(C)를 누르고 있다면 다시 스프린트로 이어짐
-            if (player.IsSprintJumping && player.SprintInputHeld)
-            {
-                stateMachine.ChangeState(player.SprintState);
-            }
-            else if (player.InputX != 0)
+            // [SPRINT_DISABLED] 착지 후 Sprint 전환 비활성화
+            // if (player.IsSprintJumping && player.SprintInputHeld)
+            // {
+            //     stateMachine.ChangeState(player.SprintState);
+            // }
+            // else
+            if (player.InputX != 0)
             {
                 stateMachine.ChangeState(player.MoveState);
             }
@@ -291,13 +292,14 @@ public class PlayerInAirState : PlayerState
         
 
 
-        // 스프린트 점프 상태 처리
-        if (player.IsSprintJumping)
-        {
-            // 수평 속도 강제 유지
-            player.RB.linearVelocity = new Vector2(player.SprintJumpVelocityX, player.RB.linearVelocity.y);
-        }
-        else if (postGrappleTimer > 0f)
+        // [SPRINT_DISABLED] 스프린트 점프 물리 처리 비활성화
+        // if (player.IsSprintJumping)
+        // {
+        //     // 수평 속도 강제 유지
+        //     player.RB.linearVelocity = new Vector2(player.SprintJumpVelocityX, player.RB.linearVelocity.y);
+        // }
+        // else
+        if (postGrappleTimer > 0f)
         {
             // 그래플 종료 후 관성 서서히 죽이기 (Damping)
             postGrappleTimer -= Time.fixedDeltaTime;
@@ -348,7 +350,7 @@ public class PlayerInAirState : PlayerState
     {
         isJumping = true;
         jumpCut = false;
-        player.IsSprintJumping = false;
+        // [SPRINT_DISABLED] player.IsSprintJumping = false;
         player.RB.linearVelocity = new Vector2(player.RB.linearVelocity.x, player.ActiveFormData.jump.jumpForce);
     }
 
@@ -359,7 +361,7 @@ public class PlayerInAirState : PlayerState
     {
         isJumping = true;
         jumpCut = false; // 강제 하강(JumpCut) 방지
-        player.IsSprintJumping = false;
+        // [SPRINT_DISABLED] player.IsSprintJumping = false;
     }
 
     /// <summary>
@@ -369,22 +371,17 @@ public class PlayerInAirState : PlayerState
     {
         // 1. 점프 상태로 인식시킴 (중력 계산 로직에서 사용)
         isJumping = true;
-        
-        // 2. 점프 컷(Jump Cut) 방지
-        // Pogo 직후 상승 관성을 유지하기 위해 초기화
         jumpCut = false;
-        
-        // 3. 스프린트 점프 해제 (순수 수직 반동)
-        player.IsSprintJumping = false; 
+        // [SPRINT_DISABLED] player.IsSprintJumping = false; 
     }
 
     private void SprintJump()
     {
-        isJumping = true;
-        jumpCut = false;
-        player.IsSprintJumping = true;
-        // SprintState에서 미리 저장해둔 속도를 사용하여 점프
-        player.RB.linearVelocity = new Vector2(player.SprintJumpVelocityX, player.ActiveFormData.jump.sprintJumpForce);
+        // [SPRINT_DISABLED] SprintJump 메서드 비활성화
+        // isJumping = true;
+        // jumpCut = false;
+        // player.IsSprintJumping = true;
+        // player.RB.linearVelocity = new Vector2(player.SprintJumpVelocityX, player.ActiveFormData.jump.sprintJumpForce);
     }
     
     private void StartDoubleJumpAnticipation()
@@ -421,8 +418,8 @@ public class PlayerInAirState : PlayerState
         vel.y = player.ActiveFormData.jump.doubleJumpForce;
         player.RB.linearVelocity = vel;
         
-        // 2. 더블 점프 시 스프린트 점프의 속도 고정을 해제하여 자유로운 공중 제어를 허용합니다.
-        player.IsSprintJumping = false;
+        // [SPRINT_DISABLED] 더블 점프 시 IsSprintJumping 해제 비활성화
+        // player.IsSprintJumping = false;
         
         // 3. 상태 동기화
         isJumping = true;

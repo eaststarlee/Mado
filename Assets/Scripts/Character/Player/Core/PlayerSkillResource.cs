@@ -6,7 +6,7 @@ using UnityEngine;
 /// 차후 아이템 획득을 통한 최대치(Max Gauge) 영구 증가 기능을 지원합니다.
 /// </summary>
 [RequireComponent(typeof(PlayerController))]
-public class PlayerSkillResource : MonoBehaviour, ISaveable
+public class PlayerSkillResource : MonoBehaviour
 {
     private PlayerController playerController;
 
@@ -23,14 +23,6 @@ public class PlayerSkillResource : MonoBehaviour, ISaveable
     private void Awake()
     {
         playerController = GetComponent<PlayerController>();
-
-        // ISaveable 등록 (Awake에서 등록 — 타이밍 계약)
-        SaveManager.Instance?.Register(this);
-    }
-
-    private void OnDestroy()
-    {
-        SaveManager.Instance?.Unregister(this);
     }
 
     private void Start()
@@ -39,17 +31,23 @@ public class PlayerSkillResource : MonoBehaviour, ISaveable
     }
 
     /// <summary>
-    /// 초기 게이지 설정 (캐릭터 폼 데이터 기반)
+    /// 초기 게이지 설정 (캐릭터 폼 데이터 및 게임 진행 상황 반영)
     /// </summary>
     private void InitializeGauge()
     {
         if (playerController != null && playerController.ActiveFormData != null)
         {
-            // 기본 시작 최대치로 초기화 (차후 세이브/로드 기능이 붙으면 세이브 데이터로 덮어씌움)
+            // 기본 시작 최대치
             currentMaxGauge = playerController.ActiveFormData.skillResource.baseMaxGauge;
-            
-            // 시작 시 게이지 0으로 시작 (원하면 꽉 채워서 시작할 수도 있음)
             currentGauge = 0; 
+            
+            // 씬 로드 시 중앙 데이터로부터 현재 상태 반영
+            if (GameProgressManager.Instance != null && GameProgressManager.Instance.CurrentData != null)
+            {
+                var data = GameProgressManager.Instance.CurrentData;
+                currentMaxGauge = data.maxSP > 0 ? data.maxSP : currentMaxGauge;
+                currentGauge = data.currentSP;
+            }
             
             NotifyGaugeChanged();
         }
@@ -64,8 +62,6 @@ public class PlayerSkillResource : MonoBehaviour, ISaveable
 
         currentGauge = Mathf.Min(currentGauge + amount, currentMaxGauge);
         NotifyGaugeChanged();
-        
-        // Debug.Log($"[SkillResource] Gained {amount} gauge! Current: {currentGauge}/{currentMaxGauge}");
     }
 
     /// <summary>
@@ -74,7 +70,7 @@ public class PlayerSkillResource : MonoBehaviour, ISaveable
     /// <returns>소모 성공 여부 (게이지가 충분했는지)</returns>
     public bool TryConsumeGauge(int amount)
     {
-        if (amount <= 0) return true; // 소모 비용이 0이면 무조건 성공
+        if (amount <= 0) return true; 
 
         if (currentGauge >= amount)
         {
@@ -83,7 +79,6 @@ public class PlayerSkillResource : MonoBehaviour, ISaveable
             return true;
         }
 
-        // 게이지 부족
         return false;
     }
 
@@ -95,10 +90,6 @@ public class PlayerSkillResource : MonoBehaviour, ISaveable
         if (amount <= 0) return;
 
         currentMaxGauge += amount;
-        
-        // 최대치 증가 시 현재 게이지도 그만큼 채워주려면 아래 코드 주석 해제
-        // currentGauge += amount; 
-        
         NotifyGaugeChanged();
     }
     
@@ -114,21 +105,5 @@ public class PlayerSkillResource : MonoBehaviour, ISaveable
     private void NotifyGaugeChanged()
     {
         PlayerEvents.RaiseSkillGaugeChanged(currentGauge, currentMaxGauge);
-    }
-
-    // ── ISaveable ────────────────────────────────────────
-
-    public void OnSave(SaveData data)
-    {
-        data.currentSP = currentGauge;
-        data.maxSP     = currentMaxGauge;
-    }
-
-    public void OnLoad(SaveData data)
-    {
-        // 로드 시 SP는 0으로 시작 (체크포인트 정책: SP는 Checkpoint 데이터)
-        currentMaxGauge = data.maxSP > 0 ? data.maxSP : currentMaxGauge;
-        currentGauge    = data.currentSP;
-        NotifyGaugeChanged();
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 /// 세이브 포인트 (할로우나이트 벤치 스타일)
 /// 플레이어가 상호작용하면 SaveManager를 통해 전체 게임 상태를 저장합니다.
 /// </summary>
-public class SavePoint : MonoBehaviour
+public class SavePoint : SpawnPoint
 {
     [Header("Settings")]
     public bool isDefaultSavePoint = true;
@@ -12,10 +12,6 @@ public class SavePoint : MonoBehaviour
     [Header("Spawn Points")]
     public Transform petSpawnPoint; // 펫 스폰 위치 (에디터에서 설정)
 
-    [Header("Save Settings")]
-    [Tooltip("이 SavePoint의 SpawnId. SaveData.lastSpawnId에 기록됩니다.")]
-    public string spawnId = "Default";
-    
     private bool playerInRange = false;
     private bool isActivated = false;
     private PlayerController targetPlayer;
@@ -75,7 +71,7 @@ public class SavePoint : MonoBehaviour
             // TODO: 처음 발견 시 이펙트/사운드
         }
         
-        // GameManager에 이 포인트 등록 (리스폰 기준점)
+        // GameManager에 이 포인트 등록 (기존 호환성용)
         GameEvents.RaiseSavePointActivated(transform);
         
         // 체력 회복
@@ -85,24 +81,30 @@ public class SavePoint : MonoBehaviour
         }
 
         // ── 세이브 실행 ──────────────────────────────────
-        if (SaveManager.Instance != null)
+        if (GameProgressManager.Instance != null)
         {
-            // 위치/스폰 정보를 CurrentData에 먼저 기록
-            var data = SaveManager.Instance.CurrentData;
+            var data = GameProgressManager.Instance.CurrentData;
             if (data != null)
             {
+                data.lastSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
                 data.lastSpawnId = spawnId;
-                // lastSceneName은 PlayerController.OnSave에서 갱신됨
+                data.lastPosition = new float[] { transform.position.x, transform.position.y, transform.position.z };
+
+                // 스탯 갱신 (선택적)
+                if (targetPlayer != null && targetPlayer.Health != null)
+                {
+                    data.currentHP = targetPlayer.Health.CurrentHealth;
+                }
             }
 
-            // ISaveable 브로드캐스트 후 비동기 저장 (fire-and-forget)
-            _ = SaveManager.Instance.SaveAsync();
+            // 파일로 비동기 덤프
+            GameProgressManager.Instance.SaveCurrentProgress();
 
-            Debug.Log($"[SavePoint] '{spawnId}' 세이브 포인트 저장 시작.");
+            Debug.Log($"[SavePoint] '{spawnId}' 세이브 포인트 저장 완료.");
         }
         else
         {
-            Debug.LogWarning("[SavePoint] SaveManager 인스턴스가 없습니다. 저장을 건너뜁니다.");
+            Debug.LogWarning("[SavePoint] GameProgressManager 인스턴스가 없습니다. 저장을 건너뜁니다.");
         }
 
         // TODO: 앉는 애니메이션 / 저장 이펙트

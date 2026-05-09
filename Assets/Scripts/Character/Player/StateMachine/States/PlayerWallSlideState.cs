@@ -11,7 +11,7 @@ public class PlayerWallSlideState : PlayerState
     public override void Enter()
     {
         base.Enter();
-        player.IsSprintJumping = false; // 스프린트 점프 상태 초기화
+        // [SPRINT_DISABLED] player.IsSprintJumping = false;
         
         // Enter 단계에서 즉시 벽 방향으로 밀착시킴
         // Vector2.zero로 하면 PhysicsUpdate 전에 LogicUpdate의 IsTouchingWall 체크에서 실패할 수 있음

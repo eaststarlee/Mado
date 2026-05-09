@@ -46,15 +46,25 @@ public class BootSequencer : MonoBehaviour
 
     private IEnumerator Start()
     {
+        // ── 0. 초기화 중 UI 노출 및 이벤트 구독 (깜빡임 & 2번 클릭 방지) ──
+        if (mainMenuUI != null)
+        {
+            SubscribeToMenuEvents();
+            if (autoLoadSlot < 0)
+            {
+                mainMenuUI.Show();
+            }
+        }
+
         // ── 1. 모든 싱글톤 매니저 Awake 완료 대기 ──────────
         int waitFrames = 0;
-        while ((SceneLoader.Instance == null || SaveManager.Instance == null) && waitFrames < 15)
+        while ((SceneLoader.Instance == null || GameProgressManager.Instance == null) && waitFrames < 15)
         {
             waitFrames++;
             yield return null;
         }
 
-        if (SceneLoader.Instance == null || SaveManager.Instance == null)
+        if (SceneLoader.Instance == null || GameProgressManager.Instance == null)
         {
             Debug.LogError("[BootSequencer] 필수 매니저를 찾지 못했습니다. Master 씬 구성을 확인하세요.");
             yield break;
@@ -80,9 +90,8 @@ public class BootSequencer : MonoBehaviour
                 SceneLoader.Instance.BindToAlreadyLoadedRoom(scene.name);
 
                 // 모든 Start() 완료 후 ISaveable 복원 (임시 슬롯 0 사용)
-                SaveManager.Instance.LoadSlot(0);
+                GameProgressManager.Instance.LoadSlot(0);
                 yield return new WaitForEndOfFrame();
-                SaveManager.Instance.BroadcastLoad();
 
                 PlaytimeTracker.Instance?.StartTracking();
                 yield break;
@@ -98,13 +107,8 @@ public class BootSequencer : MonoBehaviour
         }
         else
         {
-            // UI 표시 — BootSequencer는 이벤트를 구독하고 Show()만 호출합니다
-            if (mainMenuUI != null)
-            {
-                SubscribeToMenuEvents();
-                mainMenuUI.Show();
-            }
-            else
+            // UI가 이미 0단계에서 Show() 되었으므로, 여기서는 대기만 합니다.
+            if (mainMenuUI == null)
             {
                 Debug.LogWarning("[BootSequencer] MainMenuUI가 연결되지 않았습니다. 임시로 슬롯 0을 로드합니다.");
                 _selectedSlot   = 0;
@@ -123,14 +127,9 @@ public class BootSequencer : MonoBehaviour
         }
 
         // ── 3. 슬롯 로드 ────────────────────────────────────
-        bool loaded = SaveManager.Instance.LoadSlot(_selectedSlot);
-        if (!loaded)
-        {
-            Debug.LogError("[BootSequencer] 슬롯 로드 실패.");
-            yield break;
-        }
+        GameProgressManager.Instance.LoadSlot(_selectedSlot);
 
-        var data = SaveManager.Instance.CurrentData;
+        var data = GameProgressManager.Instance.CurrentData;
         Debug.Log($"[BootSequencer] 슬롯 {_selectedSlot} 로드 완료 → {data.lastSceneName} (Spawn: {data.lastSpawnId})");
 
         // ── 4. 플레이어/펫 활성화 보장 ─────────────────────
@@ -139,17 +138,15 @@ public class BootSequencer : MonoBehaviour
         // ── 5. 씬 로드 ──────────────────────────────────────
         SceneLoader.Instance.LoadNextRoom(data.lastSceneName, data.lastSpawnId);
 
-        // ── 6. 씬 로드 완료 + Start() 사이클 후 ISaveable 복원 ─
+        // ── 6. 씬 로드 완료 + Start() 사이클 후 ─
         // SceneLoader가 IsTransitioning을 false로 바꿀 때까지 대기
         yield return new WaitUntil(() => !SceneLoader.Instance.IsTransitioning);
         yield return new WaitForEndOfFrame(); // 모든 Start() 완료 보장
 
-        SaveManager.Instance.BroadcastLoad();
-
         // ── 7. 플레이 시간 추적 시작 ────────────────────────
         if (PlaytimeTracker.Instance != null)
         {
-            PlaytimeTracker.Instance.SetInitial(data.totalPlayTime);
+            PlaytimeTracker.Instance.SetInitial(data.meta.totalPlayTime);
             PlaytimeTracker.Instance.StartTracking();
         }
 

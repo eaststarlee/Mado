@@ -83,9 +83,11 @@ public class GameManager : MonoBehaviour
     {
         if (isRespawning) return;
         
-        // Persistent 데이터(재화, 능력 등)는 유지하고 Checkpoint 데이터(위치, 체력)만 롤백
-        SaveManager.Instance?.RollbackToCheckpoint();
-        
+        // 사망 시 최근 세이브 데이터 상태로 롤백
+        if (GameProgressManager.Instance != null && GameProgressManager.Instance.ActiveSlotIndex >= 0)
+        {
+            GameProgressManager.Instance.LoadSlot(GameProgressManager.Instance.ActiveSlotIndex);
+        }
         StartCoroutine(RespawnPlayer());
     }
     

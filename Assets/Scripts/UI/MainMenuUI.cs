@@ -67,8 +67,7 @@ public class MainMenuUI : MonoBehaviour
             slotItems[i].OnDeleteRequested += HandleDeleteRequested;
         }
 
-        // 시작 시 비활성 — BootSequencer가 Show()로 활성화
-        gameObject.SetActive(false);
+        // 시작 시 상태 유지 — BootSequencer가 제어하지만 초기 깜빡임 방지를 위해 스스로 끄지 않음
     }
 
     private void OnDestroy()
@@ -104,8 +103,11 @@ public class MainMenuUI : MonoBehaviour
     /// <summary>메뉴 전체를 활성화하고 메인 패널부터 표시합니다.</summary>
     public void Show()
     {
-        gameObject.SetActive(true);
-        ShowMainPanel();
+        if (!gameObject.activeSelf)
+        {
+            gameObject.SetActive(true);
+            ShowMainPanel();
+        }
     }
 
     /// <summary>메뉴 전체를 비활성화합니다.</summary>
@@ -133,13 +135,7 @@ public class MainMenuUI : MonoBehaviour
     /// <summary>SaveManager에서 메타를 다시 읽어 슬롯 표시를 갱신합니다.</summary>
     public void Refresh()
     {
-        if (SaveManager.Instance == null)
-        {
-            Debug.LogError("[MainMenuUI] SaveManager가 없습니다!");
-            return;
-        }
-
-        SaveSlotMeta[] metas = SaveManager.Instance.GetAllSlotMetas();
+        SaveSlotMeta[] metas = SaveSystem.GetAllSlotMetas();
         for (int i = 0; i < slotItems.Length; i++)
         {
             if (slotItems[i] != null && i < metas.Length)
@@ -153,14 +149,13 @@ public class MainMenuUI : MonoBehaviour
 
     private void HandleSlotSelected(int slotIndex)
     {
-        if (SaveManager.Instance == null) return;
-
         SetInteractable(false);
 
-        // 빈 슬롯이면 새 게임 데이터 생성
-        SaveSlotMeta[] metas = SaveManager.Instance.GetAllSlotMetas();
-        if (metas[slotIndex].isEmpty)
-            SaveManager.Instance.NewGame(slotIndex);
+        // 빈 슬롯이면 LoadSlot이 알아서 빈 데이터를 만듦
+        if (GameProgressManager.Instance != null)
+        {
+            GameProgressManager.Instance.LoadSlot(slotIndex);
+        }
 
         // BootSequencer에 이벤트 전달
         OnGameStartRequested?.Invoke(slotIndex);
@@ -177,7 +172,7 @@ public class MainMenuUI : MonoBehaviour
         deleteConfirmPopup.Show(slotIndex, () =>
         {
             SetInteractable(false);
-            SaveManager.Instance?.DeleteSlot(slotIndex);
+            SaveSystem.DeleteSlot(slotIndex);
             Refresh();
         });
     }

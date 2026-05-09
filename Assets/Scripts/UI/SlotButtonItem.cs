@@ -75,12 +75,13 @@ public class SlotButtonItem : MonoBehaviour
                                .LocalDateTime.ToString("MM/dd HH:mm")
                 : "--/-- --:--";
 
-            slotInfoText.text = $"<b>SLOT {_slotIndex + 1}</b>  "
-                              + $"<color=#88ff88>CONTINUE</color>\n"
-                              + $"<size=13><color=#cccccc>"
-                              + $"LOC: {meta.sceneName}  |  "
-                              + $"PLAY: {hours:D2}:{mins:D2}  |  "
-                              + $"SAVE: {date}"
+            slotInfoText.text = $"<size=24><b>SLOT {_slotIndex + 1}</b></size>    "
+                              + $"<color=#88ff88><size=18>CONTINUE</size></color>\n"
+                              + $"<size=18><color=#cccccc>"
+                              + $"Location : {meta.sceneName}\n"
+                              + $"SavePoint : {meta.spawnId}\n"
+                              + $"SaveTime : {date}\n"
+                              + $"PlayTime : {hours:D2}:{mins:D2}"
                               + $"</color></size>";
             backgroundImage.color = colorNormal;
             deleteButton.gameObject.SetActive(true);
@@ -88,7 +89,7 @@ public class SlotButtonItem : MonoBehaviour
     }
 
     // ── 이벤트 발행 ─────────────────────────────────────
-
+    
     private void HandleSelect()        => OnSelected?.Invoke(_slotIndex);
     private void HandleDeleteRequest() => OnDeleteRequested?.Invoke(_slotIndex);
 

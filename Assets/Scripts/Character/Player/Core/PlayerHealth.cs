@@ -7,7 +7,7 @@ using System.Linq;
 /// 플레이어 체력 관리 컴포넌트
 /// </summary>
 [RequireComponent(typeof(PlayerController))]
-public class PlayerHealth : MonoBehaviour, IDamageable, ISaveable
+public class PlayerHealth : MonoBehaviour, IDamageable
 {
     // 무적 소스 정의 (확장 가능)
     public enum InvincibilitySource { None, Hit, SlamImpact, SlamDescent, Dash, RisingAttack, Cutscene }
@@ -60,14 +60,19 @@ public class PlayerHealth : MonoBehaviour, IDamageable, ISaveable
             maxHealth = 5;
             currentHealth = 5;
         }
-
-        // ISaveable 등록 (Awake에서 등록 — 타이밍 계약)
-        SaveManager.Instance?.Register(this);
     }
 
-    private void OnDestroy()
+    private void Start()
     {
-        SaveManager.Instance?.Unregister(this);
+        // 씬 로드 시 중앙 데이터로부터 현재 상태 반영
+        if (GameProgressManager.Instance != null && GameProgressManager.Instance.CurrentData != null)
+        {
+            var data = GameProgressManager.Instance.CurrentData;
+            maxHealth = data.maxHP > 0 ? data.maxHP : maxHealth;
+            currentHealth = data.currentHP > 0 ? data.currentHP : maxHealth;
+        }
+        
+        PlayerEvents.RaiseHealthChanged(currentHealth, maxHealth);
     }
     
     private void Update()
@@ -75,35 +80,6 @@ public class PlayerHealth : MonoBehaviour, IDamageable, ISaveable
         UpdateInvincibilityTimers();
     }
     #endregion
-
-    // ── ISaveable ────────────────────────────────────────
-
-    public void OnSave(SaveData data)
-    {
-        data.currentHP = currentHealth;
-        data.maxHP     = maxHealth;
-    }
-
-    public void OnLoad(SaveData data)
-    {
-        isDead     = false;
-        maxHealth  = data.maxHP > 0 ? data.maxHP : maxHealth;
-        currentHealth = data.currentHP > 0 ? data.currentHP : maxHealth;
-
-        // 시각적 처리 복구
-        if (spriteRenderer != null)
-        {
-            spriteRenderer.enabled = true;
-            spriteRenderer.color   = UnityEngine.Color.white;
-        }
-
-        // 무적 초기화
-        invincibilityTimers.Clear();
-        if (invincibilityCoroutine != null) { StopCoroutine(invincibilityCoroutine); invincibilityCoroutine = null; }
-        SetEnemyCollision(true);
-
-        PlayerEvents.RaiseHealthChanged(currentHealth, maxHealth);
-    }
     
     #region IDamageable Implementation
     /// <summary>

@@ -9,7 +9,7 @@ public class PlayerMoveState : PlayerState
     public override void Enter()
     {
         base.Enter();
-        player.IsSprintJumping = false;
+        // [SPRINT_DISABLED] player.IsSprintJumping = false;
     }
 
     public override void LogicUpdate()

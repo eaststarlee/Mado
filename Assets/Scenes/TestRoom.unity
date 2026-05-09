@@ -1713,8 +1713,8 @@ GameObject:
   m_Component:
   - component: {fileID: 405825913}
   - component: {fileID: 405825916}
-  - component: {fileID: 405825915}
   - component: {fileID: 405825914}
+  - component: {fileID: 405825915}
   m_Layer: 0
   m_Name: Savepoint_02
   m_TagString: Untagged
@@ -1796,9 +1796,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4dcb329abe6a97b47a2d46fea1bd52fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isDefaultSavePoint: 1
+  spawnId: Save_2
+  useAutoColor: 1
+  isDefaultSavePoint: 0
   petSpawnPoint: {fileID: 1235873706}
-  spawnId: Default
 --- !u!212 &405825916
 SpriteRenderer:
   serializedVersion: 2
@@ -14685,8 +14686,8 @@ GameObject:
   m_Component:
   - component: {fileID: 652255407}
   - component: {fileID: 652255406}
-  - component: {fileID: 652255405}
   - component: {fileID: 652255408}
+  - component: {fileID: 652255405}
   m_Layer: 0
   m_Name: Savepoint_01
   m_TagString: Untagged
@@ -14706,9 +14707,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4dcb329abe6a97b47a2d46fea1bd52fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isDefaultSavePoint: 1
+  spawnId: Save_1
+  useAutoColor: 1
+  isDefaultSavePoint: 0
   petSpawnPoint: {fileID: 1949517127}
-  spawnId: Default
 --- !u!212 &652255406
 SpriteRenderer:
   serializedVersion: 2
@@ -14880,7 +14882,7 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 4087
+    m_Bits: 1015
 --- !u!114 &670513115
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16550,18 +16552,18 @@ MonoBehaviour:
   DashSettings:
     Damping: {x: 0, y: 0.1}
     LookOffset: 1
-  SprintSettings:
-    Damping: {x: 0, y: 0.1}
-    LookOffset: 1.5
   WallSlideSettings:
     Damping: {x: 0, y: 0.1}
     LookOffset: 0.5
   WallJumpSettings:
     Damping: {x: 0, y: 0.1}
     LookOffset: 0.5
-  SprintJumpSettings:
-    Damping: {x: 0, y: 0.3}
-    LookOffset: 2
+  SlamSettings:
+    Damping: {x: 0, y: 0}
+    LookOffset: 4
+  FireDashSettings:
+    Damping: {x: 0, y: 0}
+    LookOffset: 4
   verticalLookOffset: 2
   verticalLookActivateDelay: 1
 --- !u!1 &1223106206

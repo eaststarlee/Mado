@@ -1,3 +1,4 @@
+#if false // [SPRINT_DISABLED] Sprint 기능 비활성화
 using UnityEngine;
 
 public class PlayerSprintStopState : PlayerState
@@ -53,3 +54,4 @@ public class PlayerSprintStopState : PlayerState
         player.RB.linearVelocity = new Vector2(newSpeed, player.RB.linearVelocity.y);
     }
 }
+#endif // [SPRINT_DISABLED]

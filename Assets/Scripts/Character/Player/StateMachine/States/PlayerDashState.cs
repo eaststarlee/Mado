@@ -22,7 +22,11 @@ public class PlayerDashState : PlayerState
     {
         base.Exit();
         player.SetGravityScale(player.ActiveFormData.gravity.scale);
-        player.RB.linearVelocity = new Vector2(player.RB.linearVelocity.x, player.RB.linearVelocity.y * player.ActiveFormData.ability.dashEndYMultiplier);
+        
+        // 대쉬 종료 시 미끄러지는 현상 방지: 
+        // 이동키를 누르고 있으면 즉시 일반 이동 속도로, 아니면 0으로 설정
+        float targetSpeedX = player.InputX * player.ActiveFormData.run.maxSpeed;
+        player.RB.linearVelocity = new Vector2(targetSpeedX, player.RB.linearVelocity.y * player.ActiveFormData.ability.dashEndYMultiplier);
     }
 
     public override void LogicUpdate()
@@ -31,11 +35,13 @@ public class PlayerDashState : PlayerState
         if (Time.time >= dashStartTime + player.ActiveFormData.ability.dashTime)
         {
             // 대시 시간 종료. 다음 상태 결정
-            if (player.ActiveFormData.ability.canDashToSprint && player.SprintInputHeld && player.IsGrounded())
-            {
-                stateMachine.ChangeState(player.SprintState);
-            }
-            else if (player.IsGrounded())
+            // [SPRINT_DISABLED] 대시 후 스프린트 전환 비활성화
+            // if (player.ActiveFormData.ability.canDashToSprint && player.SprintInputHeld && player.IsGrounded())
+            // {
+            //     stateMachine.ChangeState(player.SprintState);
+            // }
+            // else
+            if (player.IsGrounded())
             {
                 if (player.InputX != 0)
                 {

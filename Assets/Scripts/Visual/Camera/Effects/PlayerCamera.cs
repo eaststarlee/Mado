@@ -30,10 +30,11 @@ public class PlayerCamera : MonoBehaviour
     public CameraStateSettings RisingSettings = new CameraStateSettings { Damping = new Vector2(1f, 0.5f), LookOffset = 4f };
     public CameraStateSettings FallingSettings = new CameraStateSettings { Damping = new Vector2(0f, 0.1f), LookOffset = 4f };
     public CameraStateSettings DashSettings = new CameraStateSettings { Damping = new Vector2(0f, 0.1f), LookOffset = 5f };
-    public CameraStateSettings SprintSettings = new CameraStateSettings { Damping = new Vector2(0f, 0.1f), LookOffset = 5f };
+    // [SPRINT_DISABLED]
+    // public CameraStateSettings SprintSettings = new CameraStateSettings { Damping = new Vector2(0f, 0.1f), LookOffset = 5f };
+    // public CameraStateSettings SprintJumpSettings = new CameraStateSettings { Damping = new Vector2(0f, 0.1f), LookOffset = 5f };
     public CameraStateSettings WallSlideSettings = new CameraStateSettings { Damping = new Vector2(0f, 0.1f), LookOffset = 3f };
     public CameraStateSettings WallJumpSettings = new CameraStateSettings { Damping = new Vector2(0f, 0.1f), LookOffset = 4f };
-    public CameraStateSettings SprintJumpSettings = new CameraStateSettings { Damping = new Vector2(0f, 0.1f), LookOffset = 5f };
     public CameraStateSettings SlamSettings = new CameraStateSettings { Damping = new Vector2(0f, 0f), LookOffset = 4f };
     public CameraStateSettings FireDashSettings = new CameraStateSettings { Damping = new Vector2(0f, 0f), LookOffset = 4f };
     
@@ -139,15 +140,16 @@ public class PlayerCamera : MonoBehaviour
         if (state == playerController.MoveState) { isDynamic = false; return MoveSettings; }
         
         if (state == playerController.DashState) return DashSettings;
-        if (state == playerController.SprintState) return SprintSettings;
-        if (state == playerController.SprintStopState) return SprintSettings;
-        if (state == playerController.SprintTurnState) return SprintSettings;
+        // [SPRINT_DISABLED]
+        // if (state == playerController.SprintState) return SprintSettings;
+        // if (state == playerController.SprintStopState) return SprintSettings;
+        // if (state == playerController.SprintTurnState) return SprintSettings;
         if (state == playerController.WallSlideState) return WallSlideSettings;
         if (state == playerController.WallJumpState || state == playerController.WallClimbState) return WallJumpSettings;
         
         if (state == playerController.InAirState)
         {
-            if (playerController.IsSprintJumping) return SprintJumpSettings;
+            // [SPRINT_DISABLED] if (playerController.IsSprintJumping) return SprintJumpSettings;
             if (playerController.RB.linearVelocity.y > 0.1f) { isDynamic = false; return RisingSettings; }
             return FallingSettings;
         }

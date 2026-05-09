@@ -18,7 +18,7 @@ public class PlayerInputReader : MonoBehaviour
     public bool   JumpInputUp     { get; private set; }
     public bool   JumpInputDown   { get; private set; }
     public bool   DashInput       { get; private set; }
-    public bool   SprintInputHeld { get; private set; }
+    // [SPRINT_DISABLED] public bool SprintInputHeld { get; private set; }
     public bool   IsAttackHeld    { get; private set; }
     public bool   ButtonAInput    { get; private set; }
     public bool   GrappleInput    { get; private set; }
@@ -113,9 +113,11 @@ public class PlayerInputReader : MonoBehaviour
         if (controls.Player.Jump.triggered)
         {
             JumpInputDown = true;
-            if (player.StateMachine.CurrentState == player.SprintTurnState)
-                player.LastPressedJumpTime = 0;
-            else if (player.StateMachine.CurrentState != player.DashState)
+            // [SPRINT_DISABLED]
+            // if (player.StateMachine.CurrentState == player.SprintTurnState)
+            //     player.LastPressedJumpTime = 0;
+            // else
+            if (player.StateMachine.CurrentState != player.DashState)
                 player.LastPressedJumpTime = player.ActiveFormData.assist.jumpInputBufferTime;
         }
         else
@@ -130,7 +132,7 @@ public class PlayerInputReader : MonoBehaviour
         {
             player.LastPressedDashTime = 0.15f; // 대쉬 선입력 버퍼
         }
-        SprintInputHeld = controls.Player.Sprint.IsPressed();
+        // [SPRINT_DISABLED] SprintInputHeld = controls.Player.Sprint.IsPressed();
 
         // 공격
         if (controls.Player.Attack.triggered && player.Combat != null)
@@ -170,13 +172,14 @@ public class PlayerInputReader : MonoBehaviour
     private bool CanTurnDirection()
     {
         var s = player.StateMachine.CurrentState;
-        return s != player.SprintState
-            && s != player.SprintTurnState
-            && !player.IsSprintJumping
-            && s != player.WallClimbState
+        return s != player.WallClimbState
             && s != player.WallJumpState
             && s != player.WallSlideState
             && s != player.LedgeClimbState;
+            // [SPRINT_DISABLED]
+            // && s != player.SprintState
+            // && s != player.SprintTurnState
+            // && !player.IsSprintJumping
     }
 
     /// <summary>
@@ -190,7 +193,7 @@ public class PlayerInputReader : MonoBehaviour
         JumpInputUp     = false;
         JumpInputDown   = false;
         DashInput       = false;
-        SprintInputHeld = false;
+        // [SPRINT_DISABLED] SprintInputHeld = false;
         IsAttackHeld    = false;
         ButtonAInput    = false;
         GrappleInput    = false;

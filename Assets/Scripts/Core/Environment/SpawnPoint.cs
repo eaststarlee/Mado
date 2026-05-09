@@ -25,7 +25,7 @@ public class SpawnPoint : MonoBehaviour
 {
     [Tooltip("스폰 지점 식별자. SceneLoader.TeleportPlayerToSpawn()에서 매칭에 사용됩니다.\n" +
              "규칙: Left / Right / Up / Down / Default")]
-    [SerializeField] private string spawnId = "Default";
+    [SerializeField] protected string spawnId = "Default";
 
     /// <summary>외부(SceneLoader)에서 읽을 수 있는 스폰 ID.</summary>
     public string SpawnId => spawnId;

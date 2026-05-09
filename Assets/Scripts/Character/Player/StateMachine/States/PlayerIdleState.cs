@@ -16,7 +16,7 @@ public class PlayerIdleState : PlayerState
         {
             player.RB.linearVelocity = new Vector2(0, player.RB.linearVelocity.y); // 즉시 수평 이동 정지
         }
-        player.IsSprintJumping = false; // 스프린트 점프 상태 초기화
+        // [SPRINT_DISABLED] player.IsSprintJumping = false;
     }
 
     public override void LogicUpdate()

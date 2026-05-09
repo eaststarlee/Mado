@@ -66,8 +66,8 @@ MonoBehaviour:
     ledgeLandOffset: 0.1
     ledgeMaxClimbHeight: 1.5
   ability:
-    dashSpeed: 25
-    dashTime: 0.17
+    dashSpeed: 35
+    dashTime: 0.15
     amountOfDashes: 1
     dashCooldown: 0.5
     dashEndYMultiplier: 0.05

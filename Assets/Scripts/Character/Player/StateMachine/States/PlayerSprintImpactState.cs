@@ -1,3 +1,4 @@
+#if false // [SPRINT_DISABLED] Sprint 기능 비활성화
 using UnityEngine;
 
 public class PlayerSprintImpactState : PlayerState
@@ -38,3 +39,4 @@ public class PlayerSprintImpactState : PlayerState
         // Player has no control during this state
     }
 }
+#endif // [SPRINT_DISABLED]

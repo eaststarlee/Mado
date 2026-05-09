@@ -1,3 +1,4 @@
+#if false // [SPRINT_DISABLED] Sprint 기능 비활성화
 using UnityEngine;
 
 public class PlayerSprintJumpPrepareState : PlayerState
@@ -33,3 +34,4 @@ public class PlayerSprintJumpPrepareState : PlayerState
         // Intentionally left blank to allow the player to slide with existing momentum.
     }
 }
+#endif // [SPRINT_DISABLED]

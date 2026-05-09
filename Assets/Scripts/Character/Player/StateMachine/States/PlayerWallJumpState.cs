@@ -19,7 +19,7 @@ public class PlayerWallJumpState : PlayerState
         player.OnWallJump();
         jumpCut = false;
         player.WasLongWallJump = false;
-        player.IsSprintJumping = false; // 벽 점프 시 스프린트 점프 상태 해제
+        // [SPRINT_DISABLED] player.IsSprintJumping = false;
 
         // 이 상태는 Neutral Wall Jump만 처리합니다.
         Vector2 force = player.ActiveFormData.wall.neutralWallJumpForce;

@@ -24,7 +24,6 @@ public class DeleteConfirmPopup : MonoBehaviour
     {
         confirmButton.onClick.AddListener(HandleConfirm);
         cancelButton.onClick.AddListener(HandleCancel);
-        gameObject.SetActive(false); // 기본 비활성
     }
 
     // ── 공개 API ─────────────────────────────────────────

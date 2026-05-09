@@ -1,3 +1,4 @@
+#if false // [SPRINT_DISABLED] Sprint 기능 비활성화
 using UnityEngine;
 
 public class PlayerSprintState : PlayerState
@@ -116,3 +117,4 @@ public class PlayerSprintState : PlayerState
         }
     }
 }
+#endif // [SPRINT_DISABLED]
