@@ -24,13 +24,24 @@ public class BootSequencer : MonoBehaviour
     [Tooltip("에디터에서 MainMenuUI 오브젝트를 연결해 주세요.")]
     [SerializeField] private MainMenuUI mainMenuUI;
 
-    private int selectedSlot = -1;
-    private bool isSlotSelected = false;
+    private int  _selectedSlot    = -1;
+    private bool _isSlotSelected  = false;
 
-    public void SelectSlotAndStart(int slotIndex)
+    /// <summary>
+    /// MainMenuUI.OnGameStartRequested 이벤트 구독 등록.
+    /// BootSequencer가 UI를 Show하기 전에 호출합니다.
+    /// </summary>
+    private void SubscribeToMenuEvents()
     {
-        selectedSlot = slotIndex;
-        isSlotSelected = true;
+        if (mainMenuUI == null) return;
+        mainMenuUI.OnGameStartRequested -= OnGameStartRequested; // 중복 방지
+        mainMenuUI.OnGameStartRequested += OnGameStartRequested;
+    }
+
+    private void OnGameStartRequested(int slotIndex)
+    {
+        _selectedSlot   = slotIndex;
+        _isSlotSelected = true;
     }
 
     private IEnumerator Start()
@@ -82,33 +93,37 @@ public class BootSequencer : MonoBehaviour
         // ── 2b. [빌드 / Master만] 슬롯 결정 ────────────────
         if (autoLoadSlot >= 0)
         {
-            selectedSlot = autoLoadSlot;
-            isSlotSelected = true;
+            _selectedSlot   = autoLoadSlot;
+            _isSlotSelected = true;
         }
         else
         {
-            // UI 표시
+            // UI 표시 — BootSequencer는 이벤트를 구독하고 Show()만 호출합니다
             if (mainMenuUI != null)
             {
-                mainMenuUI.gameObject.SetActive(true);
-                mainMenuUI.Initialize(this);
+                SubscribeToMenuEvents();
+                mainMenuUI.Show();
             }
             else
             {
                 Debug.LogWarning("[BootSequencer] MainMenuUI가 연결되지 않았습니다. 임시로 슬롯 0을 로드합니다.");
-                selectedSlot = 0;
-                isSlotSelected = true;
+                _selectedSlot   = 0;
+                _isSlotSelected = true;
             }
         }
 
         // 유저가 UI에서 버튼을 누를 때까지 무한 대기
-        yield return new WaitUntil(() => isSlotSelected);
+        yield return new WaitUntil(() => _isSlotSelected);
 
-        // UI 숨김
-        if (mainMenuUI != null) mainMenuUI.gameObject.SetActive(false);
+        // UI 숨김 — 이벤트 구독 해제 후 비활성화
+        if (mainMenuUI != null)
+        {
+            mainMenuUI.OnGameStartRequested -= OnGameStartRequested;
+            mainMenuUI.Hide();
+        }
 
         // ── 3. 슬롯 로드 ────────────────────────────────────
-        bool loaded = SaveManager.Instance.LoadSlot(selectedSlot);
+        bool loaded = SaveManager.Instance.LoadSlot(_selectedSlot);
         if (!loaded)
         {
             Debug.LogError("[BootSequencer] 슬롯 로드 실패.");
@@ -116,7 +131,7 @@ public class BootSequencer : MonoBehaviour
         }
 
         var data = SaveManager.Instance.CurrentData;
-        Debug.Log($"[BootSequencer] 슬롯 {selectedSlot} 로드 완료 → {data.lastSceneName} (Spawn: {data.lastSpawnId})");
+        Debug.Log($"[BootSequencer] 슬롯 {_selectedSlot} 로드 완료 → {data.lastSceneName} (Spawn: {data.lastSpawnId})");
 
         // ── 4. 플레이어/펫 활성화 보장 ─────────────────────
         EnsureCharactersActive();
