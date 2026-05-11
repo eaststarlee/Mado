@@ -14,8 +14,17 @@ public class PlayerDashState : PlayerState
         player.OnDash();
         dashStartTime = Time.time;
         player.SetGravityScale(0);
+        
+        float dashSpeed = player.ActiveFormData.ability.dashSpeed;
+        float dashTime = player.ActiveFormData.ability.dashTime;
         float dashDirection = player.IsFacingRight ? 1f : -1f;
-        player.RB.linearVelocity = new Vector2(dashDirection * player.ActiveFormData.ability.dashSpeed, 0f);
+        
+        FormType stateForm = player.CurrentForm;
+        FormType dataForm = player.ActiveFormData.formType;
+
+
+
+        player.RB.linearVelocity = new Vector2(dashDirection * dashSpeed, 0f);
     }
 
     public override void Exit()
@@ -34,6 +43,7 @@ public class PlayerDashState : PlayerState
         base.LogicUpdate();
         if (Time.time >= dashStartTime + player.ActiveFormData.ability.dashTime)
         {
+
             // 대시 시간 종료. 다음 상태 결정
             // [SPRINT_DISABLED] 대시 후 스프린트 전환 비활성화
             // if (player.ActiveFormData.ability.canDashToSprint && player.SprintInputHeld && player.IsGrounded())

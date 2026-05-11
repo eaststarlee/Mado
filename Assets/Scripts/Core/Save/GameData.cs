@@ -20,7 +20,7 @@ public class GameData
 
     // 재화 및 기타 고정 데이터
     public int geo = 0;
-    public string currentWorld = "Devil";
+    public string currentWorld = "Spirit";
 
     // 월드 진행 상태 (EntityState 통합형)
     public Dictionary<string, EntityState> worldEntities = new Dictionary<string, EntityState>();

@@ -5501,31 +5501,31 @@ MonoBehaviour:
   lookOffsetChangeSpeed: 5
   dynamicStateCooldown: 0.2
   IdleSettings:
-    Damping: {x: 0.3, y: 0.5}
+    Damping: {x: 0.01, y: 0.5}
     LookOffset: 1
   MoveSettings:
-    Damping: {x: 0.3, y: 0.5}
+    Damping: {x: 0.01, y: 0.5}
     LookOffset: 1
   RisingSettings:
-    Damping: {x: 0.3, y: 0.5}
+    Damping: {x: 0.01, y: 0.5}
     LookOffset: 1
   FallingSettings:
-    Damping: {x: 0.3, y: 0.8}
+    Damping: {x: 0.01, y: 0.8}
     LookOffset: 1
   DashSettings:
-    Damping: {x: 0.3, y: 0.3}
+    Damping: {x: 0.01, y: 0.3}
     LookOffset: 1
   WallSlideSettings:
-    Damping: {x: 0.3, y: 0.2}
+    Damping: {x: 0.01, y: 0.2}
     LookOffset: 0.5
   WallJumpSettings:
-    Damping: {x: 0.3, y: 0.2}
+    Damping: {x: 0.01, y: 0.2}
     LookOffset: 0.5
   SlamSettings:
-    Damping: {x: 0.3, y: 0.1}
+    Damping: {x: 0.01, y: 0.1}
     LookOffset: 1
   FireDashSettings:
-    Damping: {x: 0.3, y: 0.1}
+    Damping: {x: 0.01, y: 0.1}
     LookOffset: 1
   verticalLookOffset: 2
   verticalLookActivateDelay: 1

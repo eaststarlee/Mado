@@ -47,10 +47,13 @@ public class PlayerFormManager : MonoBehaviour
 
         if (characterForms != null)
         {
-            foreach (var formData in characterForms)
+            for (int i = 0; i < characterForms.Count; i++)
             {
+                var formData = characterForms[i];
                 if (formData != null)
+                {
                     formDataMap[formData.formType] = formData;
+                }
             }
         }
 
@@ -105,7 +108,22 @@ public class PlayerFormManager : MonoBehaviour
     public void SwitchForm(int formIndex)
     {
         if (characterForms == null || formIndex < 0 || formIndex >= characterForms.Count) return;
-        ActiveFormData = characterForms[formIndex];
+        
+        var targetData = characterForms[formIndex];
+        if (targetData != null)
+        {
+            CurrentForm = targetData.formType;
+            ActiveFormData = targetData;
+            ApplyAnimatorController();
+            
+            if (spriteRenderer != null && ActiveFormData.formSprite != null)
+            {
+                normalSprite = ActiveFormData.formSprite;
+                spriteRenderer.sprite = normalSprite;
+            }
+            
+            PlayerEvents.RaiseFormChanged(CurrentForm);
+        }
     }
 
     /// <summary>
