@@ -8,8 +8,8 @@ public class PauseMenuUI : UIPanel
     public Button settingsButton;
     public Button mainMenuButton;
 
-    // TODO: SettingsRootPanel 연결
-    // public UIPanel settingsPanel;
+    [Header("Settings")]
+    public UIPanel settingsPanel;
     
     [Header("Contents")]
     [Tooltip("배경을 제외한 실제 버튼들이 들어있는 오브젝트 (Resume, Settings, Quit 등)")]
@@ -42,8 +42,6 @@ public class PauseMenuUI : UIPanel
             mainMenuButton.onClick.AddListener(OnMainMenuClicked);
     }
 
-
-
     private void OnResumeClicked()
     {
         if (GameStateManager.Instance != null)
@@ -54,8 +52,14 @@ public class PauseMenuUI : UIPanel
 
     private void OnSettingsClicked()
     {
-        // TODO: UIManager.Instance.PushPanel(settingsPanel);
-        Debug.Log("[PauseMenuUI] Settings Clicked");
+        if (settingsPanel != null)
+        {
+            UIManager.Instance.PushPanel(settingsPanel);
+        }
+        else
+        {
+            Debug.LogWarning("[PauseMenuUI] SettingsPanel이 연결되지 않았습니다.");
+        }
     }
 
     private void OnMainMenuClicked()
@@ -74,8 +78,8 @@ public class PauseMenuUI : UIPanel
                     UIManager.Instance.ClearStack();
                 }
 
-                GameStateManager.Instance.ChangeState(GameState.Loading);
-                UnityEngine.SceneManagement.SceneManager.LoadScene("Master"); 
+                // Master 씬만 단독으로 로드하여 기존 방 씬들을 깨끗하게 닫습니다.
+                UnityEngine.SceneManagement.SceneManager.LoadScene("Master", UnityEngine.SceneManagement.LoadSceneMode.Single); 
             });
         }
         else

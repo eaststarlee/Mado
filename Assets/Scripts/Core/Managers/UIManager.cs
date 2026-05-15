@@ -6,6 +6,7 @@ public class UIManager : MonoBehaviour
     public static UIManager Instance { get; private set; }
 
     private Stack<UIPanel> panelStack = new Stack<UIPanel>();
+    public int PanelCount => panelStack.Count;
 
     private void Awake()
     {

@@ -1,95 +1,110 @@
-using UnityEngine;
 using System;
 using System.IO;
-
-[Serializable] 
-public class AudioSettings {
-    public float masterVolume = 1f;
-    public float bgmVolume = 1f;
-    public float sfxVolume = 1f;
-}
-
-[Serializable] 
-public class VideoSettings {
-    public int resolutionIndex = 0;
-    public bool fullscreen = true;
-    public bool vsync = true;
-    public int targetFPS = 60;
-}
-
-[Serializable]
-public class GameSettingsData {
-    public AudioSettings Audio = new AudioSettings();
-    public VideoSettings Video = new VideoSettings();
-}
+using UnityEngine;
+using UnityEngine.Audio;
+using UnityEngine.UI;
 
 public class SettingsManager : MonoBehaviour
 {
     public static SettingsManager Instance { get; private set; }
 
-    public GameSettingsData CurrentSettings { get; private set; }
+    public SettingsData Data { get; private set; }
+    
+    [Header("Engine References")]
+    [SerializeField] private AudioMixer mainAudioMixer;
+    [SerializeField] private Image brightnessOverlay; 
 
-    private string savePath;
+    private string saveFilePath;
+    public event Action OnSettingsChanged;
 
     private void Awake()
     {
-        if (Instance != null && Instance != this)
+        if (Instance == null)
+        {
+            Instance = this;
+            saveFilePath = Path.Combine(Application.persistentDataPath, "GlobalSettings.json");
+            LoadSettings();
+        }
+        else
         {
             Destroy(gameObject);
-            return;
         }
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
-
-        savePath = Path.Combine(Application.persistentDataPath, "settings.json");
-        LoadSettings();
     }
+
+    private void Start() => ApplyAllSettings();
 
     public void LoadSettings()
     {
-        if (File.Exists(savePath))
+        if (File.Exists(saveFilePath))
         {
             try
             {
-                string json = File.ReadAllText(savePath);
-                CurrentSettings = JsonUtility.FromJson<GameSettingsData>(json);
+                string json = File.ReadAllText(saveFilePath);
+                Data = JsonUtility.FromJson<SettingsData>(json);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Debug.LogError($"[SettingsManager] 설정 로드 실패: {e.Message}");
-                CurrentSettings = new GameSettingsData();
+                Data = new SettingsData(); 
             }
         }
         else
         {
-            CurrentSettings = new GameSettingsData();
+            Data = new SettingsData();
         }
-
-        ApplySettings();
     }
 
     public void SaveSettings()
     {
         try
         {
-            string json = JsonUtility.ToJson(CurrentSettings, true);
-            File.WriteAllText(savePath, json);
-            Debug.Log("[SettingsManager] 설정 저장 완료.");
+            string json = JsonUtility.ToJson(Data, true);
+            File.WriteAllText(saveFilePath, json);
         }
         catch (Exception e)
         {
-            Debug.LogError($"[SettingsManager] 설정 저장 실패: {e.Message}");
+            Debug.LogError($"[SettingsManager] Save Failed: {e.Message}");
         }
     }
 
-    public void ApplySettings()
+    public void ApplyAllSettings()
     {
-        // 비디오 적용
-        Application.targetFrameRate = CurrentSettings.Video.targetFPS;
-        QualitySettings.vSyncCount = CurrentSettings.Video.vsync ? 1 : 0;
-        Screen.fullScreen = CurrentSettings.Video.fullscreen;
-        // 해상도 로직은 해상도 목록 관리 후 추가 적용 가능
+        ApplyAudioSettings();
+        ApplyVideoSettings();
+        InputRebindSystem.LoadOverridesFromSettings();
+        OnSettingsChanged?.Invoke();
+    }
 
-        // 오디오는 AudioMixer와 연동 (추후 구현)
+    public void ApplyAudioSettings()
+    {
+        if (mainAudioMixer == null) return;
+        SetMixerVolume("MasterVolume", Data.Audio.MasterVolume);
+        SetMixerVolume("MusicVolume", Data.Audio.MusicVolume);
+        SetMixerVolume("SFXVolume", Data.Audio.SFXVolume);
+        SetMixerVolume("VoiceVolume", Data.Audio.VoiceVolume);
+    }
+
+    private void SetMixerVolume(string parameterName, float volume)
+    {
+        float dB = volume > 0.01f ? Mathf.Log10(volume / 100f) * 20f : -80f;
+        mainAudioMixer.SetFloat(parameterName, dB);
+    }
+
+    public void ApplyVideoSettings()
+    {
+        Screen.SetResolution(Data.Video.ResolutionWidth, Data.Video.ResolutionHeight, Data.Video.FullScreenMode);
+        QualitySettings.vSyncCount = Data.Video.VSync ? 1 : 0;
+        Application.targetFrameRate = Data.Video.VSync ? -1 : Data.Video.TargetFrameRate;
+        ApplyBrightness();
+    }
+
+    public void ApplyBrightness()
+    {
+        if (brightnessOverlay != null)
+        {
+            Color c = brightnessOverlay.color;
+            // 밝기가 높을수록(100) 오버레이의 알파값(검은색)은 0에 가까워집니다.
+            c.a = Mathf.Lerp(0.9f, 0f, Data.Video.Brightness / 100f);
+            brightnessOverlay.color = c;
+        }
     }
 }

@@ -38,14 +38,12 @@ public class PauseInputHandler : MonoBehaviour
 
     private void TogglePause()
     {
-        // 한 프레임에 여러 번 토글되는 것을 원천 차단 (뉴 인풋 시스템의 중복 트리거 방지)
         if (Time.frameCount == lastToggleFrame) return;
         lastToggleFrame = Time.frameCount;
 
         var stateMgr = GameStateManager.Instance;
         if (stateMgr == null) return;
 
-        // 로딩 중에는 일시정지 조작 무시
         if (stateMgr.CurrentState == GameState.Loading) return;
 
         if (stateMgr.CurrentState == GameState.Gameplay)
@@ -54,6 +52,15 @@ public class PauseInputHandler : MonoBehaviour
         }
         else if (stateMgr.CurrentState == GameState.Paused)
         {
+            // [중요] 패널이 2개 이상 쌓여있다면(예: 설정창이 열려있다면),
+            // 전역 핸들러인 여기서 일시정지를 풀지 않고, 해당 UI 스크립트(SettingsMenuUI 등)의 Update()에서 
+            // 자체적인 ESC 로직(뒤로가기 등)을 수행하도록 양보합니다.
+            if (UIManager.Instance != null && UIManager.Instance.PanelCount > 1)
+            {
+                return;
+            }
+
+            // 스택에 패널이 하나뿐이라면(일시정지 메뉴만 있다면) 일시정지를 해제합니다.
             stateMgr.ChangeState(GameState.Gameplay);
         }
     }
