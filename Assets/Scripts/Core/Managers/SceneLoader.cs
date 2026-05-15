@@ -122,6 +122,7 @@ public class SceneLoader : MonoBehaviour
     private IEnumerator LoadNextRoomRoutine(string nextSceneName, string spawnId, int transitionDirX)
     {
         IsTransitioning = true;
+        GameStateManager.Instance?.ChangeState(GameState.Loading);
         
         PlayerController player = FindAnyObjectByType<PlayerController>(FindObjectsInactive.Include);
         if (player != null && !player.gameObject.activeSelf) player.gameObject.SetActive(true);
@@ -158,6 +159,7 @@ public class SceneLoader : MonoBehaviour
             yield return StartCoroutine(FadeIn(roomFadeDuration));
             if (player != null) player.SetAutoWalk(0);
             IsTransitioning = false;
+            GameStateManager.Instance?.ChangeState(GameState.Gameplay);
             yield break;
         }
 
@@ -204,6 +206,7 @@ public class SceneLoader : MonoBehaviour
         }
         
         IsTransitioning = false;
+        GameStateManager.Instance?.ChangeState(GameState.Gameplay);
         Debug.Log($"[SceneLoader] 룸 전환 완료: {nextSceneName}");
     }
 
@@ -211,6 +214,7 @@ public class SceneLoader : MonoBehaviour
     private IEnumerator SwitchDimensionRoutine(string targetSceneName, WorldType targetWorld)
     {
         IsTransitioning = true;
+        GameStateManager.Instance?.ChangeState(GameState.Loading);
         FreezePlayer(true); // 로딩 중 추락 방지
         Debug.Log($"[SceneLoader] 차원 전환 시작: → {targetSceneName} ({targetWorld})");
 
@@ -259,6 +263,7 @@ public class SceneLoader : MonoBehaviour
         yield return StartCoroutine(FadeIn(dimensionFadeDuration));
 
         IsTransitioning = false;
+        GameStateManager.Instance?.ChangeState(GameState.Gameplay);
         Debug.Log($"[SceneLoader] 차원 전환 완료: {targetSceneName} ({targetWorld})");
     }
 

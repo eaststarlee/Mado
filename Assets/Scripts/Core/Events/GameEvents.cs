@@ -41,4 +41,13 @@ public static class GameEvents
     {
         OnDimensionSwitched?.Invoke(world);
     }
+
+    /// <summary>
+    /// 게임 상태 변경 이벤트
+    /// </summary>
+    public static event Action<GameState, GameState> OnGameStateChanged;
+    public static void RaiseGameStateChanged(GameState prev, GameState current)
+    {
+        OnGameStateChanged?.Invoke(prev, current);
+    }
 }

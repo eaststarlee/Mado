@@ -43,20 +43,19 @@ public class PlayerInputReader : MonoBehaviour
     private bool wasUp;
     private bool wasDown;
 
-    private void Awake()
+    private void Start()
     {
-        controls = new Controls();
-        player   = GetComponent<PlayerController>();
+        player = GetComponent<PlayerController>();
+        // InputRouter에서 전역 Actions를 가져옴 (Awake/OnEnable 대신 Start에서 바인딩)
     }
 
     private void OnEnable()
     {
-        if (controls == null) controls = new Controls();
-        controls.Enable();
+        // controls.Enable() 제거 (InputRouter가 관리)
     }
     private void OnDisable()
     {
-        if (controls != null) controls.Disable();
+        // controls.Disable() 제거
     }
 
     // ── 공개 API ────────────────────────────────────────────────
@@ -67,6 +66,16 @@ public class PlayerInputReader : MonoBehaviour
     /// </summary>
     public void GatherInput()
     {
+        // 0. 게임 플레이 상태가 아니면 모든 입력을 무시하고 잔여 입력을 클리어 (이중 안전장치)
+        if (GameStateManager.Instance != null && GameStateManager.Instance.CurrentState != GameState.Gameplay)
+        {
+            ClearAllInputs();
+            return;
+        }
+
+        controls = InputRouter.Instance?.Actions;
+        if (controls == null) return;
+
         // ① 특수 행동(Slam) 또는 그래플링 대쉬 중 — 입력 완전 잠금
         bool isActionLocked = (player.Combat != null && player.Combat.IsSpecialActionLocked)
                               || player.StateMachine.CurrentState == player.GrapplingState;
