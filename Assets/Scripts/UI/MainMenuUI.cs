@@ -16,19 +16,24 @@ using TMPro;
 /// ■ BootSequencer를 전혀 알지 못합니다.
 ///   OnGameStartRequested 이벤트만 발행합니다.
 /// </summary>
-public class MainMenuUI : MonoBehaviour
+/// <summary>슬롯이 선택되어 게임 시작 준비가 완료되면 발행합니다.</summary>
+public class MainMenuUI : UIPanel
 {
     // ── Inspector — 패널 ─────────────────────────────────
-    [Header("패널 (두 화면 전환)")]
+    [Header("패널 (화면 전환)")]
     [Tooltip("타이틀 / 게임시작 / 나가기 버튼이 있는 첫 화면")]
     [SerializeField] private GameObject mainPanel;
 
     [Tooltip("슬롯 3개가 있는 두 번째 화면")]
     [SerializeField] private GameObject slotPanel;
 
+    [Header("설정")]
+    [SerializeField] private UIPanel settingsPanel;
+
     // ── Inspector — 메인 패널 버튼 ───────────────────────
     [Header("메인 패널 버튼")]
     [SerializeField] private Button gameStartButton;
+    [SerializeField] private Button settingsButton;
     [SerializeField] private Button quitButton;
 
     // ── Inspector — 슬롯 패널 ────────────────────────────
@@ -53,6 +58,8 @@ public class MainMenuUI : MonoBehaviour
     {
         // 메인 패널 버튼 리스너
         gameStartButton.onClick.AddListener(ShowSlotPanel);
+        if (settingsButton != null)
+            settingsButton.onClick.AddListener(HandleSettingsClicked);
         quitButton.onClick.AddListener(HandleQuit);
 
         // 슬롯 패널 뒤로가기 버튼
@@ -82,8 +89,11 @@ public class MainMenuUI : MonoBehaviour
 
     private void Update()
     {
+        // UIManager에 다른 패널(설정 등)이 떠있다면 여기서의 ESC 처리는 양보합니다.
+        if (UIManager.Instance != null && UIManager.Instance.PanelCount > 1) return;
+
         // ESC 키 입력 처리
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (InputRouter.Instance != null && InputRouter.Instance.Actions.Permanent.Pause.WasPressedThisFrame())
         {
             // 1. 삭제 확인 팝업이 열려있으면 팝업 닫기
             if (deleteConfirmPopup != null && deleteConfirmPopup.gameObject.activeSelf)
@@ -98,28 +108,52 @@ public class MainMenuUI : MonoBehaviour
         }
     }
 
-    // ── 공개 API (BootSequencer가 호출) ─────────────────
-
-    /// <summary>메뉴 전체를 활성화하고 메인 패널부터 표시합니다.</summary>
-    public void Show()
+    public override void OnGainFocus()
     {
-        if (!gameObject.activeSelf)
+        base.OnGainFocus();
+        // 포커스를 얻었을 때 이전에 열려있던 패널(메인 또는 슬롯)을 다시 켭니다.
+        if (slotPanelWasActive)
         {
-            gameObject.SetActive(true);
-            ShowMainPanel();
+            mainPanel.SetActive(false);
+            slotPanel.SetActive(true);
+        }
+        else
+        {
+            mainPanel.SetActive(true);
+            slotPanel.SetActive(false);
         }
     }
 
-    /// <summary>메뉴 전체를 비활성화합니다.</summary>
-    public void Hide()
+    public override void OnLostFocus()
     {
-        gameObject.SetActive(false);
+        base.OnLostFocus();
+        // 설정창 등이 뜰 때 메인 메뉴 콘텐츠를 가려서 겹쳐 보이지 않게 합니다.
+        mainPanel.SetActive(false);
+        slotPanel.SetActive(false);
+    }
+
+    private bool slotPanelWasActive = false;
+
+    // ── 공개 API (BootSequencer가 호출) ─────────────────
+
+    /// <summary>메뉴 전체를 활성화하고 메인 패널부터 표시합니다.</summary>
+    public override void Show()
+    {
+        base.Show();
+        ShowMainPanel();
+    }
+
+    /// <summary>메뉴 전체를 비활성화합니다.</summary>
+    public override void Hide()
+    {
+        base.Hide();
     }
 
     // ── 패널 전환 ────────────────────────────────────────
 
     private void ShowMainPanel()
     {
+        slotPanelWasActive = false;
         mainPanel.SetActive(true);
         slotPanel.SetActive(false);
         SetInteractable(true);
@@ -127,6 +161,7 @@ public class MainMenuUI : MonoBehaviour
 
     private void ShowSlotPanel()
     {
+        slotPanelWasActive = true;
         mainPanel.SetActive(false);
         slotPanel.SetActive(true);
         Refresh();
@@ -178,6 +213,18 @@ public class MainMenuUI : MonoBehaviour
     }
 
     // ── 나가기 ───────────────────────────────────────────
+
+    private void HandleSettingsClicked()
+    {
+        if (settingsPanel != null)
+        {
+            UIManager.Instance.PushPanel(settingsPanel);
+        }
+        else
+        {
+            Debug.LogWarning("[MainMenuUI] SettingsPanel이 연결되지 않았습니다.");
+        }
+    }
 
     private void HandleQuit()
     {

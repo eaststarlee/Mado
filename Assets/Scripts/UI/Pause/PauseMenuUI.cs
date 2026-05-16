@@ -78,6 +78,12 @@ public class PauseMenuUI : UIPanel
                     UIManager.Instance.ClearStack();
                 }
 
+                // 메인메뉴로 돌아갈 때 게임 상태를 MainMenu로 변경
+                if (GameStateManager.Instance != null)
+                {
+                    GameStateManager.Instance.ChangeState(GameState.MainMenu);
+                }
+
                 // Master 씬만 단독으로 로드하여 기존 방 씬들을 깨끗하게 닫습니다.
                 UnityEngine.SceneManagement.SceneManager.LoadScene("Master", UnityEngine.SceneManagement.LoadSceneMode.Single); 
             });

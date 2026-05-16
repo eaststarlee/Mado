@@ -12,12 +12,14 @@ public class SettingsMenuUI : UIPanel
 
     [Header("Navigation")]
     [SerializeField] private GameObject navigationRoot; // 탭 버튼들의 부모 (Buttons)
+    [SerializeField] private GameObject titleTextObject; // "Settings" 타이틀 텍스트
 
     private string currentTabName = "";
 
     private void OnEnable()
     {
         BackToNavigation(); 
+        if (titleTextObject != null) titleTextObject.SetActive(true);
     }
 
     public void ShowTab(string tabName)
@@ -44,7 +46,8 @@ public class SettingsMenuUI : UIPanel
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        // InputRouter를 통한 ESC 처리
+        if (InputRouter.Instance != null && InputRouter.Instance.Actions.Permanent.Pause.WasPressedThisFrame())
         {
             if (!string.IsNullOrEmpty(currentTabName))
             {

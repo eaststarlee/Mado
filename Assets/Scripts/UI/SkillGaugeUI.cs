@@ -19,12 +19,34 @@ public class SkillGaugeUI : MonoBehaviour
     {
         // 이벤트 구독
         PlayerEvents.OnSkillGaugeChanged += UpdateGaugeUI;
+        GameEvents.OnGameStateChanged += HandleGameStateChanged;
+        
+        // 초기 상태 설정
+        if (GameStateManager.Instance != null)
+        {
+            RefreshVisibility(GameStateManager.Instance.CurrentState);
+        }
     }
 
     private void OnDisable()
     {
         // 메모리 누수 방지를 위한 구독 해제
         PlayerEvents.OnSkillGaugeChanged -= UpdateGaugeUI;
+        GameEvents.OnGameStateChanged -= HandleGameStateChanged;
+    }
+
+    private void HandleGameStateChanged(GameState prev, GameState current)
+    {
+        RefreshVisibility(current);
+    }
+
+    private void RefreshVisibility(GameState state)
+    {
+        // Gameplay 상태에서만 게이지 노출
+        if (gaugeText != null)
+        {
+            gaugeText.gameObject.SetActive(state == GameState.Gameplay);
+        }
     }
 
     private void Start()

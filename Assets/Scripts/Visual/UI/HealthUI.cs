@@ -40,12 +40,34 @@ public class HealthUI : MonoBehaviour
     {
         // 이벤트 구독
         PlayerEvents.OnHealthChanged += UpdateHealth;
+        GameEvents.OnGameStateChanged += HandleGameStateChanged;
+        
+        // 초기 상태 설정
+        if (GameStateManager.Instance != null)
+        {
+            RefreshVisibility(GameStateManager.Instance.CurrentState);
+        }
     }
     
     private void OnDisable()
     {
         // 이벤트 구독 해제 (메모리 누수 방지)
         PlayerEvents.OnHealthChanged -= UpdateHealth;
+        GameEvents.OnGameStateChanged -= HandleGameStateChanged;
+    }
+
+    private void HandleGameStateChanged(GameState prev, GameState current)
+    {
+        RefreshVisibility(current);
+    }
+
+    private void RefreshVisibility(GameState state)
+    {
+        // Gameplay 상태에서만 하트 컨테이너 노출
+        if (heartContainer != null)
+        {
+            heartContainer.gameObject.SetActive(state == GameState.Gameplay);
+        }
     }
     #endregion
     

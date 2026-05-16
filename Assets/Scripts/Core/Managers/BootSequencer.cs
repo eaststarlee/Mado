@@ -52,7 +52,10 @@ public class BootSequencer : MonoBehaviour
             SubscribeToMenuEvents();
             if (autoLoadSlot < 0)
             {
-                mainMenuUI.Show();
+                if (UIManager.Instance != null)
+                    UIManager.Instance.PushPanel(mainMenuUI);
+                else
+                    mainMenuUI.Show();
             }
         }
 
@@ -94,6 +97,10 @@ public class BootSequencer : MonoBehaviour
                 yield return new WaitForEndOfFrame();
 
                 PlaytimeTracker.Instance?.StartTracking();
+                
+                // 에디터 샌드박스 실행 시 게임 상태를 Gameplay로 변경
+                if (GameStateManager.Instance != null) GameStateManager.Instance.ChangeState(GameState.Gameplay);
+                
                 yield break;
             }
         }
@@ -123,7 +130,10 @@ public class BootSequencer : MonoBehaviour
         if (mainMenuUI != null)
         {
             mainMenuUI.OnGameStartRequested -= OnGameStartRequested;
-            mainMenuUI.Hide();
+            if (UIManager.Instance != null)
+                UIManager.Instance.ClearStack();
+            else
+                mainMenuUI.Hide();
         }
 
         // ── 3. 슬롯 로드 ────────────────────────────────────
@@ -151,6 +161,9 @@ public class BootSequencer : MonoBehaviour
         }
 
         Debug.Log("[BootSequencer] 부팅 시퀀스 완료.");
+        
+        // 정식 부팅 완료 후 게임 상태를 Gameplay로 변경
+        if (GameStateManager.Instance != null) GameStateManager.Instance.ChangeState(GameState.Gameplay);
     }
 
     // ── 헬퍼 ────────────────────────────────────────────────

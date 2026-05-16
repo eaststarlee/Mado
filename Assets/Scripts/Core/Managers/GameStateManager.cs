@@ -1,13 +1,13 @@
 using UnityEngine;
 using System;
 
-public enum GameState { Gameplay, Paused, Loading, Cutscene, Dead }
+public enum GameState { MainMenu, Gameplay, Paused, Loading, Cutscene, Dead }
 
 public class GameStateManager : MonoBehaviour
 {
     public static GameStateManager Instance { get; private set; }
 
-    public GameState CurrentState { get; private set; } = GameState.Gameplay;
+    public GameState CurrentState { get; private set; } = GameState.MainMenu;
 
     private void Awake()
     {

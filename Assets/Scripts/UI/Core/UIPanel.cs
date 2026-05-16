@@ -8,6 +8,8 @@ public class UIPanel : MonoBehaviour
 
     public virtual void Show()
     {
+        // 패널이 열릴 때 항상 최상단(Canvas 내에서)으로 오도록 보장
+        transform.SetAsLastSibling();
         gameObject.SetActive(true);
         OnGainFocus();
     }
