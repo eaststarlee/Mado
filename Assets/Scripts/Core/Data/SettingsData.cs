@@ -4,10 +4,10 @@ using UnityEngine;
 [Serializable]
 public class AudioSettingsData
 {
-    [Range(0f, 100f)] public float MasterVolume = 100f;
-    [Range(0f, 100f)] public float MusicVolume = 100f;
-    [Range(0f, 100f)] public float SFXVolume = 100f;
-    [Range(0f, 100f)] public float VoiceVolume = 100f;
+    [Range(0f, 100f)] public float MasterVolume = 80f;
+    [Range(0f, 100f)] public float MusicVolume = 80f;
+    [Range(0f, 100f)] public float SFXVolume = 80f;
+    [Range(0f, 100f)] public float VoiceVolume = 80f;
 }
 
 [Serializable]
@@ -15,7 +15,7 @@ public class VideoSettingsData
 {
     public int ResolutionWidth = 1920;
     public int ResolutionHeight = 1080;
-    public FullScreenMode FullScreenMode = FullScreenMode.FullScreenWindow;
+    public FullScreenMode FullScreenMode = FullScreenMode.ExclusiveFullScreen;
     
     public bool VSync = true;
     public int TargetFrameRate = -1; 

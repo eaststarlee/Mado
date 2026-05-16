@@ -3,6 +3,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 public class SettingsManager : MonoBehaviour
 {
@@ -106,5 +107,29 @@ public class SettingsManager : MonoBehaviour
             c.a = Mathf.Lerp(0.9f, 0f, Data.Video.Brightness / 100f);
             brightnessOverlay.color = c;
         }
+    }
+
+    public void ResetAudioDefaults()
+    {
+        Data.Audio = new AudioSettingsData();
+        ApplyAudioSettings();
+        SaveSettings();
+    }
+
+    public void ResetVideoDefaults()
+    {
+        Data.Video = new VideoSettingsData();
+        ApplyVideoSettings();
+        SaveSettings();
+    }
+
+    public void ResetInputDefaults()
+    {
+        if (InputRouter.Instance != null && InputRouter.Instance.Actions != null)
+        {
+            InputRouter.Instance.Actions.asset.RemoveAllBindingOverrides();
+        }
+        Data.Input = new InputSettingsData();
+        SaveSettings();
     }
 }
