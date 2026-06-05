@@ -14,15 +14,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SpriteAnimationClip
   isLoop: 1
   frames:
-  - sprite: {fileID: 21300000, guid: cf20c555cb754ce44b0b55a271e172b1, type: 3}
+  - sprite: {fileID: -1723747838, guid: 7ce48325ada4c3c47b0ba89071004dab, type: 3}
     duration: 0.08
     eventName: 
-  - sprite: {fileID: 21300000, guid: 6eb42d3196cd8714b9160c4d3b757a53, type: 3}
+  - sprite: {fileID: -1243306546, guid: 7ce48325ada4c3c47b0ba89071004dab, type: 3}
     duration: 0.08
     eventName: 
-  - sprite: {fileID: 21300000, guid: 7013ef012b47d654a87057515289967c, type: 3}
+  - sprite: {fileID: -739921205, guid: 7ce48325ada4c3c47b0ba89071004dab, type: 3}
     duration: 0.08
     eventName: 
-  - sprite: {fileID: 21300000, guid: 16cc998861e5a6e428fad1c507a7f1a5, type: 3}
+  - sprite: {fileID: -278736404, guid: 7ce48325ada4c3c47b0ba89071004dab, type: 3}
+    duration: 0.08
+    eventName: 
+  - sprite: {fileID: 384172475, guid: 7ce48325ada4c3c47b0ba89071004dab, type: 3}
+    duration: 0.08
+    eventName: 
+  - sprite: {fileID: -1824316164, guid: 7ce48325ada4c3c47b0ba89071004dab, type: 3}
+    duration: 0.08
+    eventName: 
+  - sprite: {fileID: -1914265706, guid: 7ce48325ada4c3c47b0ba89071004dab, type: 3}
+    duration: 0.08
+    eventName: 
+  - sprite: {fileID: -917112618, guid: 7ce48325ada4c3c47b0ba89071004dab, type: 3}
+    duration: 0.08
+    eventName: 
+  - sprite: {fileID: -830771679, guid: 7ce48325ada4c3c47b0ba89071004dab, type: 3}
+    duration: 0.08
+    eventName: 
+  - sprite: {fileID: 73001760, guid: 7ce48325ada4c3c47b0ba89071004dab, type: 3}
     duration: 0.08
     eventName: 
