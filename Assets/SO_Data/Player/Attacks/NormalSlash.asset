@@ -16,10 +16,12 @@ MonoBehaviour:
   direction: 0
   baseDamage: 1
   baseKnockback: {x: 5, y: 3}
-  hitboxOffset: {x: 1, y: 0}
+  hitboxOffset: {x: 1, y: 0.7}
   hitboxSize: {x: 1.5, y: 1}
   recoilType: 2
   recoilForce: {x: 1.5, y: 0}
+  knockbackMode: 0
+  stunDuration: 0.4
   hitStopDuration: 0.05
   screenShakeMagnitude: 0.1
   animationName: 

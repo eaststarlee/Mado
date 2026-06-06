@@ -15,6 +15,8 @@ public class GrappleDetector : MonoBehaviour
     [SerializeField] private GrappleData data;
     [Tooltip("Linecast 시작점 수직 오프셋. 발(0)에서 시작하면 지면이 즉시 막힘 → 중심(0.5~1) 권장")]
     [SerializeField] private float losOriginOffset = 0.7f;
+    [Tooltip("Grapple 감지 및 렌더링 원의 중심 오프셋 (몸통 위치 보정용)")]
+    [SerializeField] private Vector2 detectionCircleOffset = new Vector2(0f, 0.9f);
 
     [Header("시각화 (Debug/Visuals)")]
     [Tooltip("게임 뷰에서 감지 반경 원을 그릴지 여부")]
@@ -112,8 +114,9 @@ public class GrappleDetector : MonoBehaviour
             searchMask |= DimensionManager.Instance.CurrentWorldMask;
 #pragma warning restore CS0618
 
+        Vector2 searchCenter = (Vector2)transform.position + detectionCircleOffset;
         Collider2D[] hits = Physics2D.OverlapCircleAll(
-            transform.position,
+            searchCenter,
             data.detectionRadius,
             searchMask
         );
@@ -246,7 +249,7 @@ public class GrappleDetector : MonoBehaviour
         circleRenderer.endColor = targetColor;
 
         float radius = data.detectionRadius;
-        Vector3 center = transform.position;
+        Vector3 center = transform.position + (Vector3)detectionCircleOffset;
         float angleStep = 2f * Mathf.PI / circleSegments;
 
         for (int i = 0; i <= circleSegments; i++)
@@ -309,7 +312,8 @@ public class GrappleDetector : MonoBehaviour
         Gizmos.color = HasTarget
             ? new Color(0f, 1f, 0.4f, 0.12f)
             : new Color(1f, 1f, 0f, 0.07f);
-        Gizmos.DrawWireSphere(transform.position, data.detectionRadius);
+        Vector3 searchCenter = transform.position + (Vector3)detectionCircleOffset;
+        Gizmos.DrawWireSphere(searchCenter, data.detectionRadius);
 
         if (!Application.isPlaying) return;
 

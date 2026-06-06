@@ -44,6 +44,10 @@ public class PlayerCamera : MonoBehaviour
     [Tooltip("상하 시선 이동이 발동되기까지 얼마나 오래 입력을 유지해야 하는지 (초)")]
     public float verticalLookActivateDelay = 0.5f;
 
+    [Header("기본 위치 설정")]
+    [Tooltip("주인공 Pivot 보정용 카메라 기본 Y 오프셋 (발끝 피벗 대응용)")]
+    public float defaultVerticalOffset = 0.9f;
+
     private CinemachinePositionComposer m_PositionComposer;
     private Vector3 m_TargetTrackedOffset;
     private float m_VerticalLookTimer;
@@ -72,6 +76,7 @@ public class PlayerCamera : MonoBehaviour
         if (m_PositionComposer != null)
         {
             m_TargetTrackedOffset = m_PositionComposer.TargetOffset;
+            m_TargetTrackedOffset.y = defaultVerticalOffset;
         }
         else
         {
@@ -241,7 +246,7 @@ public class PlayerCamera : MonoBehaviour
             // 설정된 지연 시간(Activate Delay)이 지나면 시선 이동 적용
             if (m_VerticalLookTimer >= verticalLookActivateDelay)
             {
-                float targetY = verticalInput > 0 ? verticalLookOffset : -verticalLookOffset;
+                float targetY = defaultVerticalOffset + (verticalInput > 0 ? verticalLookOffset : -verticalLookOffset);
                 m_TargetTrackedOffset.y = Mathf.Lerp(m_TargetTrackedOffset.y, targetY, Time.deltaTime * lookOffsetChangeSpeed);
             }
         }
@@ -256,6 +261,6 @@ public class PlayerCamera : MonoBehaviour
     {
         m_VerticalLookTimer = 0;
         // 부드럽게 원위치로 복귀
-        m_TargetTrackedOffset.y = Mathf.Lerp(m_TargetTrackedOffset.y, 0, Time.deltaTime * lookOffsetChangeSpeed);
+        m_TargetTrackedOffset.y = Mathf.Lerp(m_TargetTrackedOffset.y, defaultVerticalOffset, Time.deltaTime * lookOffsetChangeSpeed);
     }
 }

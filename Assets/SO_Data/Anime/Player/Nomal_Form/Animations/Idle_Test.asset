@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SpriteAnimationClip
   isLoop: 1
   frames:
-  - sprite: {fileID: 21300000, guid: 5f3d472c5684b7a4380fef4f89335e9a, type: 3}
+  - sprite: {fileID: 21300000, guid: ab8c77928dec539489fc29b59cced8fb, type: 3}
     duration: 0.08
     eventName: 
