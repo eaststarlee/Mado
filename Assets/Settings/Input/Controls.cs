@@ -147,6 +147,15 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""Parry"",
+                    ""type"": ""Button"",
+                    ""id"": ""a9f23c55-1b2e-4d3a-bc77-5e8f1a0d9c4b"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""Grapple"",
                     ""type"": ""Button"",
                     ""id"": ""a3f71c22-5d8e-4b1a-9c3f-2b4d6e8f0a1c"",
@@ -226,7 +235,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""5e173265-2769-4503-b072-03823467c631"",
-                    ""path"": ""<Keyboard>/x"",
+                    ""path"": ""<Keyboard>/c"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -237,7 +246,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""01783542-9956-4279-b003-911855675841"",
-                    ""path"": ""<Keyboard>/c"",
+                    ""path"": ""<Keyboard>/x"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -248,7 +257,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""01783542-9956-4279-b003-911855675841"",
-                    ""path"": ""<Keyboard>/c"",
+                    ""path"": ""<Keyboard>/x"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -264,6 +273,17 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""ButtonA"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d4e7b2a1-9c3f-4e5d-b8f2-6a1c3e5d7b9f"",
+                    ""path"": ""<Keyboard>/leftShift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Parry"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -431,6 +451,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_Player_Dash = m_Player.FindAction("Dash", throwIfNotFound: true);
         m_Player_Sprint = m_Player.FindAction("Sprint", throwIfNotFound: true);
         m_Player_ButtonA = m_Player.FindAction("ButtonA", throwIfNotFound: true);
+        m_Player_Parry = m_Player.FindAction("Parry", throwIfNotFound: true);
         m_Player_Grapple = m_Player.FindAction("Grapple", throwIfNotFound: true);
         // Permanent
         m_Permanent = asset.FindActionMap("Permanent", throwIfNotFound: true);
@@ -528,6 +549,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Dash;
     private readonly InputAction m_Player_Sprint;
     private readonly InputAction m_Player_ButtonA;
+    private readonly InputAction m_Player_Parry;
     private readonly InputAction m_Player_Grapple;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
@@ -564,6 +586,10 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/ButtonA".
         /// </summary>
         public InputAction @ButtonA => m_Wrapper.m_Player_ButtonA;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/Parry".
+        /// </summary>
+        public InputAction @Parry => m_Wrapper.m_Player_Parry;
         /// <summary>
         /// Provides access to the underlying input action "Player/Grapple".
         /// </summary>
@@ -612,6 +638,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @ButtonA.started += instance.OnButtonA;
             @ButtonA.performed += instance.OnButtonA;
             @ButtonA.canceled += instance.OnButtonA;
+            @Parry.started += instance.OnParry;
+            @Parry.performed += instance.OnParry;
+            @Parry.canceled += instance.OnParry;
             @Grapple.started += instance.OnGrapple;
             @Grapple.performed += instance.OnGrapple;
             @Grapple.canceled += instance.OnGrapple;
@@ -644,6 +673,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @ButtonA.started -= instance.OnButtonA;
             @ButtonA.performed -= instance.OnButtonA;
             @ButtonA.canceled -= instance.OnButtonA;
+            @Parry.started -= instance.OnParry;
+            @Parry.performed -= instance.OnParry;
+            @Parry.canceled -= instance.OnParry;
             @Grapple.started -= instance.OnGrapple;
             @Grapple.performed -= instance.OnGrapple;
             @Grapple.canceled -= instance.OnGrapple;
@@ -943,6 +975,13 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnButtonA(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Parry" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnParry(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "Grapple" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>

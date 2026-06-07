@@ -26,6 +26,7 @@ public class PlayerInputReader : MonoBehaviour
     public bool   IsSwitchHeld    { get; private set; }
     public bool   IsUpPressed     { get; private set; }
     public bool   IsDownPressed   { get; private set; }
+    public bool   ParryInput      { get; private set; }
 
     // ── AutoWalk (룸 전환 자동 워킹) ────────────────────────────
     public int AutoWalkDirection { get; private set; } = 0;
@@ -155,6 +156,7 @@ public class PlayerInputReader : MonoBehaviour
         ButtonAInput  = controls.Player.ButtonA.triggered;
         GrappleInput  = controls.Player.Grapple.triggered;
         IsGrappleHeld = controls.Player.Grapple.IsPressed();
+        ParryInput    = controls.Player.Parry.triggered;
 
         // ─── D키(차원전환), S키(펫 공격) — 레거시 구형 API 잠정 유지 ──
         // TODO(P2): Controls.inputactions에 WorldSwitch / PetAttack 액션 추가 후 교체
@@ -210,6 +212,7 @@ public class PlayerInputReader : MonoBehaviour
         IsSwitchHeld    = false;
         IsUpPressed     = false;
         IsDownPressed   = false;
+        ParryInput      = false;
         player.LastPressedJumpTime = 0f;
     }
 }

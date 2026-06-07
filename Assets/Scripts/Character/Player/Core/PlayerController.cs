@@ -56,6 +56,7 @@ public class PlayerController : MonoBehaviour
     public bool JumpInputDown => inputReader.JumpInputDown;
     public bool IsAttackHeld => inputReader.IsAttackHeld;
     public bool ButtonAInput => inputReader.ButtonAInput;
+    public bool ParryInput    => inputReader.ParryInput;
     public bool IsGrappleHeld => inputReader.IsGrappleHeld;
     public bool IsSwitchHeld => inputReader.IsSwitchHeld;
     
@@ -274,7 +275,7 @@ public class PlayerController : MonoBehaviour
         }
         
         // 2?쒖쐞: ?⑤쭅 ?낅젰 媛먯? 諛??곹깭 ?꾩씠
-        if (ButtonAInput && CanParry())
+        if (ParryInput && CanParry())
         {
             StateMachine.ChangeState(ParryState);
         }
@@ -380,7 +381,7 @@ public class PlayerController : MonoBehaviour
     {
         // 1. ??대㉧ 利앷? ?먯젙 (議곗옉 以묒씠嫄곕굹 Idle???꾨땲硫???대㉧ 珥덇린??
         bool isMoving = Mathf.Abs(InputX) > 0.01f;
-        bool isAnyAction = isMoving || JumpInputDown || DashInput || ButtonAInput;
+        bool isAnyAction = isMoving || JumpInputDown || DashInput || ButtonAInput || ParryInput;
         // 援ъ뿭(IsInDimensionZone) ?댁뿉?쒕쭔 異⑹쟾 媛??
         bool canCharge = StateMachine.CurrentState == IdleState && !isAnyAction && IsInDimensionZone;
 
