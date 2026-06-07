@@ -15,7 +15,7 @@ public class PlayerInAirState : PlayerState
     private float postGrappleTimer;
 
 
-    public PlayerInAirState(PlayerController player, PlayerStateMachine stateMachine, Mado.Character.Animation.PlayerAnimType animType) : base(player, stateMachine, animType)
+    public PlayerInAirState(PlayerController player, PlayerStateMachine stateMachine) : base(player, stateMachine)
     {
     }
 
@@ -85,6 +85,11 @@ public class PlayerInAirState : PlayerState
     public override void LogicUpdate()
     {
         base.LogicUpdate();
+
+        if (player.SpriteAnimator != null)
+        {
+            player.SpriteAnimator.Play(player.RB.linearVelocity.y > 0 ? "Jump" : "Fall");
+        }
 
         if (player.JumpInputUp)
         {

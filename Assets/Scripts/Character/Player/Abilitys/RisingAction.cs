@@ -55,9 +55,7 @@ public class RisingAction : ISpecialAction
             alreadyHit = new HashSet<GameObject>()
         };
 
-        // 3. 애니메이션 실행 (불꽃 대시 전용 애니메이션이 없을 경우 AttackUp 사용)
-        Mado.Character.Animation.PlayerAnimType animType = Mado.Character.Animation.PlayerAnimType.AttackUp;
-        player.PlayAnimation(animType, force: true);
+
 
         // 4. Anticipation 시작 (기를 모으는 단계)
         currentPhase = Phase.Anticipation;

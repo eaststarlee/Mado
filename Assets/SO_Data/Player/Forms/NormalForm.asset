@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: NormalForm
   m_EditorClassIdentifier: 
   formType: 0
-  animationData: {fileID: 11400000, guid: 9ef070a1abf29e14a90026c242db2da0, type: 2}
   formSprite: {fileID: 21300000, guid: 75f101920a63cf94ea040f35c3412c63, type: 3}
+  animationSet: {fileID: 0}
   attackProfile: {fileID: 11400000, guid: 768048dbabf0ed04ebf9427c9d4002ef, type: 2}
   gravity:
     strength: -56.25

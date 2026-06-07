@@ -11,7 +11,7 @@ public class PlayerHitState : PlayerState
     private const float MIN_VELOCITY_THRESHOLD = 0.5f;
     private Vector2 initialKnockbackVelocity;
     
-    public PlayerHitState(PlayerController player, PlayerStateMachine stateMachine, Mado.Character.Animation.PlayerAnimType animType) : base(player, stateMachine, animType)
+    public PlayerHitState(PlayerController player, PlayerStateMachine stateMachine) : base(player, stateMachine)
     {
     }
     

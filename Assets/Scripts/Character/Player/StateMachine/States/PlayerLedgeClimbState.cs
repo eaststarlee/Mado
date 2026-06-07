@@ -30,7 +30,7 @@ public class PlayerLedgeClimbState : PlayerState
     // BoxCollider 캐싱
     private BoxCollider2D playerCollider;
 
-    public PlayerLedgeClimbState(PlayerController player, PlayerStateMachine stateMachine, Mado.Character.Animation.PlayerAnimType animType) : base(player, stateMachine, animType)
+    public PlayerLedgeClimbState(PlayerController player, PlayerStateMachine stateMachine) : base(player, stateMachine)
     {
     }
 

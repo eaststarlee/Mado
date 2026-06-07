@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PlayerMoveState : PlayerState
 {
-    public PlayerMoveState(PlayerController player, PlayerStateMachine stateMachine, Mado.Character.Animation.PlayerAnimType animType) : base(player, stateMachine, animType)
+    public PlayerMoveState(PlayerController player, PlayerStateMachine stateMachine) : base(player, stateMachine)
     {
     }
 

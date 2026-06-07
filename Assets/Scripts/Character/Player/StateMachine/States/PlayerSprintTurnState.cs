@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class PlayerSprintTurnState : PlayerState
 {
-    public PlayerSprintTurnState(PlayerController player, PlayerStateMachine stateMachine, Mado.Character.Animation.PlayerAnimType animType) : base(player, stateMachine, animType)
+    public PlayerSprintTurnState(PlayerController player, PlayerStateMachine stateMachine) : base(player, stateMachine)
     {
     }
 

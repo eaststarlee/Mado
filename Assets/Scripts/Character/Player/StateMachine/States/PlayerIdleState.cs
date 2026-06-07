@@ -3,8 +3,8 @@ using UnityEngine;
 public class PlayerIdleState : PlayerState
 {
     // 생성자에서 Idle 애니메이션 해시 전달
-    public PlayerIdleState(PlayerController player, PlayerStateMachine stateMachine, Mado.Character.Animation.PlayerAnimType animType) 
-        : base(player, stateMachine, animType)
+    public PlayerIdleState(PlayerController player, PlayerStateMachine stateMachine) 
+        : base(player, stateMachine)
     {
     }
 

@@ -7,8 +7,8 @@ public class CharacterFormData : ScriptableObject
 {
 	[Header("Form Identity")]
 	public FormType formType = FormType.Normal;
-	public Mado.Character.Animation.PlayerAnimationData animationData; // [New] 커스텀 애니메이션 세트
 	public Sprite formSprite; // 폼별 기본 스프라이트 (선택)
+	public Mado.AnimationSystem.CharacterAnimationSet animationSet; // [New] 폼별 애니메이션 세트
 	
 	[Header("공격 프로필")]
 	[Tooltip("폼별 공격 데이터 (Normal/Up/Down Attack + 보정값)")]

@@ -6,7 +6,7 @@ public class PlayerSprintState : PlayerState
     private float lastDirection;
     private float sprintStartTime; // 스프린트 시작 시간
 
-    public PlayerSprintState(PlayerController player, PlayerStateMachine stateMachine, Mado.Character.Animation.PlayerAnimType animType) : base(player, stateMachine, animType)
+    public PlayerSprintState(PlayerController player, PlayerStateMachine stateMachine) : base(player, stateMachine)
     {
     }
 

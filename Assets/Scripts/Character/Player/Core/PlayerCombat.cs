@@ -326,9 +326,7 @@ public class PlayerCombat : MonoBehaviour
             LockMovement = true;
         }
         
-        // 6. 애니메이션 재생
-        Mado.Character.Animation.PlayerAnimType animType = GetAnimType(dir);
-        player.PlayAnimation(animType, force: true);
+
         
         // 7. 이벤트 발생
         CombatEvents.RaiseAttackStart(currentAttack);
@@ -467,15 +465,7 @@ public class PlayerCombat : MonoBehaviour
     
     #region Helpers
     
-    private Mado.Character.Animation.PlayerAnimType GetAnimType(AttackDirection dir)
-    {
-        return dir switch
-        {
-            AttackDirection.Up => Mado.Character.Animation.PlayerAnimType.AttackUp,
-            AttackDirection.Down => Mado.Character.Animation.PlayerAnimType.AttackDown,
-            _ => Mado.Character.Animation.PlayerAnimType.AttackNormal
-        };
-    }
+
     
     private void UpdateTimers()
     {

@@ -7,24 +7,22 @@ public abstract class PlayerState
     protected PlayerController player;
     protected PlayerStateMachine stateMachine;
     
-    // [Animation] 상태별 애니메이션 타입 (None이면 애니메이션 없음)
-    protected Mado.Character.Animation.PlayerAnimType animType;
-
-    // 생성자 (애니메이션 타입을 받도록 수정)
-    protected PlayerState(PlayerController player, PlayerStateMachine stateMachine, Mado.Character.Animation.PlayerAnimType animType = Mado.Character.Animation.PlayerAnimType.None)
+    // 클래스 이름에서 Player와 State를 제거하여 애니메이션 상태 이름 자동 생성 (예: PlayerIdleState -> Idle)
+    protected virtual string AnimStateName => GetType().Name.Replace("Player", "").Replace("State", "");
+    
+    // 생성자
+    protected PlayerState(PlayerController player, PlayerStateMachine stateMachine)
     {
         this.player = player;
         this.stateMachine = stateMachine;
-        this.animType = animType;
     }
 
     // 상태에 진입할 때 한 번 호출되는 함수
     public virtual void Enter() 
     {
-        // None이 아닌 경우 커스텀 애니메이션 플레이어에 재생 요청
-        if (animType != Mado.Character.Animation.PlayerAnimType.None)
+        if (player.SpriteAnimator != null)
         {
-            player.PlayAnimation(animType);
+            player.SpriteAnimator.Play(AnimStateName);
         }
     }
 

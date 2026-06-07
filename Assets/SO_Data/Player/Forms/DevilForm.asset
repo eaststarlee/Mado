@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: DevilForm
   m_EditorClassIdentifier: 
   formType: 1
-  animationData: {fileID: 0}
   formSprite: {fileID: 0}
+  animationSet: {fileID: 11400000, guid: e18e1d3e99c234d438b48044a4bf53b1, type: 2}
   attackProfile: {fileID: 11400000, guid: a2fd0f928f81acc479154a1cd004c674, type: 2}
   gravity:
     strength: -56.25

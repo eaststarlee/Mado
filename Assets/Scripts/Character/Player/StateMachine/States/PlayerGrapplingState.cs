@@ -21,8 +21,8 @@ public class PlayerGrapplingState : PlayerState
 
     private float originalDrag;
 
-    public PlayerGrapplingState(PlayerController player, PlayerStateMachine stateMachine, GrappleData data, Mado.Character.Animation.PlayerAnimType animType)
-        : base(player, stateMachine, animType)
+    public PlayerGrapplingState(PlayerController player, PlayerStateMachine stateMachine, GrappleData data)
+        : base(player, stateMachine)
     {
         this.data = data;
     }

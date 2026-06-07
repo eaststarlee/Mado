@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a744e256e4e1c849abe6c03ceedd0a5, type: 3}
+  m_Name: Player_Devil_Anime_Set
+  m_EditorClassIdentifier: Assembly-CSharp::Mado.AnimationSystem.CharacterAnimationSet
+  animationDatas:
+  - {fileID: 11400000, guid: 7a59b26dbde164845a9a551cc416fbed, type: 2}
+  - {fileID: 11400000, guid: 68f1726b1a7b2c54e956f9b999fedb89, type: 2}
+  - {fileID: 11400000, guid: 16c7bf1143dc5264f9f3ea36673b30b2, type: 2}

@@ -13,8 +13,8 @@ public class PlayerGrappleAimState : PlayerState
     private float aimTimer;
     private Vector2 lastValidAimDir;
 
-    public PlayerGrappleAimState(PlayerController player, PlayerStateMachine stateMachine, GrappleData data, Mado.Character.Animation.PlayerAnimType animType) 
-        : base(player, stateMachine, animType)
+    public PlayerGrappleAimState(PlayerController player, PlayerStateMachine stateMachine, GrappleData data) 
+        : base(player, stateMachine)
     {
         this.data = data;
     }

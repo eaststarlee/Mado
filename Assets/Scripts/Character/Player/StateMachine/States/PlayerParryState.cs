@@ -12,8 +12,8 @@ public class PlayerParryState : PlayerState
 
     public bool IsActiveWindow => currentPhase == ParryPhase.Active;
 
-    public PlayerParryState(PlayerController player, PlayerStateMachine stateMachine, Mado.Character.Animation.PlayerAnimType animType = 0)
-        : base(player, stateMachine, animType)
+    public PlayerParryState(PlayerController player, PlayerStateMachine stateMachine)
+        : base(player, stateMachine)
     {
     }
 

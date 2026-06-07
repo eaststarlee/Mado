@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf6dcd85d5aa99e419d33f610a5d0c18, type: 3}
+  m_Name: Devil_Idle_Tail
+  m_EditorClassIdentifier: Assembly-CSharp::Mado.AnimationSystem.SpriteAnimationData
+  stateName: Idle
+  partId: Tail
+  isLooping: 1
+  frameDuration: 0.033
+  sprites:
+  - {fileID: -1405277839, guid: 43725944ac68c8f45ad269353f9e5216, type: 3}
+  - {fileID: -1657866182, guid: 43725944ac68c8f45ad269353f9e5216, type: 3}
+  - {fileID: 1295745265, guid: 43725944ac68c8f45ad269353f9e5216, type: 3}
+  - {fileID: 1647381539, guid: 43725944ac68c8f45ad269353f9e5216, type: 3}
+  - {fileID: 393390628, guid: 43725944ac68c8f45ad269353f9e5216, type: 3}
+  - {fileID: -764157966, guid: 43725944ac68c8f45ad269353f9e5216, type: 3}
+  - {fileID: -1128115621, guid: 43725944ac68c8f45ad269353f9e5216, type: 3}
+  - {fileID: 208201511, guid: 43725944ac68c8f45ad269353f9e5216, type: 3}
+  - {fileID: -1786102107, guid: 43725944ac68c8f45ad269353f9e5216, type: 3}
+  - {fileID: -435103047, guid: 43725944ac68c8f45ad269353f9e5216, type: 3}
+  - {fileID: 1145172309, guid: 43725944ac68c8f45ad269353f9e5216, type: 3}
+  - {fileID: -1417385685, guid: 43725944ac68c8f45ad269353f9e5216, type: 3}
+  - {fileID: 1477317772, guid: 43725944ac68c8f45ad269353f9e5216, type: 3}
+  - {fileID: -360269799, guid: 43725944ac68c8f45ad269353f9e5216, type: 3}
+  - {fileID: 1654717357, guid: 43725944ac68c8f45ad269353f9e5216, type: 3}
+  - {fileID: 1974342330, guid: 43725944ac68c8f45ad269353f9e5216, type: 3}
+  - {fileID: -1675946327, guid: 43725944ac68c8f45ad269353f9e5216, type: 3}
+  - {fileID: 238253835, guid: 43725944ac68c8f45ad269353f9e5216, type: 3}
+  - {fileID: 1749016646, guid: 43725944ac68c8f45ad269353f9e5216, type: 3}
+  - {fileID: 397397886, guid: 43725944ac68c8f45ad269353f9e5216, type: 3}
+  - {fileID: 108780810, guid: 43725944ac68c8f45ad269353f9e5216, type: 3}
+  - {fileID: 184263871, guid: 43725944ac68c8f45ad269353f9e5216, type: 3}
+  - {fileID: 713373051, guid: 43725944ac68c8f45ad269353f9e5216, type: 3}
+  - {fileID: -765114663, guid: 43725944ac68c8f45ad269353f9e5216, type: 3}
+  events: []

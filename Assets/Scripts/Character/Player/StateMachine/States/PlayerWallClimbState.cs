@@ -8,7 +8,7 @@ public class PlayerWallClimbState : PlayerState
     private bool isCeilingHit;
     private bool isOffWall;
 
-    public PlayerWallClimbState(PlayerController player, PlayerStateMachine stateMachine, Mado.Character.Animation.PlayerAnimType animType) : base(player, stateMachine, animType)
+    public PlayerWallClimbState(PlayerController player, PlayerStateMachine stateMachine) : base(player, stateMachine)
     {
     }
 
