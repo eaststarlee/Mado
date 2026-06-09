@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf6dcd85d5aa99e419d33f610a5d0c18, type: 3}
+  m_Name: Devil_Jump_Body
+  m_EditorClassIdentifier: Assembly-CSharp::Mado.AnimationSystem.SpriteAnimationData
+  stateName: Jump
+  partId: Body
+  isLooping: 1
+  frameDuration: 0.033
+  sprites:
+  - {fileID: 770909930, guid: c67b598cfbd092f428719520a59602f7, type: 3}
+  - {fileID: 772790329, guid: c67b598cfbd092f428719520a59602f7, type: 3}
+  - {fileID: -98304558, guid: c67b598cfbd092f428719520a59602f7, type: 3}
+  - {fileID: -588232060, guid: c67b598cfbd092f428719520a59602f7, type: 3}
+  - {fileID: -1014057386, guid: c67b598cfbd092f428719520a59602f7, type: 3}
+  - {fileID: -45145144, guid: c67b598cfbd092f428719520a59602f7, type: 3}
+  - {fileID: -882598424, guid: c67b598cfbd092f428719520a59602f7, type: 3}
+  - {fileID: 1268102827, guid: c67b598cfbd092f428719520a59602f7, type: 3}
+  - {fileID: -1375250662, guid: c67b598cfbd092f428719520a59602f7, type: 3}
+  - {fileID: -1402355285, guid: c67b598cfbd092f428719520a59602f7, type: 3}
+  - {fileID: -1086430077, guid: c67b598cfbd092f428719520a59602f7, type: 3}
+  - {fileID: -484657951, guid: c67b598cfbd092f428719520a59602f7, type: 3}
+  - {fileID: 433982160, guid: c67b598cfbd092f428719520a59602f7, type: 3}
+  - {fileID: -425198380, guid: c67b598cfbd092f428719520a59602f7, type: 3}
+  - {fileID: -11745679, guid: c67b598cfbd092f428719520a59602f7, type: 3}
+  - {fileID: 631671874, guid: c67b598cfbd092f428719520a59602f7, type: 3}
+  - {fileID: 944252879, guid: c67b598cfbd092f428719520a59602f7, type: 3}
+  - {fileID: 1155237847, guid: c67b598cfbd092f428719520a59602f7, type: 3}
+  - {fileID: 1499653182, guid: c67b598cfbd092f428719520a59602f7, type: 3}
+  - {fileID: 1438752720, guid: c67b598cfbd092f428719520a59602f7, type: 3}
+  - {fileID: 309108531, guid: c67b598cfbd092f428719520a59602f7, type: 3}
+  - {fileID: 266215754, guid: c67b598cfbd092f428719520a59602f7, type: 3}
+  - {fileID: 176218551, guid: c67b598cfbd092f428719520a59602f7, type: 3}
+  - {fileID: 509440744, guid: c67b598cfbd092f428719520a59602f7, type: 3}
+  events: []

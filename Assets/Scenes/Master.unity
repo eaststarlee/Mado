@@ -287,8 +287,8 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0}
-    oldSize: {x: 3.5906978, y: 2.5}
-    newSize: {x: 1, y: 1.5}
+    oldSize: {x: 2.5, y: 2.5}
+    newSize: {x: 2.5, y: 2.5}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
@@ -371,12 +371,12 @@ SpriteRenderer:
   m_SortingLayer: 8
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 770909930, guid: c67b598cfbd092f428719520a59602f7, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 9eff7bd2d1c378f49b73d81581c14c43, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 1
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1.5}
+  m_Size: {x: 2.5, y: 2.5}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -449,9 +449,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 11146172}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3d0372c13cc684f43b0a3cdf695ebc6a, type: 3}
+  m_Script: {fileID: 11500000, guid: 955ecb4c67350ad46baadd9fbb65b52c, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Mado.AnimationSystem.PlayerSpriteAnimator
+  m_EditorClassIdentifier: Assembly-CSharp::Mado.AnimationSystem.CharacterSpriteAnimator
   partRenderers:
   - partId: Body
     renderer: {fileID: 11146182}
@@ -14839,12 +14839,12 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -1405277839, guid: 43725944ac68c8f45ad269353f9e5216, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 1872a994760dc834c9e86686e2990672, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 1
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 3.5906978, y: 2.5}
+  m_Size: {x: 2.5, y: 2.5}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1

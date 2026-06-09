@@ -17,5 +17,5 @@ MonoBehaviour:
   isLooping: 1
   frameDuration: 0.033
   sprites:
-  - {fileID: 21300000, guid: e5f0d9425c9565040b7b8761fcf03d0d, type: 3}
+  - {fileID: 21300000, guid: 9eff7bd2d1c378f49b73d81581c14c43, type: 3}
   events: []

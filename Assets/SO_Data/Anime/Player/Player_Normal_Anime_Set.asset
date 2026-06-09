@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: Player_Normal_Anime_Set
   m_EditorClassIdentifier: Assembly-CSharp::Mado.AnimationSystem.CharacterAnimationSet
   animationDatas:
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 907a937cb3f63984c9dfd9610a7b9973, type: 2}
+  - {fileID: 11400000, guid: d04cdc8c0417c7442be05adf50ffab9c, type: 2}
