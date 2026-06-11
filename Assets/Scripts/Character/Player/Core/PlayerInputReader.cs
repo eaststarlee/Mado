@@ -158,13 +158,9 @@ public class PlayerInputReader : MonoBehaviour
         IsGrappleHeld = controls.Player.Grapple.IsPressed();
         ParryInput    = controls.Player.Parry.triggered;
 
-        // ─── D키(차원전환), S키(펫 공격) — 레거시 구형 API 잠정 유지 ──
-        // TODO(P2): Controls.inputactions에 WorldSwitch / PetAttack 액션 추가 후 교체
+        // ─── D키(차원전환) — 레거시 구형 API 잠정 유지 ──
+        // TODO(P2): Controls.inputactions에 WorldSwitch 액션 추가 후 교체
         IsSwitchHeld = Input.GetKey(KeyCode.D);
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            player.Pet?.TriggerRushAttack();
-        }
 
         // Up / Down pressed (GetKeyDown 모방)
         bool isUpNow    = InputY >  0.5f;

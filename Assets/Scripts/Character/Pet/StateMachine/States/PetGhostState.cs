@@ -52,7 +52,7 @@ public class PetGhostState : PetState
         {
             if (pet.DistanceToPlayer < pet.PetData.ghostTransitionRadius)
             {
-                stateMachine.ChangeState(pet.GetDefaultPetState());
+                stateMachine.ChangeState(pet.FollowState);
                 return;
             }
         }
@@ -62,7 +62,7 @@ public class PetGhostState : PetState
         {
             if (pet.HasLOS)
             {
-                stateMachine.ChangeState(pet.GetDefaultPetState());
+                stateMachine.ChangeState(pet.FollowState);
                 return;
             }
         }

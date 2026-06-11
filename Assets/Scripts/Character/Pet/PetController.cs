@@ -8,7 +8,6 @@ public class PetController : MonoBehaviour
     public PetStateMachine StateMachine { get; private set; }
     public PetFollowState FollowState { get; private set; }
     public PetGhostState GhostState { get; private set; }
-    public PetRushState RushState { get; private set; }
     #endregion
     
     #region References
@@ -68,20 +67,15 @@ public class PetController : MonoBehaviour
         StateMachine = new PetStateMachine();
         FollowState = new PetFollowState(this, StateMachine);
         GhostState = new PetGhostState(this, StateMachine);
-        RushState = new PetRushState(this, StateMachine);
     }
     
     private void Start()
     {
         StateMachine.Initialize(FollowState);
-        GameEvents.OnPlayerDeath += CancelRushAttack;
-        GameEvents.OnSavePointActivated += OnSavePointRest;
     }
 
     private void OnDestroy()
     {
-        GameEvents.OnPlayerDeath -= CancelRushAttack;
-        GameEvents.OnSavePointActivated -= OnSavePointRest;
     }
 
     private void Update()
@@ -114,49 +108,7 @@ public class PetController : MonoBehaviour
         HasLOS = HasLineOfSightToPlayerInternal(out _);
     }
 
-    #region Attack Controls
-    public int RushCharges { get; set; } = 0;
-    
-    public void TriggerRushAttack()
-    {
-        if (RushCharges > 0) return;
-        RushCharges = PetData.rushMaxCharge;
-        if (StateMachine.CurrentState != RushState) StateMachine.ChangeState(RushState);
-    }
 
-    public void CancelRushAttack()
-    {
-        RushCharges = 0;
-        if (StateMachine.CurrentState == RushState) StateMachine.ChangeState(FollowState);
-    }
-
-    private void OnSavePointRest(Transform savePoint) => CancelRushAttack();
-    
-    public PetState GetDefaultPetState() => RushCharges > 0 ? RushState : FollowState;
-
-    public Collider2D FindNearestEnemyInSight()
-    {
-        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, PetData.rushDetectRadius, PetData.targetLayer);
-        Collider2D nearest = null;
-        float minDistance = float.MaxValue;
-        
-        foreach (var hit in hits)
-        {
-            IDamageable damageable = hit.GetComponent<IDamageable>();
-            if (damageable == null || damageable.IsInvincible) continue;
-            
-            float dist = Vector2.Distance(transform.position, hit.transform.position);
-            Vector2 dir = (hit.transform.position - transform.position).normalized;
-            
-            RaycastHit2D rayHit = Physics2D.Raycast(transform.position, dir, dist, PetData.wallLayer);
-            if (rayHit.collider == null)
-            {
-                if (dist < minDistance) { minDistance = dist; nearest = hit; }
-            }
-        }
-        return nearest;
-    }
-    #endregion
 
     public void Teleport()
     {
@@ -164,7 +116,7 @@ public class PetController : MonoBehaviour
         
         transform.position = (Vector2)Player.transform.position + PetData.anchorOffset;
         RB.linearVelocity = Vector2.zero;
-        StateMachine.ChangeState(GetDefaultPetState());
+        StateMachine.ChangeState(FollowState);
         lastTeleportTime = Time.time;
     }
     

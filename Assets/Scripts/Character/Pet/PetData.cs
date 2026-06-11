@@ -98,24 +98,6 @@ public class PetData : ScriptableObject
     [Tooltip("Ghost 모드 종료 후 재진입 방지 쿨다운")]
     public float ghostExitCooldown = 0.5f;
 
-    [Header("Rush Attack Settings")]
-    [Tooltip("러쉬(돌진) 속도")]
-    public float rushSpeed = 30f;
-    [Tooltip("러쉬 총 체인 공격 횟수")]
-    public int rushMaxCharge = 5;
-    [Tooltip("러쉬 타격당 기초 데미지")]
-    public int rushDamage = 10;
-    [Tooltip("러쉬 타겟 탐색 반경 (원형)")]
-    public float rushDetectRadius = 12f;
-    [Tooltip("러쉬 공격 전역 쿨타임")]
-    public float rushGlobalCooldown = 2.0f;
-    [Tooltip("러쉬 중 단일 타격 역경직 시간(정지 후 재돌진 대기 시간)")]
-    public float rushHitStopDuration = 0.15f;
-    [Tooltip("러쉬 타격 시 튕겨져 나오는(Recoil) 거리/강도")]
-    public float rushRecoilForce = 5f;
-    [Tooltip("러쉬 공격 시 타겟 감지용 레이어마스크")]
-    public LayerMask targetLayer;
-
     [Header("Ghost Speed Settings")]
     [Tooltip("멀리서 소환될 때 속도 (빠름)")]
     public float ghostFastSpeed = 20f;
