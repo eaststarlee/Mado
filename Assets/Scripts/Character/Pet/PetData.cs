@@ -37,6 +37,9 @@ public class PetData : ScriptableObject
     [Tooltip("위치 변경 주기 최대값 (초)")]
     public float changePosTimeMax = 3.0f;
 
+    [Tooltip("플레이어와 겹치지 않게 밀어내는 최소 반경 (0이면 비활성)")]
+    public float antiOverlapRadius = 1.2f;
+
     [Header("Anchor Settings (앵커 설정)")]
     [Tooltip("주인공 등 뒤쪽 상공 기본 오프셋 (X: 등 뒤 거리, Y: 높이)")]
     public Vector2 anchorOffset = new Vector2(1.5f, 2.0f);

@@ -6,7 +6,7 @@ using UnityEngine;
 /// 역할: L-Shape Scan으로 목표 좌표 계산.
 ///
 /// [레이어 판별 방식]
-/// - DimensionManager.CurrentWorldMask 기반으로 현재 세계 지형을 모두 감지.
+/// - PlayerController.GroundLayer 기반으로 현재 세계 지형을 모두 감지.
 /// - 클라임 가능 여부는 SurfaceInfo.type == Climbable 로 판별.
 /// - SurfaceInfo는 Collider 인스턴스 ID 기반 Dictionary에 캐싱하여 GC 최소화.
 ///   (타일맵 루트에 SurfaceInfo가 부착되어 있어야 GetComponentInParent 동작)
@@ -65,7 +65,7 @@ public class LedgeDetector : MonoBehaviour
         float ledgeScanHeight = player.ActiveFormData.wall.ledgeScanHeight;
         float landOffset = player.ActiveFormData.wall.ledgeLandOffset;
 
-        LayerMask worldMask = DimensionManager.Instance.CurrentWorldMask;
+        LayerMask worldMask = player.GroundLayer;
 
         // ========================================================
         // 1. [Wall Check] 앞에 벽이 있는가? + SurfaceInfo.Climbable 검증
@@ -133,16 +133,18 @@ public class LedgeDetector : MonoBehaviour
         float targetX = ledgeHit.point.x + (dir * landOffset);
         float targetY = ledgeHit.point.y;
 
-        // [핵심] Pivot 보정 (캐릭터 Pivot이 중앙일 경우)
-        // 바닥 표면에서 캐릭터 절반 높이 위로 올려야 함
-        targetY += boxSize.y * 0.5f;
+        // [핵심] Pivot 보정 (캐릭터 Pivot 위치에 무관하게 발바닥이 지면에 닿도록)
+        // bottom_of_collider = transform.position.y + offset.y - size.y/2
+        // targetY + offset.y - size.y/2 = ledgeHit.point.y 가 되어야 함
+        targetY = ledgeHit.point.y + (boxSize.y * 0.5f) - playerCollider.offset.y;
 
         Vector2 finalPos = new Vector2(targetX, targetY);
 
         // ========================================================
-        // 🔥 [Grid Snap] 0.5 Grid 정렬 (필수)
+        // [Grid Snap 제거] 부동소수점 스냅오류(허공에 뜨거나 파고드는 현상) 방지를 위해
+        // 레이캐스트가 맞은 물리적 표면 좌표를 그대로 사용합니다.
         // ========================================================
-        finalPos = GridSnap05(finalPos);
+        // finalPos = GridSnap05(finalPos);
         
         // ========================================================
         // [벽 표면 X 계산] Phase 1.5에서 사용

@@ -181,8 +181,18 @@ public class PetController : MonoBehaviour
         
         foreach (Vector2 origin in rayOrigins)
         {
-            RaycastHit2D hit = Physics2D.Raycast(origin, dirNormalized, checkDist, PetData.wallLayer);
-            if (hit.collider != null) { blockCount++; if (hit.distance < minHitDist) minHitDist = hit.distance; }
+            RaycastHit2D[] hits = Physics2D.RaycastAll(origin, dirNormalized, checkDist, PetData.wallLayer);
+            foreach (var hit in hits)
+            {
+                if (hit.collider != null && !hit.collider.isTrigger &&
+                    hit.collider.gameObject != Player.gameObject &&
+                    hit.collider.gameObject != gameObject)
+                {
+                    blockCount++;
+                    if (hit.distance < minHitDist) minHitDist = hit.distance;
+                    break;
+                }
+            }
         }
         
         if (blockCount >= 2) { hitDistance = minHitDist; return false; }

@@ -6,6 +6,9 @@ using UnityEngine;
 /// </summary>
 public class GroundSensor : SensorBase
 {
+    [Header("Layer Config")]
+    [SerializeField] private LayerMask groundLayer;
+
     [Header("Ground Check")]
     [SerializeField] private Vector2 groundCheckOffset = new Vector2(0f, -0.5f);
     [SerializeField] private float groundCheckRadius = 0.2f;
@@ -24,10 +27,7 @@ public class GroundSensor : SensorBase
         int facing = bb.Movement.facingDirection;
         if (facing == 0) facing = 1;
         
-        // 월드 마스크 가져오기 (DimensionManager가 없으면 모든 레이어)
-        LayerMask worldMask = DimensionManager.Instance != null 
-            ? DimensionManager.Instance.CurrentWorldMask 
-            : ~0;
+        LayerMask worldMask = groundLayer;
             
         // 1. 지면 체크
         Collider2D groundHit = Physics2D.OverlapCircle(pos + groundCheckOffset, groundCheckRadius, worldMask);

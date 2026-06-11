@@ -125,6 +125,7 @@ public class PlayerController : MonoBehaviour
 
     #region Check Variables
     [Header("Checks")]
+    [SerializeField] public LayerMask GroundLayer;
     [SerializeField] private Transform groundCheckPoint;
     [SerializeField] private Vector2 groundCheckSize;
     [Space(5)]
@@ -389,7 +390,7 @@ public class PlayerController : MonoBehaviour
         // 구역(IsInDimensionZone) 안에서만 충전 가능
         bool canCharge = StateMachine.CurrentState == IdleState && !isAnyAction && IsInDimensionZone;
 
-        if (IsSwitchHeld && DimensionManager.Instance != null)
+        if (IsSwitchHeld)
         {
             if (canCharge && !isSwitchInterrupted)
             {
@@ -398,7 +399,15 @@ public class PlayerController : MonoBehaviour
                 if (switchHoldTimer >= targetSwitchHoldTime)
                 {
                     // SceneLoader를 통한 씬 교체 방식으로 진입
-                    DimensionManager.Instance.RequestDimensionSwitch();
+                    if (SceneLoader.Instance != null && !SceneLoader.Instance.IsTransitioning)
+                    {
+                        RoomData currentRoomData = FindFirstObjectByType<RoomData>();
+                        if (currentRoomData != null && !string.IsNullOrEmpty(currentRoomData.otherWorldSceneName))
+                        {
+                            WorldType targetWorld = currentRoomData.world == WorldType.Devil ? WorldType.Spirit : WorldType.Devil;
+                            SceneLoader.Instance.SwitchDimensionRoom(currentRoomData.otherWorldSceneName, targetWorld);
+                        }
+                    }
 
                     // 연속 발동 방지 (D버튼 완전히 뗄 때까지 재발동 차단)
                     switchHoldTimer = -0.5f;
@@ -488,16 +497,12 @@ public class PlayerController : MonoBehaviour
 
     public bool IsGrounded()
     {
-        // DimensionManager.CurrentWorldMask만 사용
-        LayerMask groundMask = DimensionManager.Instance.CurrentWorldMask;
-        return GetSolidColliderInBox(groundCheckPoint.position, groundCheckSize, groundMask) != null;
+        return GetSolidColliderInBox(groundCheckPoint.position, groundCheckSize, GroundLayer) != null;
     }
 
     public bool IsTouchingWall()
     {
-        LayerMask mask = DimensionManager.Instance.CurrentWorldMask;
-
-        Collider2D hit = GetSolidColliderInBox(wallCheckPoint.position, wallCheckSize, mask);
+        Collider2D hit = GetSolidColliderInBox(wallCheckPoint.position, wallCheckSize, GroundLayer);
         if (hit == null) return false;
 
         // SurfaceType.Wall 검증
@@ -520,17 +525,15 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     public bool IsCeilinged()
     {
-        LayerMask mask = DimensionManager.Instance.CurrentWorldMask;
         Vector2 origin = (Vector2)transform.position + new Vector2(0, 1.0f);
         // 플레이어 너비(약 0.8)보다 약간 작게(0.5) 설정하여 벽에 밀착했을 때 벽을 천장으로 오인하지 않도록 함
         Vector2 size = new Vector2(0.5f, 0.2f);
-        return GetSolidColliderInBox(origin, size, mask) != null;
+        return GetSolidColliderInBox(origin, size, GroundLayer) != null;
     }
 
     public bool IsTouchingGroundOnSide()
     {
-        LayerMask mask = DimensionManager.Instance.CurrentWorldMask;
-        return GetSolidColliderInBox(wallCheckPoint.position, wallCheckSize, mask) != null;
+        return GetSolidColliderInBox(wallCheckPoint.position, wallCheckSize, GroundLayer) != null;
     }
 
     public bool CanDash() => DashCountLeft > 0 && Time.time >= lastDashTime + ActiveFormData.ability.dashCooldown;

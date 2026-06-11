@@ -12,6 +12,7 @@ public class RaySensor : SensorBase
     [Tooltip("감지 영역의 중심 오프셋 (X는 보는 방향 기준)")]
     [SerializeField] private Vector2 boxOffset = new Vector2(5f, 1f); 
     [SerializeField] private LayerMask targetLayer;   // 플레이어 레이어
+    [SerializeField] private LayerMask obstacleLayer; // 벽/지형 레이어
 
     [Header("Debug")]
     [SerializeField] private Color visionColor = new Color(1f, 1f, 0f, 0.2f);
@@ -75,9 +76,7 @@ public class RaySensor : SensorBase
 
         // 2. 장애물(벽) 투시 방지 (Raycast)
         // 월드 마스크 사용
-        LayerMask worldMask = DimensionManager.Instance != null 
-            ? DimensionManager.Instance.CurrentWorldMask 
-            : ~0;
+        LayerMask worldMask = obstacleLayer;
             
         Vector2 eyePos = myPos + new Vector2(0f, boxOffset.y); 
         Vector2 dirToTarget = (targetPos - eyePos).normalized;

@@ -107,12 +107,11 @@ public class GrappleDetector : MonoBehaviour
         }
 
         // 1단계: 주변 콜라이더 모두 감지
-        // 기존 GrappleTarget 레이어(하위 호환) + 현재 세계의 모든 지형 레이어 혼합 검색
 #pragma warning disable CS0618
         LayerMask searchMask = data.grappleTargetLayer;
-        if (DimensionManager.Instance != null)
-            searchMask |= DimensionManager.Instance.CurrentWorldMask;
-#pragma warning restore CS0618
+        PlayerController player = GetComponent<PlayerController>();
+        if (player != null)
+            searchMask |= player.GroundLayer;
 
         Vector2 searchCenter = (Vector2)transform.position + detectionCircleOffset;
         Collider2D[] hits = Physics2D.OverlapCircleAll(

@@ -13,43 +13,34 @@ MonoBehaviour:
   m_Name: PetData
   m_EditorClassIdentifier: 
   safeZoneRadius: 3
-  elasticZoneRadius: 5
+  elasticZoneRadius: 7
   ghostTransitionRadius: 10
-  minCatchUpSmoothTime: 0.05
-  predictiveLeadFactor: 0.2
-  hoverSmoothTime: 0.8
+  minCatchUpSmoothTime: 0.1
+  predictiveLeadFactor: 0.25
+  hoverSmoothTime: 1
   randomOffsetBlendSpeed: 2
-  changePosTimeMin: 2
-  changePosTimeMax: 5
+  changePosTimeMin: 4
+  changePosTimeMax: 10
+  antiOverlapRadius: 1.4
   anchorOffset: {x: 1.7, y: 1.3}
-  anchorUpdateSpeed: 6
-  floatingAmplitude: 1
-  floatingFrequency: 2
+  anchorUpdateSpeed: 5
+  floatingAmplitude: 0.1
+  floatingFrequency: 3
   ghostToFollowDistance: 2
-  stuckTimeThreshold: 0.5
+  stuckTimeThreshold: 0.25
   ghostSpeed: 20
-  ghostAlpha: 0.7
+  ghostAlpha: 0.9
   followMaxSpeed: 10
   runawayVelocityThreshold: 15
   arrivalThreshold: 0.05
   wallLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1015
   maxBlockDistance: 3
   playerStabilityThreshold: 0.5
   closeRangeThreshold: 1
   closeRangeTimerWeight: 0.3
   ghostExitCooldown: 0.5
-  rushSpeed: 30
-  rushMaxCharge: 5
-  rushDamage: 1
-  rushDetectRadius: 25
-  rushGlobalCooldown: 2
-  rushHitStopDuration: 0.15
-  rushRecoilForce: 5
-  targetLayer:
-    serializedVersion: 2
-    m_Bits: 512
   ghostFastSpeed: 30
   ghostStuckSpeed: 15
   ghostFloatingFreqMultiplier: 4

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -16,6 +16,9 @@ public class HitResolver : MonoBehaviour
     
     [Header("피드백")]
     [SerializeField] private CombatFeedback feedback;
+    
+    [Header("환경 설정")]
+    [SerializeField] private LayerMask environmentLayer;
     
     private void Awake()
     {
@@ -85,12 +88,10 @@ public class HitResolver : MonoBehaviour
             if (col != null) return true;
         }
 
-        // 2. 지?�된 SurfaceInfo 검??
+        // 2. 지?된 SurfaceInfo 검??
         if (session.recoilTargetSurfaces != null && session.recoilTargetSurfaces.Count > 0)
         {
-            LayerMask worldMask = DimensionManager.Instance != null
-                ? DimensionManager.Instance.CurrentWorldMask
-                : ~0; // 모든 ?�이??
+            LayerMask worldMask = environmentLayer;
                 
             Collider2D[] hits = Physics2D.OverlapBoxAll(boxCenter, boxSize, 0f, worldMask);
             foreach (var col in hits)
@@ -109,60 +110,57 @@ public class HitResolver : MonoBehaviour
     #region Stage 1: Detection
     
     /// <summary>
-    /// OverlapBox�?충돌 ?�???�집
+    /// OverlapBox?충돌 ????집
     /// </summary>
     private List<Collider2D> DetectTargets(AttackSession session)
     {
-        // 방향 ?�용???�트박스 중심 계산
+        // 방향 ?용???트박스 중심 계산
         Vector2 boxCenter = session.origin + new Vector2(
             session.attack.hitboxOffset.x * session.facing * session.rangeMultiplier,
             session.attack.hitboxOffset.y
         );
         
-        // 범위 배율 ?�용
+        // 범위 배율 ?용
         Vector2 boxSize = session.attack.hitboxSize * session.rangeMultiplier;
         
-        // OverlapBox�?충돌 검??
+        // OverlapBox?충돌 검??
         Collider2D[] hits = Physics2D.OverlapBoxAll(boxCenter, boxSize, 0f, session.targetLayer);
         
 #if UNITY_EDITOR
-        // ?�버�? ?�트박스 ?�각??
+        // ?버? ?트박스 ?각??
         DebugDrawHitbox(boxCenter, boxSize, hits.Length > 0 ? Color.red : Color.yellow);
 #endif
         
-        // Game �??�트박스 ?�각??(?��???
+        // Game ??트박스 ?각??(????
         HitboxDebugRenderer.Instance?.RegisterPlayerHitbox(boxCenter, boxSize, 0.1f);
         
         return hits.ToList();
     }
     
     /// <summary>
-    /// ?�경 ?�브?�트(BreakableWall ?? ?�캔 �??��?처리
+    /// ?경 ?브?트(BreakableWall ?? ?캔 ???처리
     /// </summary>
     private void CheckEnvironmentHits(AttackSession session)
     {
-        // 공격 주체가 ?�레?�어?��? ?�인
+        // 공격 주체가 ?레?어?? ?인
         if (session.attacker == null) return;
         PlayerController player = session.attacker.GetComponent<PlayerController>();
         if (player == null) return;
         
-        // ??체크 로직 ??��: ??검증�? 개별 ?�경 ?�브?�트(DestructibleEntity ??가 ?�스�??�단?�도�??�임
+        // ??체크 로직 ??: ??검증? 개별 ?경 ?브?트(DestructibleEntity ??가 ?스??단?도??임
         
-        // ?�트박스 계산 (DetectTargets?� ?�일)
+        // ?트박스 계산 (DetectTargets? ?일)
         Vector2 boxCenter = session.origin + new Vector2(
             session.attack.hitboxOffset.x * session.facing * session.rangeMultiplier,
             session.attack.hitboxOffset.y
         );
         Vector2 boxSize = session.attack.hitboxSize * session.rangeMultiplier;
         
-        // ?�재 ?�계 ?�이?�마?�크 (DimensionManager가 ?�으�??�체 ?�이??
-        LayerMask worldMask = DimensionManager.Instance != null
-            ? DimensionManager.Instance.CurrentWorldMask
-            : ~0;
+        LayerMask worldMask = environmentLayer;
             
         Collider2D[] hits = Physics2D.OverlapBoxAll(boxCenter, boxSize, 0f, worldMask);
         
-        // ?�경 ?��??�보�??�집
+        // ?경 ???보??집
         List<Collider2D> environmentTargets = new List<Collider2D>();
         
         foreach (var col in hits)

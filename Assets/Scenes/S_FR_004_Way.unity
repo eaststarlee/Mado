@@ -319,7 +319,7 @@ GameObject:
   - component: {fileID: 183755210}
   - component: {fileID: 183755209}
   - component: {fileID: 183755208}
-  m_Layer: 10
+  m_Layer: 3
   m_Name: ClimbGround
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1378,7 +1378,7 @@ GameObject:
   - component: {fileID: 615348674}
   - component: {fileID: 615348673}
   - component: {fileID: 615348672}
-  m_Layer: 10
+  m_Layer: 3
   m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8378,6 +8378,7 @@ MonoBehaviour:
   connectedScene_Right: 
   connectedScene_Up: 
   connectedScene_Down: 
+  lockCameraY: 0
 --- !u!4 &717278438
 Transform:
   m_ObjectHideFlags: 0
@@ -8457,7 +8458,7 @@ GameObject:
   - component: {fileID: 912103523}
   - component: {fileID: 912103522}
   - component: {fileID: 912103521}
-  m_Layer: 10
+  m_Layer: 3
   m_Name: GrapplePoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8788,7 +8789,7 @@ GameObject:
   - component: {fileID: 923720072}
   - component: {fileID: 923720071}
   - component: {fileID: 923720077}
-  m_Layer: 10
+  m_Layer: 3
   m_Name: Spike
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9328,20 +9329,21 @@ MonoBehaviour:
   DashSettings:
     Damping: {x: 0, y: 0.1}
     LookOffset: 1
-  SprintSettings:
-    Damping: {x: 0, y: 0.1}
-    LookOffset: 1.5
   WallSlideSettings:
     Damping: {x: 0, y: 0.1}
     LookOffset: 0.5
   WallJumpSettings:
     Damping: {x: 0, y: 0.1}
     LookOffset: 0.5
-  SprintJumpSettings:
-    Damping: {x: 0, y: 0.3}
-    LookOffset: 2
+  SlamSettings:
+    Damping: {x: 0, y: 0}
+    LookOffset: 4
+  FireDashSettings:
+    Damping: {x: 0, y: 0}
+    LookOffset: 4
   verticalLookOffset: 2
   verticalLookActivateDelay: 1
+  defaultVerticalOffset: 0.9
 --- !u!1 &1223106206
 GameObject:
   m_ObjectHideFlags: 0
@@ -9755,7 +9757,7 @@ GameObject:
   - component: {fileID: 1613869273}
   - component: {fileID: 1613869280}
   - component: {fileID: 1613869279}
-  m_Layer: 10
+  m_Layer: 3
   m_Name: BreakableWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10129,7 +10131,7 @@ GameObject:
   - component: {fileID: 1617323893}
   - component: {fileID: 1617323892}
   - component: {fileID: 1617323891}
-  m_Layer: 10
+  m_Layer: 3
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12669,7 +12671,7 @@ GameObject:
   - component: {fileID: 1692953997}
   - component: {fileID: 1692954004}
   - component: {fileID: 1692954003}
-  m_Layer: 10
+  m_Layer: 3
   m_Name: 'Devil_BreakableWall '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13073,6 +13075,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   feedback: {fileID: 1948737447}
+  environmentLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!4 &1948737449
 Transform:
   m_ObjectHideFlags: 0

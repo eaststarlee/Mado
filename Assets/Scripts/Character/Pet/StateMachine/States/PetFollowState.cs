@@ -165,6 +165,18 @@ public class PetFollowState : PetState
         // 최종 목표
         Vector2 target = anchorPosition + leadOffset + currentRandomOffset;
 
+        // [Anti-Overlap] 플레이어와 겹치지 않도록 강제 밀어내기
+        if (pet.PetData.antiOverlapRadius > 0f)
+        {
+            Vector2 playerPos = pet.Player.transform.position;
+            Vector2 toTarget = target - playerPos;
+            if (toTarget.sqrMagnitude < pet.PetData.antiOverlapRadius * pet.PetData.antiOverlapRadius)
+            {
+                if (toTarget.sqrMagnitude <= 0.001f) toTarget = Vector2.up; // 완전히 겹쳤을 때 방어
+                target = playerPos + toTarget.normalized * pet.PetData.antiOverlapRadius;
+            }
+        }
+
         if (pet.IsFloating)
         {
             target.y += Mathf.Sin(Time.time * pet.PetData.floatingFrequency) * pet.PetData.floatingAmplitude;

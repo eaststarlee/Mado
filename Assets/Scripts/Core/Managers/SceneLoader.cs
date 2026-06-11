@@ -239,11 +239,8 @@ public class SceneLoader : MonoBehaviour
         // ── 6. 활성 씬 설정 ────────────────────────────
         SetActiveScene(targetSceneName);
 
-        // ── 7. 세계 상태 갱신 (DimensionManager에 통보) ─
-        if (DimensionManager.Instance != null)
-        {
-            DimensionManager.Instance.SetCurrentWorld(targetWorld);
-        }
+        // ── 7. 세계 상태 갱신 (DimensionManager 삭제됨) ─
+        // (더 이상 중앙 집중식 월드 상태 관리가 불필요하며, 이벤트로 대체)
 
         // ── 8. 플레이어 위치 유지 (차원 전환 = 같은 좌표) ─
         SetPlayerPosition(cachedPlayerPos);

@@ -201,7 +201,7 @@ public class PlayerLedgeClimbState : PlayerState
         Vector2 checkOrigin = player.RB.position + Vector2.up * (playerCollider.size.y * 0.5f);
         Vector2 checkSize = new Vector2(playerCollider.size.x * 0.8f, 0.2f);
 
-        LayerMask ceilingMask = DimensionManager.Instance.CurrentWorldMask;
+        LayerMask ceilingMask = player.GroundLayer;
 
         RaycastHit2D ceilingHit = Physics2D.BoxCast(
             checkOrigin,

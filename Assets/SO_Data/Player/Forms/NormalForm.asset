@@ -61,7 +61,7 @@ MonoBehaviour:
     climbForce: 25
     climbDuration: 0.3
     climbStopSmoothingDuration: 0.2
-    ledgeClimbSpeed: 5
+    ledgeClimbSpeed: 6
     ledgeScanHeight: 1.5
     ledgeLandOffset: 0.1
     ledgeMaxClimbHeight: 1.5

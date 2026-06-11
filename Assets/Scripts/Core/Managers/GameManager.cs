@@ -137,42 +137,62 @@ public class GameManager : MonoBehaviour
         
         // === 완전 암전 상태: 모든 재배치 수행 ===
         
-        if (player != null && currentSavePoint != null)
+        if (player != null)
         {
-            // 플레이어 재배치
-            player.transform.position = currentSavePoint.position;
+            // 1. 공통 물리 상태 및 체력 복구 (세이브포인트 유무 무관하게 무조건 실행)
             playerRigidbody.linearVelocity = Vector2.zero;
             playerRigidbody.angularVelocity = 0f;
             playerRigidbody.bodyType = RigidbodyType2D.Dynamic;
             
-            // 체력 복구
             if (playerHealth != null)
             {
                 playerHealth.ResetHealth();
             }
             
-            // 펫 재배치 (PetSpawnPoint 활용)
-            if (player.Pet != null)
+            // 2. 위치 재배치
+            if (currentSavePoint != null)
             {
-                Vector3 targetPos;
-                var savePointScript = currentSavePoint.GetComponent<SavePoint>();
+                player.transform.position = currentSavePoint.position;
                 
-                if (savePointScript != null && savePointScript.petSpawnPoint != null)
+                // 펫 재배치 (PetSpawnPoint 활용)
+                if (player.Pet != null)
                 {
-                    targetPos = savePointScript.petSpawnPoint.position;
+                    Vector3 targetPos;
+                    var savePointScript = currentSavePoint.GetComponent<SavePoint>();
+                    
+                    if (savePointScript != null && savePointScript.petSpawnPoint != null)
+                    {
+                        targetPos = savePointScript.petSpawnPoint.position;
+                    }
+                    else
+                    {
+                        targetPos = currentSavePoint.position + new Vector3(-1f, 0.5f, 0);
+                    }
+                    
+                    player.Pet.transform.position = targetPos;
+                    
+                    var trail = player.Pet.GetComponentInChildren<TrailRenderer>();
+                    if (trail != null)
+                    {
+                        trail.emitting = false;
+                        trail.Clear();
+                    }
                 }
-                else
-                {
-                    targetPos = currentSavePoint.position + new Vector3(-1f, 0.5f, 0);
-                }
+            }
+            else
+            {
+                Debug.LogWarning("[GameManager] currentSavePoint가 null입니다! 제자리에서 정상 상태로 부활합니다.");
                 
-                player.Pet.transform.position = targetPos;
-                
-                var trail = player.Pet.GetComponentInChildren<TrailRenderer>();
-                if (trail != null)
+                // 제자리 부활 시에도 펫 위치를 플레이어 근처로 이동
+                if (player.Pet != null)
                 {
-                    trail.emitting = false;
-                    trail.Clear();
+                    player.Pet.transform.position = player.transform.position + new Vector3(-1f, 0.5f, 0);
+                    var trail = player.Pet.GetComponentInChildren<TrailRenderer>();
+                    if (trail != null)
+                    {
+                        trail.emitting = false;
+                        trail.Clear();
+                    }
                 }
             }
         }
