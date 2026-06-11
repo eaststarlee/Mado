@@ -17,5 +17,23 @@ MonoBehaviour:
   isLooping: 1
   frameDuration: 0.033
   sprites:
-  - {fileID: 21300000, guid: 9eff7bd2d1c378f49b73d81581c14c43, type: 3}
+  - {fileID: 780997553, guid: 326a5f88237c94e4ba1b6b54d99be0e6, type: 3}
+  - {fileID: 404954401, guid: 326a5f88237c94e4ba1b6b54d99be0e6, type: 3}
+  - {fileID: 776633860, guid: 326a5f88237c94e4ba1b6b54d99be0e6, type: 3}
+  - {fileID: -10279456, guid: 326a5f88237c94e4ba1b6b54d99be0e6, type: 3}
+  - {fileID: -2119531313, guid: 326a5f88237c94e4ba1b6b54d99be0e6, type: 3}
+  - {fileID: 384329959, guid: 326a5f88237c94e4ba1b6b54d99be0e6, type: 3}
+  - {fileID: 973920737, guid: 326a5f88237c94e4ba1b6b54d99be0e6, type: 3}
+  - {fileID: 1809250774, guid: 326a5f88237c94e4ba1b6b54d99be0e6, type: 3}
+  - {fileID: 287682326, guid: 326a5f88237c94e4ba1b6b54d99be0e6, type: 3}
+  - {fileID: 1569566422, guid: 326a5f88237c94e4ba1b6b54d99be0e6, type: 3}
+  - {fileID: 428358589, guid: 326a5f88237c94e4ba1b6b54d99be0e6, type: 3}
+  - {fileID: 793125960, guid: 326a5f88237c94e4ba1b6b54d99be0e6, type: 3}
+  - {fileID: -607286456, guid: 326a5f88237c94e4ba1b6b54d99be0e6, type: 3}
+  - {fileID: -913374193, guid: 326a5f88237c94e4ba1b6b54d99be0e6, type: 3}
+  - {fileID: 1801869753, guid: 326a5f88237c94e4ba1b6b54d99be0e6, type: 3}
+  - {fileID: 1223167086, guid: 326a5f88237c94e4ba1b6b54d99be0e6, type: 3}
+  - {fileID: 2127697741, guid: 326a5f88237c94e4ba1b6b54d99be0e6, type: 3}
+  - {fileID: -839923462, guid: 326a5f88237c94e4ba1b6b54d99be0e6, type: 3}
+  - {fileID: -1408926207, guid: 326a5f88237c94e4ba1b6b54d99be0e6, type: 3}
   events: []

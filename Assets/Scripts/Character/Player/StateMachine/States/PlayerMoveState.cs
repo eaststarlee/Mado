@@ -24,20 +24,6 @@ public class PlayerMoveState : PlayerState
             return;
         }
 
-        // 변신 입력 체크 (↑ + A)
-        if (stateMachine.CurrentState != player.TransformState 
-            && player.InputY > 0.5f 
-            && player.ButtonAInput) 
-        {
-            FormType nextForm = player.CurrentForm == FormType.Normal 
-                ? FormType.Devil 
-                : FormType.Normal;
-            
-            player.TransformState.SetTransform(nextForm, this);
-            stateMachine.ChangeState(player.TransformState);
-            return;
-        }
-
         // [LedgeClimb] Walk 중 벽 방향으로 이동하다 턱이 감지되면 LedgeClimb 전환
         bool inputTowardsWall = (player.InputX > 0 && player.IsFacingRight)
                              || (player.InputX < 0 && !player.IsFacingRight);

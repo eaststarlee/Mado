@@ -103,20 +103,6 @@ public class PlayerInAirState : PlayerState
             }
         }
         
-        // 변신 입력 체크 (↑ + A) - 최우선
-        if (stateMachine.CurrentState != player.TransformState 
-            && player.InputY > 0.5f 
-            && player.ButtonAInput)
-        {
-            FormType nextForm = player.CurrentForm == FormType.Normal 
-                ? FormType.Devil 
-                : FormType.Normal;
-            
-            player.TransformState.SetTransform(nextForm, this);
-            stateMachine.ChangeState(player.TransformState);
-            return;
-        }
-
         // 더블 점프 및 활공 로직 (우선순위 결정)
         
         // 1. 더블 점프 (최우선: 생존기)

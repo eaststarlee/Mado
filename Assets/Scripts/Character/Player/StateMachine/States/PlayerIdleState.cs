@@ -31,20 +31,7 @@ public class PlayerIdleState : PlayerState
             return;
         }
         
-        // 변신 입력 체크 (↑ + A)
-        if (stateMachine.CurrentState != player.TransformState 
-            && player.InputY > 0.5f 
-            && player.ButtonAInput)
-        {
-            FormType nextForm = player.CurrentForm == FormType.Normal 
-                ? FormType.Devil 
-                : FormType.Normal;
-            
-            player.TransformState.SetTransform(nextForm, this);
-            stateMachine.ChangeState(player.TransformState);
-            return;
-        }
-        
+
         if (player.LastPressedJumpTime > 0)
         {
             stateMachine.ChangeState(player.InAirState);
