@@ -7,6 +7,9 @@ public class PetState
     protected PetController pet;
     protected PetStateMachine stateMachine;
 
+    // 클래스 이름에서 Pet과 State를 제거하여 애니메이션 상태 이름 자동 생성 (예: PetFollowState -> Follow)
+    protected virtual string AnimStateName => GetType().Name.Replace("Pet", "").Replace("State", "");
+
     // 생성자
     public PetState(PetController pet, PetStateMachine stateMachine)
     {
@@ -15,7 +18,13 @@ public class PetState
     }
 
     // 상태에 진입할 때 한 번 호출되는 함수
-    public virtual void Enter() { }
+    public virtual void Enter() 
+    { 
+        if (pet.Animator != null)
+        {
+            pet.Animator.Play(AnimStateName);
+        }
+    }
 
     // 상태를 빠져나갈 때 한 번 호출되는 함수
     public virtual void Exit() { }

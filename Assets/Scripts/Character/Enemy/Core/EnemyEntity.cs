@@ -17,7 +17,7 @@ public class EnemyEntity : MonoBehaviour
     
     // --- 컴포넌트 참조 ---
     public Rigidbody2D Rigidbody { get; private set; }
-    public Animator Animator { get; private set; }
+    public Mado.AnimationSystem.ICharacterAnimator Animator { get; private set; }
     public SpriteRenderer SpriteRenderer { get; private set; }
     public Collider2D Collider { get; private set; }
     public EnemyHealth Health { get; private set; }
@@ -58,7 +58,7 @@ public class EnemyEntity : MonoBehaviour
     {
         // 컴포넌트 수집
         Rigidbody = GetComponent<Rigidbody2D>();
-        Animator = GetComponentInChildren<Animator>();
+        Animator = GetComponentInChildren<Mado.AnimationSystem.ICharacterAnimator>();
         SpriteRenderer = GetComponentInChildren<SpriteRenderer>();
         Collider = GetComponentInChildren<Collider2D>();
         Health = GetComponentInChildren<EnemyHealth>();

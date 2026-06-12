@@ -15,11 +15,14 @@ public class PetController : MonoBehaviour
     public Rigidbody2D RB { get; private set; }
     public Collider2D Collider { get; private set; }
     public SpriteRenderer SpriteRenderer { get; private set; }
+    public Mado.AnimationSystem.ICharacterAnimator Animator { get; private set; }
     #endregion
     
     #region Data
     [SerializeField] private PetData petData;
     public PetData PetData => petData;
+    [SerializeField] private Mado.AnimationSystem.CharacterAnimationSet animationSet;
+    public Mado.AnimationSystem.CharacterAnimationSet AnimationSet => animationSet;
     #endregion
     
     #region Logic & Cache Variables
@@ -57,6 +60,7 @@ public class PetController : MonoBehaviour
         RB = GetComponent<Rigidbody2D>();
         Collider = GetComponent<Collider2D>();
         SpriteRenderer = GetComponent<SpriteRenderer>();
+        Animator = GetComponentInChildren<Mado.AnimationSystem.ICharacterAnimator>();
         Player = FindFirstObjectByType<PlayerController>();
         
         if (Player == null)
@@ -71,6 +75,10 @@ public class PetController : MonoBehaviour
     
     private void Start()
     {
+        if (Animator is Mado.AnimationSystem.CharacterSpriteAnimator spriteAnimator && animationSet != null)
+        {
+            spriteAnimator.SetAnimationSet(animationSet);
+        }
         StateMachine.Initialize(FollowState);
     }
 
@@ -93,6 +101,10 @@ public class PetController : MonoBehaviour
         
         // 3. 상태 머신 업데이트
         StateMachine.CurrentState?.LogicUpdate();
+
+#if UNITY_EDITOR
+        UpdateDebugInfo();
+#endif
     }
     
     private void FixedUpdate()

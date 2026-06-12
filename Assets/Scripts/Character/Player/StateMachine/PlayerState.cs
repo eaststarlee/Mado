@@ -20,9 +20,9 @@ public abstract class PlayerState
     // 상태에 진입할 때 한 번 호출되는 함수
     public virtual void Enter() 
     {
-        if (player.SpriteAnimator != null)
+        if (player.Animator != null)
         {
-            player.SpriteAnimator.Play(AnimStateName);
+            player.Animator.Play(AnimStateName);
         }
     }
 

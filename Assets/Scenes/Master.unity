@@ -921,6 +921,7 @@ GameObject:
   - component: {fileID: 91013344}
   - component: {fileID: 91013343}
   - component: {fileID: 91013342}
+  - component: {fileID: 91013348}
   m_Layer: 8
   m_Name: Lilly
   m_TagString: Untagged
@@ -941,6 +942,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   petData: {fileID: 11400000, guid: 81f9098e4b3e863429c44db2db8f5614, type: 2}
+  animationSet: {fileID: 11400000, guid: e7dfc3f7dbf00f04daf17f8cb59a5a52, type: 2}
   currentStateName: 
 --- !u!95 &91013343
 Animator:
@@ -1101,6 +1103,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &91013348
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 91013341}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 955ecb4c67350ad46baadd9fbb65b52c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mado.AnimationSystem.CharacterSpriteAnimator
+  partRenderers:
+  - partId: Default
+    renderer: {fileID: 91013346}
 --- !u!1 &106528374
 GameObject:
   m_ObjectHideFlags: 0

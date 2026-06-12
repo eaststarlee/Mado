@@ -66,7 +66,7 @@ namespace Modules.Reaction
             
             // 애니메이션
             if (entity.Animator != null)
-                entity.Animator.Play("Hit", -1, 0f);
+                entity.Animator.Play("Hit", true);
 
             Debug.Log($"[HitReaction] Enter - Duration: {context.Duration}, Knockback: {context.InitialKnockback}, Force: {info.knockbackForce}");
 
@@ -148,7 +148,7 @@ namespace Modules.Reaction
             entity.Motor.SetVelocity(context.InitialKnockback);
             
             if (entity.Animator != null)
-                entity.Animator.Play("Hit", -1, 0f);
+                entity.Animator.Play("Hit", true);
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Mado.AnimationSystem
         public SpriteRenderer renderer;
     }
 
-    public class CharacterSpriteAnimator : MonoBehaviour
+    public class CharacterSpriteAnimator : MonoBehaviour, ICharacterAnimator
     {
         [Header("Renderers Mapping")]
         public List<PartRendererMapping> partRenderers = new List<PartRendererMapping>();
@@ -41,6 +41,7 @@ namespace Mado.AnimationSystem
         private string _currentStateName;
 
         private IAnimationEventListener[] _eventListeners;
+        private float _playbackSpeed = 1f;
 
         private void Awake()
         {
@@ -134,7 +135,7 @@ namespace Mado.AnimationSystem
                 if (partState.currentData == null || partState.isCompleted) 
                     continue;
 
-                partState.timer += Time.deltaTime;
+                partState.timer += Time.deltaTime * _playbackSpeed;
 
                 if (partState.timer >= partState.currentData.frameDuration)
                 {
@@ -205,6 +206,11 @@ namespace Mado.AnimationSystem
                     listener.OnAnimationEvent(eventName);
                 }
             }
+        }
+
+        public void SetSpeed(float speed)
+        {
+            _playbackSpeed = speed;
         }
     }
 }

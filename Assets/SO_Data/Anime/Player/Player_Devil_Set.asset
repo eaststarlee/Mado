@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7a744e256e4e1c849abe6c03ceedd0a5, type: 3}
-  m_Name: Player_Normal_Anime_Set
+  m_Name: Player_Devil_Set
   m_EditorClassIdentifier: Assembly-CSharp::Mado.AnimationSystem.CharacterAnimationSet
   animationDatas:
-  - {fileID: 11400000, guid: 907a937cb3f63984c9dfd9610a7b9973, type: 2}
-  - {fileID: 11400000, guid: d04cdc8c0417c7442be05adf50ffab9c, type: 2}
-  - {fileID: 11400000, guid: f0cf0407ac26d93488515ecfa5d359e5, type: 2}
-  - {fileID: 11400000, guid: ef4f95e0a72671049848eaed63f1ad46, type: 2}
+  - {fileID: 11400000, guid: 7a59b26dbde164845a9a551cc416fbed, type: 2}
+  - {fileID: 11400000, guid: 68f1726b1a7b2c54e956f9b999fedb89, type: 2}
+  - {fileID: 11400000, guid: 16c7bf1143dc5264f9f3ea36673b30b2, type: 2}
+  - {fileID: 11400000, guid: 464c57fefb948fe43aceaccbca25bdc4, type: 2}

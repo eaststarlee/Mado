@@ -86,9 +86,9 @@ public class PlayerInAirState : PlayerState
     {
         base.LogicUpdate();
 
-        if (player.SpriteAnimator != null)
+        if (player.Animator != null)
         {
-            player.SpriteAnimator.Play(player.RB.linearVelocity.y > 0 ? "Jump" : "Fall");
+            player.Animator.Play(player.RB.linearVelocity.y > 0 ? "Jump" : "Fall");
         }
 
         if (player.JumpInputUp)

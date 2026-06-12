@@ -102,7 +102,7 @@ public class PlayerController : MonoBehaviour
     public PlayerInputReader inputReader { get; private set; }
     public PlayerFormManager formManager { get; private set; }
     public PlayerActionController actionController { get; private set; }
-    public Mado.AnimationSystem.CharacterSpriteAnimator SpriteAnimator { get; private set; }
+    public Mado.AnimationSystem.ICharacterAnimator Animator { get; private set; }
 
     public FormType CurrentForm => formManager.CurrentForm;
     public CharacterFormData ActiveFormData => formManager.ActiveFormData;
@@ -150,7 +150,7 @@ public class PlayerController : MonoBehaviour
         actionController = GetComponent<PlayerActionController>();
         RB = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        SpriteAnimator = GetComponentInChildren<Mado.AnimationSystem.CharacterSpriteAnimator>();
+        Animator = GetComponentInChildren<Mado.AnimationSystem.ICharacterAnimator>();
 
 
         var boxCol = GetComponent<BoxCollider2D>();
