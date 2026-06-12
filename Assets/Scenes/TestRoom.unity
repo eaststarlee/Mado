@@ -15092,7 +15092,7 @@ GameObject:
   - component: {fileID: 912103523}
   - component: {fileID: 912103522}
   - component: {fileID: 912103521}
-  m_Layer: 10
+  m_Layer: 3
   m_Name: GrapplePoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -16540,10 +16540,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a89e0fdf690be2c48a38162967111f42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DimensionManager
-  initialWorld: 1
-  commonWorldLayer: 10
-  devilWorldLayer: 11
-  spiritWorldLayer: 12
 --- !u!4 &1478740419
 Transform:
   m_ObjectHideFlags: 0
@@ -16594,7 +16590,7 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 4087
+    m_Bits: 1015
 --- !u!114 &1510185338
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16774,7 +16770,7 @@ GameObject:
   - component: {fileID: 1613869273}
   - component: {fileID: 1613869280}
   - component: {fileID: 1613869279}
-  m_Layer: 10
+  m_Layer: 3
   m_Name: BreakableWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
