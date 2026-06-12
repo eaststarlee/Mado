@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: d55e5992f369766469b79fbf412659ab
+guid: 60cab8d8fe9c8a34e8cb58dee29f7370
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -97,7 +97,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Nromal_Idle_tail_0
+      name: Normal_idle_Tail_0
       rect:
         serializedVersion: 2
         x: 0
@@ -112,14 +112,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 9b55444e9d50400458105ef5e75a6354
-      internalID: 1765564171
+      spriteID: f78a49ed3a0e97b409218f17de4118b2
+      internalID: -802554771
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nromal_Idle_tail_1
+      name: Normal_idle_Tail_1
       rect:
         serializedVersion: 2
         x: 1280
@@ -134,14 +134,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 235222c1db6d73a4f87765b4287a4a1c
-      internalID: 1147479670
+      spriteID: 254552709b79ffb44835501c59cf209f
+      internalID: 1737779906
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nromal_Idle_tail_2
+      name: Normal_idle_Tail_2
       rect:
         serializedVersion: 2
         x: 2560
@@ -156,14 +156,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 91a9902853f09db49ad699ccdb7794a8
-      internalID: -926768904
+      spriteID: b07c704d470af3943b9014fc4f8c3d4b
+      internalID: -645332632
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nromal_Idle_tail_3
+      name: Normal_idle_Tail_3
       rect:
         serializedVersion: 2
         x: 3840
@@ -178,14 +178,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 89977fcbff3d10749a518e535add7a9f
-      internalID: 516786607
+      spriteID: 57073b6eb5eb5654bb1cd8f0494d8cf6
+      internalID: 1548930769
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nromal_Idle_tail_4
+      name: Normal_idle_Tail_4
       rect:
         serializedVersion: 2
         x: 0
@@ -200,14 +200,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 80b7a7d91cf219b4ea5f80d3689aee12
-      internalID: -1079579271
+      spriteID: ce094830cf706504d90d6f8a64e16c1b
+      internalID: 157168447
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nromal_Idle_tail_5
+      name: Normal_idle_Tail_5
       rect:
         serializedVersion: 2
         x: 1280
@@ -222,14 +222,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 20307c94e513f12459e95d8e9d2824ea
-      internalID: -1473955788
+      spriteID: f74576268f08d8d4484b9273aa24b6a6
+      internalID: -875363803
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nromal_Idle_tail_6
+      name: Normal_idle_Tail_6
       rect:
         serializedVersion: 2
         x: 2560
@@ -244,14 +244,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: fe48739f7d85da7498f59128e28a9846
-      internalID: 1201905447
+      spriteID: 8b0aeb9c67c34ab48bab3a66ea94a9cc
+      internalID: 1516850872
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nromal_Idle_tail_7
+      name: Normal_idle_Tail_7
       rect:
         serializedVersion: 2
         x: 3840
@@ -266,14 +266,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 24f631677b8498e4bb476130bf584779
-      internalID: -631574415
+      spriteID: 5573f0249618d8d43b808ef3931117c5
+      internalID: 283698518
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nromal_Idle_tail_8
+      name: Normal_idle_Tail_8
       rect:
         serializedVersion: 2
         x: 0
@@ -288,14 +288,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e4cc8caaf9b453f44ae61c86fa45520f
-      internalID: -1736729966
+      spriteID: 635c543785ebdeb41a562141b2618dba
+      internalID: -1467561880
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nromal_Idle_tail_9
+      name: Normal_idle_Tail_9
       rect:
         serializedVersion: 2
         x: 1280
@@ -310,14 +310,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e8c7cc42673bf204b914e8b4396d474b
-      internalID: 793029644
+      spriteID: 24b7b9bfcb2eb6a46b4b0ded71dc9f63
+      internalID: 1133230383
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nromal_Idle_tail_10
+      name: Normal_idle_Tail_10
       rect:
         serializedVersion: 2
         x: 2560
@@ -332,14 +332,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 6f99c04ec63a9524e9c39ff9017b97da
-      internalID: -238919436
+      spriteID: 1c42ed1527e36234dba8b20ff0b0aaa3
+      internalID: 615899833
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nromal_Idle_tail_11
+      name: Normal_idle_Tail_11
       rect:
         serializedVersion: 2
         x: 3840
@@ -354,14 +354,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e96cd936f1a80324fb440d5ce25d8ac5
-      internalID: -1132772068
+      spriteID: fd4b7eebb9de00140936bf049da1fffa
+      internalID: 211916801
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nromal_Idle_tail_12
+      name: Normal_idle_Tail_12
       rect:
         serializedVersion: 2
         x: 0
@@ -376,14 +376,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: cfe4a78b86d17b5428ae1e59395fb0f8
-      internalID: -1023431347
+      spriteID: 86ab5439caf93e940aeb12406beb3acd
+      internalID: 283052306
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nromal_Idle_tail_13
+      name: Normal_idle_Tail_13
       rect:
         serializedVersion: 2
         x: 1280
@@ -398,14 +398,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: fe31724e3e213c74aba6d1ecec8322ee
-      internalID: -526675076
+      spriteID: a45805ca97f069948957806febdf610c
+      internalID: -1873450491
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nromal_Idle_tail_14
+      name: Normal_idle_Tail_14
       rect:
         serializedVersion: 2
         x: 2560
@@ -420,14 +420,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f635cd90ed5bcb74283752653c7e3378
-      internalID: 1087832924
+      spriteID: 19884d85f74d3b64694b59e7b5b094ab
+      internalID: -888124697
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nromal_Idle_tail_15
+      name: Normal_idle_Tail_15
       rect:
         serializedVersion: 2
         x: 3840
@@ -442,14 +442,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c07e4dfd1948a7f409783f344f755660
-      internalID: -1376042223
+      spriteID: cc5c14182880bf54dbd673e3bc59617c
+      internalID: -11072268
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nromal_Idle_tail_16
+      name: Normal_idle_Tail_16
       rect:
         serializedVersion: 2
         x: 0
@@ -464,14 +464,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 84f5ccfda98478f489ac749beddda162
-      internalID: -1882619596
+      spriteID: 048348212d00bd04c94f67b3a97a4f88
+      internalID: 1699621348
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nromal_Idle_tail_17
+      name: Normal_idle_Tail_17
       rect:
         serializedVersion: 2
         x: 1280
@@ -486,14 +486,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 348ea08ec16b26f44b2b3762f435921f
-      internalID: 162708672
+      spriteID: c6b4ddea7aeb4334aac4b1f84a6a5fa4
+      internalID: -1735935083
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Nromal_Idle_tail_18
+      name: Normal_idle_Tail_18
       rect:
         serializedVersion: 2
         x: 2560
@@ -508,8 +508,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 76ea015c449e5264e89df2406e235f51
-      internalID: 2046651583
+      spriteID: 3dbc44b02a9b3b94ba6fb590bfef1e66
+      internalID: -574532983
       vertices: []
       indices: 
       edges: []
@@ -518,7 +518,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 92e9bdd7d35609845be0ddf044269b38
+    spriteID: 7471c605c2dc9a94b84c0c0cac8c864c
     internalID: 0
     vertices: []
     indices: 
@@ -530,25 +530,25 @@ TextureImporter:
       - key: SpriteEditor.SliceSettings
         value: '{"sliceOnImport":false,"gridCellCount":{"x":4.0,"y":5.0},"gridSpriteSize":{"x":1280.0,"y":1280.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.0},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":9,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      Nromal_Idle_tail_0: 1765564171
-      Nromal_Idle_tail_1: 1147479670
-      Nromal_Idle_tail_10: -238919436
-      Nromal_Idle_tail_11: -1132772068
-      Nromal_Idle_tail_12: -1023431347
-      Nromal_Idle_tail_13: -526675076
-      Nromal_Idle_tail_14: 1087832924
-      Nromal_Idle_tail_15: -1376042223
-      Nromal_Idle_tail_16: -1882619596
-      Nromal_Idle_tail_17: 162708672
-      Nromal_Idle_tail_18: 2046651583
-      Nromal_Idle_tail_2: -926768904
-      Nromal_Idle_tail_3: 516786607
-      Nromal_Idle_tail_4: -1079579271
-      Nromal_Idle_tail_5: -1473955788
-      Nromal_Idle_tail_6: 1201905447
-      Nromal_Idle_tail_7: -631574415
-      Nromal_Idle_tail_8: -1736729966
-      Nromal_Idle_tail_9: 793029644
+      Normal_idle_Tail_0: -802554771
+      Normal_idle_Tail_1: 1737779906
+      Normal_idle_Tail_10: 615899833
+      Normal_idle_Tail_11: 211916801
+      Normal_idle_Tail_12: 283052306
+      Normal_idle_Tail_13: -1873450491
+      Normal_idle_Tail_14: -888124697
+      Normal_idle_Tail_15: -11072268
+      Normal_idle_Tail_16: 1699621348
+      Normal_idle_Tail_17: -1735935083
+      Normal_idle_Tail_18: -574532983
+      Normal_idle_Tail_2: -645332632
+      Normal_idle_Tail_3: 1548930769
+      Normal_idle_Tail_4: 157168447
+      Normal_idle_Tail_5: -875363803
+      Normal_idle_Tail_6: 1516850872
+      Normal_idle_Tail_7: 283698518
+      Normal_idle_Tail_8: -1467561880
+      Normal_idle_Tail_9: 1133230383
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

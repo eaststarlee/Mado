@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf6dcd85d5aa99e419d33f610a5d0c18, type: 3}
+  m_Name: Normal_Move_Body
+  m_EditorClassIdentifier: Assembly-CSharp::Mado.AnimationSystem.SpriteAnimationData
+  stateName: 
+  partId: 
+  isLooping: 1
+  frameDuration: 0.033
+  sprites:
+  - {fileID: 1945410055, guid: 78033ec3fa861584cb26329bf2f087f4, type: 3}
+  - {fileID: -524349535, guid: 78033ec3fa861584cb26329bf2f087f4, type: 3}
+  - {fileID: -1406959430, guid: 78033ec3fa861584cb26329bf2f087f4, type: 3}
+  - {fileID: -1952233718, guid: 78033ec3fa861584cb26329bf2f087f4, type: 3}
+  - {fileID: -1674533380, guid: 78033ec3fa861584cb26329bf2f087f4, type: 3}
+  - {fileID: -2094330595, guid: 78033ec3fa861584cb26329bf2f087f4, type: 3}
+  - {fileID: 1634277310, guid: 78033ec3fa861584cb26329bf2f087f4, type: 3}
+  - {fileID: 433509680, guid: 78033ec3fa861584cb26329bf2f087f4, type: 3}
+  - {fileID: 590559287, guid: 78033ec3fa861584cb26329bf2f087f4, type: 3}
+  - {fileID: -1809450777, guid: 78033ec3fa861584cb26329bf2f087f4, type: 3}
+  - {fileID: 362866499, guid: 78033ec3fa861584cb26329bf2f087f4, type: 3}
+  - {fileID: -1617703541, guid: 78033ec3fa861584cb26329bf2f087f4, type: 3}
+  events: []
