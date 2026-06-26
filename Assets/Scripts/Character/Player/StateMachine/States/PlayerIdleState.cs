@@ -8,20 +8,45 @@ public class PlayerIdleState : PlayerState
     {
     }
 
+    private float lookTimer;
+    private const float LOOK_DELAY = 0.1f;
+
     public override void Enter()
     {
-        base.Enter(); // 애니메이션 재생
+        base.Enter(); // 애니메이션 재생 (SetBaseState)
+        lookTimer = 0f;
         
         if (player.RB != null && player.RB.bodyType != RigidbodyType2D.Static)
         {
             player.RB.linearVelocity = new Vector2(0, player.RB.linearVelocity.y); // 즉시 수평 이동 정지
         }
-        // [SPRINT_DISABLED] player.IsSprintJumping = false;
     }
 
     public override void LogicUpdate()
     {
         base.LogicUpdate();
+        
+        if (player.InputY > 0.5f)
+        {
+            lookTimer += Time.deltaTime;
+            if (lookTimer > LOOK_DELAY)
+            {
+                player.animationController?.SetBaseState("LookUp");
+            }
+        }
+        else if (player.InputY < -0.5f)
+        {
+            lookTimer += Time.deltaTime;
+            if (lookTimer > LOOK_DELAY)
+            {
+                player.animationController?.SetBaseState("LookDown");
+            }
+        }
+        else
+        {
+            lookTimer = 0f;
+            player.animationController?.SetBaseState(AnimStateName);
+        }
         
         // DashInput 체크 (대쉬가 모든 스프린트의 시작점)
         if (player.LastPressedDashTime > 0 && player.CanDash())

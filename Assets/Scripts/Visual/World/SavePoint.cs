@@ -80,7 +80,6 @@ public class SavePoint : SpawnPoint
             targetPlayer.Health.ResetHealth();
         }
 
-        // ── 세이브 실행 ──────────────────────────────────
         if (GameProgressManager.Instance != null)
         {
             var data = GameProgressManager.Instance.CurrentData;
@@ -107,7 +106,11 @@ public class SavePoint : SpawnPoint
             Debug.LogWarning("[SavePoint] GameProgressManager 인스턴스가 없습니다. 저장을 건너뜁니다.");
         }
 
-        // TODO: 앉는 애니메이션 / 저장 이펙트
+        // 앉는 애니메이션 / 중앙 정렬 / 이동 제한
+        if (targetPlayer != null)
+        {
+            targetPlayer.RestAt(transform.position.x);
+        }
     }
     
     void OnDrawGizmos()

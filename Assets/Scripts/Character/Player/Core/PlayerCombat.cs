@@ -224,6 +224,7 @@ public class PlayerCombat : MonoBehaviour
             hasBufferedAttack = false;
             currentSession = null;
             
+            player.animationController?.ClearAction(PlayerAnimationController.AnimPriority.Action);
             CombatEvents.RaiseAttackInterrupt();
         }
         
@@ -330,6 +331,13 @@ public class PlayerCombat : MonoBehaviour
         
         // 7. 이벤트 발생
         CombatEvents.RaiseAttackStart(currentAttack);
+        
+        // 8. 애니메이션 재생 (Action 우선순위)
+        string animName = "NormalAttack";
+        if (dir == AttackDirection.Up) animName = "UpAttack";
+        else if (dir == AttackDirection.Down) animName = "DownAttack";
+        
+        player.animationController?.PlayAction(animName, PlayerAnimationController.AnimPriority.Action, currentAttack.baseAnimDuration, true);
     }
     
     private void ProcessAttack()

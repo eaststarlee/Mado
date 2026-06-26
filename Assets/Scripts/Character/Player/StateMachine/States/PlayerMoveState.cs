@@ -6,9 +6,12 @@ public class PlayerMoveState : PlayerState
     {
     }
 
+    private bool lastFacingRight;
+
     public override void Enter()
     {
         base.Enter();
+        lastFacingRight = player.IsFacingRight;
         // [SPRINT_DISABLED] player.IsSprintJumping = false;
     }
 
@@ -22,6 +25,13 @@ public class PlayerMoveState : PlayerState
             player.LastPressedDashTime = 0f;
             stateMachine.ChangeState(player.DashState);
             return;
+        }
+
+        // 방향 전환 감지 (Turn)
+        if (player.IsFacingRight != lastFacingRight)
+        {
+            player.animationController?.PlayAction("Turn", PlayerAnimationController.AnimPriority.Transition, 0.15f);
+            lastFacingRight = player.IsFacingRight;
         }
 
         // [LedgeClimb] Walk 중 벽 방향으로 이동하다 턱이 감지되면 LedgeClimb 전환
@@ -44,6 +54,11 @@ public class PlayerMoveState : PlayerState
         }
         else if (player.InputX == 0)
         {
+            // 급정지 감지 (RunStop)
+            if (Mathf.Abs(player.RB.linearVelocity.x) > 2f)
+            {
+                player.animationController?.PlayAction("RunStop", PlayerAnimationController.AnimPriority.Transition, 0.2f);
+            }
             stateMachine.ChangeState(player.IdleState);
         }
         else if (!player.IsGrounded())

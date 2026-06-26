@@ -20,9 +20,11 @@ public abstract class PlayerState
     // 상태에 진입할 때 한 번 호출되는 함수
     public virtual void Enter() 
     {
-        if (player.Animator != null)
+        if (player.animationController != null)
         {
-            player.Animator.Play(AnimStateName);
+            player.animationController.SetBaseState(AnimStateName);
+            // 상태 전환 시 트랜지션 애니메이션(Turn, RunStop 등)은 즉시 정리
+            player.animationController.ClearAction(PlayerAnimationController.AnimPriority.Transition);
         }
     }
 

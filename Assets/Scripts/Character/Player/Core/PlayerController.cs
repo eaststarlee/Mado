@@ -27,6 +27,7 @@ public class PlayerController : MonoBehaviour
     public PlayerDeathState DeathState { get; private set; }
     public PlayerGrappleAimState GrappleAimState { get; private set; }
     public PlayerGrapplingState GrapplingState { get; private set; }
+    public PlayerRestState RestState { get; private set; }
     #endregion
 
     #region State Variables
@@ -102,6 +103,7 @@ public class PlayerController : MonoBehaviour
     public PlayerInputReader inputReader { get; private set; }
     public PlayerFormManager formManager { get; private set; }
     public PlayerActionController actionController { get; private set; }
+    public PlayerAnimationController animationController { get; private set; }
     public Mado.AnimationSystem.ICharacterAnimator Animator { get; private set; }
 
     public FormType CurrentForm => formManager.CurrentForm;
@@ -137,6 +139,7 @@ public class PlayerController : MonoBehaviour
 #if UNITY_EDITOR
     [Header("Debug Info")]
     [SerializeField] private string currentStateName;
+    [SerializeField] private string currentAnimationName;
 #endif
     #endregion
 
@@ -151,6 +154,10 @@ public class PlayerController : MonoBehaviour
         RB = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         Animator = GetComponentInChildren<Mado.AnimationSystem.ICharacterAnimator>();
+        
+        animationController = GetComponent<PlayerAnimationController>();
+        if (animationController == null) animationController = gameObject.AddComponent<PlayerAnimationController>();
+        animationController.Initialize(Animator);
 
 
         var boxCol = GetComponent<BoxCollider2D>();
@@ -198,6 +205,7 @@ public class PlayerController : MonoBehaviour
         DeathState = new PlayerDeathState(this, StateMachine);
         GrappleAimState = new PlayerGrappleAimState(this, StateMachine, grappleData);
         GrapplingState = new PlayerGrapplingState(this, StateMachine, grappleData);
+        RestState = new PlayerRestState(this, StateMachine);
     }
     
     private void OnDisable()
@@ -299,6 +307,7 @@ public class PlayerController : MonoBehaviour
         
 #if UNITY_EDITOR
         currentStateName = StateMachine.CurrentState?.GetType().Name;
+        if (animationController != null) currentAnimationName = animationController.CurrentPlayingAnimation;
 #endif
     }
 
@@ -609,6 +618,12 @@ public class PlayerController : MonoBehaviour
         LastOnWallTime = 0;
         
         return true; // 벽점프 성공
+    }
+    
+    public void RestAt(float centerX)
+    {
+        RestState.SetTargetX(centerX);
+        StateMachine.ChangeState(RestState);
     }
     
     public void TransformTo(FormType targetForm) => formManager.TransformTo(targetForm);

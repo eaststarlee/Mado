@@ -18,6 +18,8 @@ public class PlayerHitState : PlayerState
     public override void Enter()
     {
         base.Enter();
+        player.animationController?.ClearAllAboveBase();
+        
         startTime = Time.time;
         
         // ✅ 핵심 1: Continuous Collision Detection 활성화 (고속 이동 시 터널링 방지)

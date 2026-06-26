@@ -12,6 +12,7 @@ public class PlayerDeathState : PlayerState
     public override void Enter()
     {
         base.Enter();
+        player.animationController?.ClearAllAboveBase();
         
         // 물리 정지
         player.RB.linearVelocity = Vector2.zero;
