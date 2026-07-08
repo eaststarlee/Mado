@@ -25814,6 +25814,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7766eeebfaa24548ab851d7c1c68730, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomData
+  defaultBiomeProfile: {fileID: 11400000, guid: 8502c44d21ceda341b4386f07a44d366, type: 2}
   roomId: TESTROOM
   world: 1
   otherWorldSceneName: 

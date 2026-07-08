@@ -1,0 +1,37 @@
+using UnityEngine;
+using UnityEngine.Rendering;
+
+namespace Mado.Visual.Environment
+{
+    [CreateAssetMenu(fileName = "NewBiomeAtmosphere", menuName = "Visual/Biome Atmosphere Profile", order = 1)]
+    public class BiomeAtmosphereProfile : ScriptableObject
+    {
+        [Header("Global Lighting")]
+        [Tooltip("해당 구역의 주 광원(태양/달빛) 색상")]
+        public Color directionalLightColor = Color.white;
+        [Range(0f, 3f)] 
+        public float directionalLightIntensity = 1f;
+        
+        [Header("Ambient/Environment Lighting")]
+        [Tooltip("환경광(그림자 영역에 맺히는 기본 색상)")]
+        public Color ambientColor = new Color(0.2f, 0.2f, 0.3f, 1f);
+
+        [Header("Z-Distance Fog (대기 원근법)")]
+        [Tooltip("멀어질수록 덮일 안개(배경) 색상")]
+        public Color fogColor = new Color(0.1f, 0.15f, 0.2f, 1f);
+        [Tooltip("안개가 시작되는 Z 거리 (카메라 기준)")]
+        public float fogStartDistance = 10f;
+        [Tooltip("안개가 완전히 덮이는 Z 거리")]
+        public float fogEndDistance = 50f;
+
+        [Header("Ambient Particles (대기 입자)")]
+        [Tooltip("이 구역에서 흩날릴 파티클 프리팹 (먼지, 포자, 눈 등)")]
+        public GameObject ambientParticlePrefab;
+        [Tooltip("동시 활성화 최대 파티클 갯수 (최적화용)")]
+        public int maxParticles = 100;
+
+        [Header("Post-Processing (옵션)")]
+        [Tooltip("이 구역에 진입했을 때 덮어씌울 로컬 포스트 프로세싱 볼륨 프로필")]
+        public VolumeProfile biomeVolumeProfile;
+    }
+}

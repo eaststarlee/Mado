@@ -1,4 +1,5 @@
 using UnityEngine;
+using Mado.Visual.Environment;
 
 /// <summary>
 /// 룸 씬 메타데이터 컴포넌트.
@@ -18,6 +19,11 @@ using UnityEngine;
 /// </summary>
 public class RoomData : MonoBehaviour
 {
+    // ── 방 분위기 (Atmosphere) ──────────────────────────────
+    [Header("방 분위기 (Atmosphere)")]
+    [Tooltip("이 룸에 진입했을 때 자동으로 깔릴 기본 분위기 프로필 (트리거 없이 적용됨)")]
+    public BiomeAtmosphereProfile defaultBiomeProfile;
+
     // ── 방 식별 ────────────────────────────────────────────
     [Header("방 식별")]
     [Tooltip("씬 파일명과 동일하게 입력 (예: Devil_Area01_001_EntranceHall)\n" +
