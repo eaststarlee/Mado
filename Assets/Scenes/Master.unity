@@ -15801,7 +15801,7 @@ Transform:
   m_GameObject: {fileID: 1569041699}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.5, y: 0, z: -42}
+  m_LocalPosition: {x: 1.5, y: 0, z: -9.58}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -15924,7 +15924,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 15
+  field of view: 60
   orthographic: 0
   orthographic size: 5.625
   m_Depth: -1
@@ -20731,7 +20731,7 @@ Transform:
   m_GameObject: {fileID: 2060501645}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.5, y: 0, z: -42}
+  m_LocalPosition: {x: 1.5, y: 0, z: -9.58}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -20815,7 +20815,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 886251e9a18ece04ea8e61686c173e1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CameraDistance: 42
+  CameraDistance: 9.58
   DeadZoneDepth: 20
   Composition:
     ScreenPosition: {x: 0, y: 0}
@@ -20858,7 +20858,7 @@ MonoBehaviour:
     LookAtTarget: {fileID: 0}
     CustomLookAtTarget: 0
   Lens:
-    FieldOfView: 15
+    FieldOfView: 60
     OrthographicSize: 5.625
     NearClipPlane: 0.3
     FarClipPlane: 1000
