@@ -51,17 +51,20 @@ namespace Mado.Visual.Environment
             if (targetLight == null) targetLight = GetComponent<Light2D>();
             if (targetSprite == null) targetSprite = GetComponent<SpriteRenderer>();
 
+            // 스크립트의 Base 값을 Light2D 컴포넌트의 현재 설정값으로 자동 동기화 (편의성)
+            if (targetLight != null)
+            {
+                baseIntensity = targetLight.intensity;
+                baseRadius = targetLight.pointLightOuterRadius;
+            }
+
             // 맵에 횃불 100개를 복사해도 전부 다른 타이밍에 일렁이도록 고유 시드 부여
             uniqueOffset = Random.Range(0f, 1000f);
         }
 
         private void Start()
         {
-            if (targetLight != null)
-            {
-                targetLight.intensity = baseIntensity;
-                if (!animateRadius) targetLight.pointLightOuterRadius = baseRadius;
-            }
+            // Sprite 초기화
             if (targetSprite != null)
             {
                 Color c = targetSprite.color;
