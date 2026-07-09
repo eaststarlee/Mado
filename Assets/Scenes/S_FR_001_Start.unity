@@ -1162,7 +1162,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Mado.Visual.Environment.LightAnimator2D
   targetLight: {fileID: 389920754}
   targetSprite: {fileID: 0}
-  waveType: 0
+  waveType: 1
   frequency: 5
   baseIntensity: 1
   amplitude: 0.5
