@@ -19,10 +19,12 @@ using Mado.Visual.Environment;
 /// </summary>
 public class RoomData : MonoBehaviour
 {
-    // ── 방 분위기 (Atmosphere) ──────────────────────────────
-    [Header("방 분위기 (Atmosphere)")]
-    [Tooltip("이 룸에 진입했을 때 자동으로 깔릴 기본 분위기 프로필 (트리거 없이 적용됨)")]
-    public BiomeAtmosphereProfile defaultBiomeProfile;
+
+
+    [Tooltip("수동 바운즈 크기 지정. 0,0일 경우 gridSize 기반으로 자동 계산됩니다.")]
+    public Vector2 customBoundsSize = Vector2.zero;
+
+    private Bounds? cachedBounds = null;
 
     // ── 방 식별 ────────────────────────────────────────────
     [Header("방 식별")]
@@ -75,6 +77,61 @@ public class RoomData : MonoBehaviour
     [Tooltip("이 방에서 카메라의 Y축 추적을 고정할지 여부")]
     public bool lockCameraY = false;
 
+    // ── Public Accessors ──────────────────────────────────
+    public Bounds GetRoomBounds()
+    {
+        if (cachedBounds.HasValue) return cachedBounds.Value;
+
+        // 1. Scene 내의 RoomBoundary 오브젝트를 찾아서 사용 (가장 우선)
+        Transform boundaryTransform = null;
+        foreach (GameObject root in gameObject.scene.GetRootGameObjects())
+        {
+            Transform[] allChildren = root.GetComponentsInChildren<Transform>(true);
+            foreach (Transform child in allChildren)
+            {
+                if (child.name == "RoomBoundary")
+                {
+                    boundaryTransform = child;
+                    break;
+                }
+            }
+            if (boundaryTransform != null) break;
+        }
+
+        if (boundaryTransform != null)
+        {
+            Collider2D boundaryCol = boundaryTransform.GetComponent<Collider2D>();
+            if (boundaryCol != null)
+            {
+                cachedBounds = boundaryCol.bounds;
+                return cachedBounds.Value;
+            }
+        }
+
+        // 2. 자신의 Collider2D가 있다면 사용
+        Collider2D col = GetComponent<Collider2D>();
+        if (col != null)
+        {
+            cachedBounds = col.bounds;
+            return cachedBounds.Value;
+        }
+
+        // 3. 없다면 커스텀 사이즈나 그리드 기반으로 생성
+        Vector3 size = Vector3.zero;
+        if (customBoundsSize.sqrMagnitude > 0)
+        {
+            size = new Vector3(customBoundsSize.x, customBoundsSize.y, 10f); // 2D 파티클 스폰용이므로 Z는 적당히 고정
+        }
+        else
+        {
+            // 한 그리드 화면 크기를 폭 30, 높이 20으로 가정
+            size = new Vector3(gridSize.x * 30f, gridSize.y * 20f, 10f);
+        }
+
+        cachedBounds = new Bounds(transform.position, size);
+        return cachedBounds.Value;
+    }
+
     // ── Unity Lifecycle ────────────────────────────────────
     private void Start()
     {
@@ -121,6 +178,11 @@ public class RoomData : MonoBehaviour
             transform.position + Vector3.up * 0.5f,
             $"[RoomData]\n{roomId}\n{world} | {roomType}"
         );
+
+        // 파티클 스폰 영역(Bounds) 디버깅용 외곽선 (청록색)
+        Bounds b = GetRoomBounds();
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawWireCube(b.center, b.size);
     }
 #endif
 }

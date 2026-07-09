@@ -18,6 +18,4 @@ MonoBehaviour:
   fogColor: {r: 1, g: 1, b: 1, a: 0.0627451}
   fogStartDistance: -20
   fogEndDistance: 20
-  ambientParticlePrefab: {fileID: 0}
-  maxParticles: 100
   biomeVolumeProfile: {fileID: 11400000, guid: 28d7611eac3402d4ca7af4c95afe9397, type: 2}
