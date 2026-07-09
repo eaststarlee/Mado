@@ -5,9 +5,14 @@ using System.Collections.Generic;
 
 namespace Mado.Visual.Environment
 {
+    [ExecuteAlways]
     public class AtmosphereManager : MonoBehaviour
     {
         public static AtmosphereManager Instance { get; private set; }
+
+        [Header("Editor Preview")]
+        [Tooltip("에디터 모드에서 실시간으로 테스트할 분위기 프로필을 여기에 넣으세요. (플레이 시에는 무시됨)")]
+        public BiomeAtmosphereProfile previewProfile;
 
         [Header("Scene References")]
         [Tooltip("씬의 메인 Directional Light (태양광/달빛)")]
@@ -24,6 +29,7 @@ namespace Mado.Visual.Environment
         private readonly int fogColorID = Shader.PropertyToID("_GlobalFogColor");
         private readonly int fogStartID = Shader.PropertyToID("_GlobalFogStart");
         private readonly int fogEndID = Shader.PropertyToID("_GlobalFogEnd");
+        private readonly int fogPowerID = Shader.PropertyToID("_GlobalFogPower"); // 추가된 파워
 
         // 현재 렌더링 값 (Lerp 용도)
         private Color currentDirColor;
@@ -32,6 +38,7 @@ namespace Mado.Visual.Environment
         private Color currentFogColor;
         private float currentFogStart;
         private float currentFogEnd;
+        private float currentFogPower = 1f;
 
         // 등록된 존 관리
         private static List<BiomeZoneVolume> allZones = new List<BiomeZoneVolume>();
@@ -59,10 +66,32 @@ namespace Mado.Visual.Environment
             currentFogColor = Shader.GetGlobalColor(fogColorID);
             currentFogStart = Shader.GetGlobalFloat(fogStartID);
             currentFogEnd = Shader.GetGlobalFloat(fogEndID);
+            currentFogPower = Shader.GetGlobalFloat(fogPowerID);
 
             // [초기화 버그 픽스] 게임 시작 시 플레이어가 이미 Zone 안에 있는지 강제 검사
             CheckInitialOverlap();
         }
+
+#if UNITY_EDITOR
+        public void ForceUpdateFromEditor()
+        {
+            if (Application.isPlaying) return;
+            if (previewProfile != null)
+            {
+                Shader.SetGlobalColor(fogColorID, previewProfile.fogColor);
+                Shader.SetGlobalFloat(fogStartID, previewProfile.fogStartDistance);
+                Shader.SetGlobalFloat(fogEndID, previewProfile.fogEndDistance);
+                Shader.SetGlobalFloat(fogPowerID, previewProfile.fogPower);
+                
+                if (globalDirectionalLight != null)
+                {
+                    globalDirectionalLight.color = previewProfile.directionalLightColor;
+                    globalDirectionalLight.intensity = previewProfile.directionalLightIntensity;
+                }
+                RenderSettings.ambientLight = previewProfile.ambientColor;
+            }
+        }
+#endif
 
         private void CheckInitialOverlap()
         {
@@ -106,6 +135,14 @@ namespace Mado.Visual.Environment
 
         private void Update()
         {
+#if UNITY_EDITOR
+            if (!Application.isPlaying)
+            {
+                if (Instance == null) Instance = this;
+                ForceUpdateFromEditor();
+                return;
+            }
+#endif
             UpdateFrustumCulling();
             UpdateLightingBlending();
         }
@@ -142,6 +179,7 @@ namespace Mado.Visual.Environment
             float targetDirI = 0f;
             float targetFogS = 0f;
             float targetFogE = 0f;
+            float targetFogP = 0f;
             
             float rDir = 0f, gDir = 0f, bDir = 0f, aDir = 0f;
             float rAmb = 0f, gAmb = 0f, bAmb = 0f, aAmb = 0f;
@@ -161,6 +199,7 @@ namespace Mado.Visual.Environment
                 targetDirI += profile.directionalLightIntensity;
                 targetFogS += profile.fogStartDistance;
                 targetFogE += profile.fogEndDistance;
+                targetFogP += profile.fogPower;
                 count++;
             }
 
@@ -174,6 +213,7 @@ namespace Mado.Visual.Environment
                 targetDirI *= invCount;
                 targetFogS *= invCount;
                 targetFogE *= invCount;
+                targetFogP *= invCount;
 
                 // 시간에 따른 부드러운 전환(Lerp)
                 float dt = Time.deltaTime * transitionSpeed;
@@ -184,6 +224,7 @@ namespace Mado.Visual.Environment
                 currentFogColor = Color.Lerp(currentFogColor, targetFogC, dt);
                 currentFogStart = Mathf.Lerp(currentFogStart, targetFogS, dt);
                 currentFogEnd = Mathf.Lerp(currentFogEnd, targetFogE, dt);
+                currentFogPower = Mathf.Lerp(currentFogPower, targetFogP, dt);
 
                 // 실제 렌더링에 적용
                 if (globalDirectionalLight != null)
@@ -196,6 +237,7 @@ namespace Mado.Visual.Environment
                 Shader.SetGlobalColor(fogColorID, currentFogColor);
                 Shader.SetGlobalFloat(fogStartID, currentFogStart);
                 Shader.SetGlobalFloat(fogEndID, currentFogEnd);
+                Shader.SetGlobalFloat(fogPowerID, currentFogPower);
             }
         }
     }

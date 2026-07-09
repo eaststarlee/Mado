@@ -15,7 +15,8 @@ MonoBehaviour:
   directionalLightColor: {r: 1, g: 0, b: 0, a: 1}
   directionalLightIntensity: 1
   ambientColor: {r: 0.11779833, g: 1, b: 0, a: 1}
-  fogColor: {r: 1, g: 1, b: 1, a: 0.0627451}
-  fogStartDistance: -20
-  fogEndDistance: 20
+  fogColor: {r: 1, g: 1, b: 1, a: 1}
+  fogStartDistance: 0
+  fogEndDistance: 25
+  fogPower: 1
   biomeVolumeProfile: {fileID: 11400000, guid: 28d7611eac3402d4ca7af4c95afe9397, type: 2}

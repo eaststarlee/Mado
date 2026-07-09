@@ -23,9 +23,22 @@ namespace Mado.Visual.Environment
         public float fogStartDistance = 10f;
         [Tooltip("안개가 완전히 덮이는 Z 거리")]
         public float fogEndDistance = 50f;
+        [Tooltip("안개가 짙어지는 곡선 강도 (1=선형, 2=제곱(부드럽게 짙어짐))")]
+        public float fogPower = 1f;
 
         [Header("Post-Processing (옵션)")]
         [Tooltip("이 구역에 진입했을 때 덮어씌울 로컬 포스트 프로세싱 볼륨 프로필")]
         public VolumeProfile biomeVolumeProfile;
+
+#if UNITY_EDITOR
+        private void OnValidate()
+        {
+            // 에디터에서 값을 수정했을 때, 씬 뷰에 즉시 반영되도록 매니저에게 알림
+            if (!Application.isPlaying && AtmosphereManager.Instance != null)
+            {
+                AtmosphereManager.Instance.ForceUpdateFromEditor();
+            }
+        }
+#endif
     }
 }

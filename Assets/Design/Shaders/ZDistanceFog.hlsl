@@ -5,6 +5,7 @@
 float4 _GlobalFogColor;
 float _GlobalFogStart;
 float _GlobalFogEnd;
+float _GlobalFogPower; // 인스펙터에서 제어하는 포그 곡선 파워
 
 void ReadGlobalFog_float(out float4 FogColor, out float FogStart, out float FogEnd)
 {
@@ -27,12 +28,13 @@ void CalculateCompleteFog_float(float3 WorldPos, out float4 FinalFogColor, out f
 {
     FinalFogColor = _GlobalFogColor;
     
-    // 유니티 내장 카메라 Z값 사용 (Camera 노드 버그 원천 차단)
-    float camZ = _WorldSpaceCameraPos.z; 
-    float zDist = abs(WorldPos.z - camZ);
+    // 2D 게임 최적화: 카메라와의 거리가 아닌, 오브젝트의 절대적인 월드 Z 좌표를 사용합니다.
+    // Z가 0 이하(플레이어/전경)면 포그가 적용되지 않고, Z가 클수록(배경) 포그가 짙어집니다.
+    float zDepth = WorldPos.z; 
     
-    // 거리 비례 안개 농도에, 매니저에서 설정한 FogColor의 알파(a)값을 곱해서 최종 농도를 결정합니다.
-    float distanceFactor = saturate((zDist - _GlobalFogStart) / max(0.001f, (_GlobalFogEnd - _GlobalFogStart)));
+    // Z좌표에 따른 안개 농도 계산 (Power 곡선 적용)
+    float distanceFactor = saturate((zDepth - _GlobalFogStart) / max(0.001f, (_GlobalFogEnd - _GlobalFogStart)));
+    distanceFactor = pow(distanceFactor, max(0.1f, _GlobalFogPower));
     FogFactor = distanceFactor * _GlobalFogColor.a;
 }
 
@@ -40,27 +42,27 @@ void CalculateCompleteFog_half(half3 WorldPos, out half4 FinalFogColor, out half
 {
     FinalFogColor = (half4)_GlobalFogColor;
     
-    half camZ = (half)_WorldSpaceCameraPos.z;
-    half zDist = abs(WorldPos.z - camZ);
+    half zDepth = (half)WorldPos.z;
     
-    half distanceFactor = saturate((zDist - (half)_GlobalFogStart) / max(0.001h, ((half)_GlobalFogEnd - (half)_GlobalFogStart)));
+    half distanceFactor = saturate((zDepth - (half)_GlobalFogStart) / max(0.001h, ((half)_GlobalFogEnd - (half)_GlobalFogStart)));
+    distanceFactor = pow(distanceFactor, (half)max(0.1f, _GlobalFogPower));
     FogFactor = distanceFactor * ((half4)_GlobalFogColor).a;
 }
 
 // Float 정밀도 버전
 void CalculateZDistanceFog_float(float3 WorldPos, float3 CameraPos, float FogStart, float FogEnd, out float OutFogFactor)
 {
-    float zDistance = abs(WorldPos.z - CameraPos.z);
-    float fogFactor = saturate((zDistance - FogStart) / max(0.001f, (FogEnd - FogStart)));
-    OutFogFactor = fogFactor;
+    float zDepth = WorldPos.z;
+    float fogFactor = saturate((zDepth - FogStart) / max(0.001f, (FogEnd - FogStart)));
+    OutFogFactor = pow(fogFactor, max(0.1f, _GlobalFogPower));
 }
 
 // Half 정밀도 버전 (유니티 모바일/기본 precision 대응용)
 void CalculateZDistanceFog_half(half3 WorldPos, half3 CameraPos, half FogStart, half FogEnd, out half OutFogFactor)
 {
-    half zDistance = abs(WorldPos.z - CameraPos.z);
-    half fogFactor = saturate((zDistance - FogStart) / max(0.001h, (FogEnd - FogStart)));
-    OutFogFactor = fogFactor;
+    half zDepth = (half)WorldPos.z;
+    half fogFactor = saturate((zDepth - FogStart) / max(0.001h, (FogEnd - FogStart)));
+    OutFogFactor = pow(fogFactor, (half)max(0.1f, _GlobalFogPower));
 }
 
 #endif // Z_DISTANCE_FOG_INCLUDED

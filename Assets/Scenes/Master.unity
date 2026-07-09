@@ -20,7 +20,7 @@ RenderSettings:
   m_FogDensity: 0.01
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
-  m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
+  m_AmbientSkyColor: {r: 0.11779833, g: 1, b: 0, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 1
@@ -7971,7 +7971,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 12
   m_Type: 1
-  m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
+  m_Color: {r: 1, g: 0, b: 0, a: 1}
   m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
@@ -8513,9 +8513,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9670450e4e7d6364ba6f44f55d47ba1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mado.Visual.Environment.AtmosphereManager
+  previewProfile: {fileID: 11400000, guid: 8502c44d21ceda341b4386f07a44d366, type: 2}
   globalDirectionalLight: {fileID: 868700762}
-  currentProfile: {fileID: 11400000, guid: 8502c44d21ceda341b4386f07a44d366, type: 2}
   transitionSpeed: 1
+  cullingMarginRatio: 0.2
 --- !u!4 &955788368
 Transform:
   m_ObjectHideFlags: 0
