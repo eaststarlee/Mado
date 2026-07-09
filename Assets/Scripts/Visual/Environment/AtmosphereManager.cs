@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal; // URP 2D 조명 시스템 접근용
 using System.Collections;
 using System.Collections.Generic;
 
@@ -15,8 +16,8 @@ namespace Mado.Visual.Environment
         public BiomeAtmosphereProfile previewProfile;
 
         [Header("Scene References")]
-        [Tooltip("씬의 메인 Directional Light (태양광/달빛)")]
-        public Light globalDirectionalLight;
+        [Tooltip("씬의 메인 2D 글로벌 조명 (태양광/달빛 - URP Global Light 2D)")]
+        public Light2D globalLight2D;
         
         [Header("Settings")]
         [Tooltip("구역 전환 시 색상/안개가 변하는 속도 (Lerp Speed)")]
@@ -34,7 +35,6 @@ namespace Mado.Visual.Environment
         // 현재 렌더링 값 (Lerp 용도)
         private Color currentDirColor;
         private float currentDirIntensity;
-        private Color currentAmbientColor;
         private Color currentFogColor;
         private float currentFogStart;
         private float currentFogEnd;
@@ -57,12 +57,11 @@ namespace Mado.Visual.Environment
         {
             mainCamera = Camera.main;
             
-            if (globalDirectionalLight != null)
+            if (globalLight2D != null)
             {
-                currentDirColor = globalDirectionalLight.color;
-                currentDirIntensity = globalDirectionalLight.intensity;
+                currentDirColor = globalLight2D.color;
+                currentDirIntensity = globalLight2D.intensity;
             }
-            currentAmbientColor = RenderSettings.ambientLight;
             currentFogColor = Shader.GetGlobalColor(fogColorID);
             currentFogStart = Shader.GetGlobalFloat(fogStartID);
             currentFogEnd = Shader.GetGlobalFloat(fogEndID);
@@ -83,12 +82,11 @@ namespace Mado.Visual.Environment
                 Shader.SetGlobalFloat(fogEndID, previewProfile.fogEndDistance);
                 Shader.SetGlobalFloat(fogPowerID, previewProfile.fogPower);
                 
-                if (globalDirectionalLight != null)
+                if (globalLight2D != null)
                 {
-                    globalDirectionalLight.color = previewProfile.directionalLightColor;
-                    globalDirectionalLight.intensity = previewProfile.directionalLightIntensity;
+                    globalLight2D.color = previewProfile.directionalLightColor;
+                    globalLight2D.intensity = previewProfile.directionalLightIntensity;
                 }
-                RenderSettings.ambientLight = previewProfile.ambientColor;
             }
         }
 #endif
@@ -182,7 +180,6 @@ namespace Mado.Visual.Environment
             float targetFogP = 0f;
             
             float rDir = 0f, gDir = 0f, bDir = 0f, aDir = 0f;
-            float rAmb = 0f, gAmb = 0f, bAmb = 0f, aAmb = 0f;
             float rFog = 0f, gFog = 0f, bFog = 0f, aFog = 0f;
 
             // 겹쳐있는 활성 존(들)의 프로필 값을 평균냅니다 (Equal Weight Blending)
@@ -193,7 +190,6 @@ namespace Mado.Visual.Environment
                 if (profile == null) continue;
                 
                 rDir += profile.directionalLightColor.r; gDir += profile.directionalLightColor.g; bDir += profile.directionalLightColor.b; aDir += profile.directionalLightColor.a;
-                rAmb += profile.ambientColor.r; gAmb += profile.ambientColor.g; bAmb += profile.ambientColor.b; aAmb += profile.ambientColor.a;
                 rFog += profile.fogColor.r; gFog += profile.fogColor.g; bFog += profile.fogColor.b; aFog += profile.fogColor.a;
                 
                 targetDirI += profile.directionalLightIntensity;
@@ -207,7 +203,6 @@ namespace Mado.Visual.Environment
             {
                 float invCount = 1f / count;
                 Color targetDirC = new Color(rDir * invCount, gDir * invCount, bDir * invCount, aDir * invCount);
-                Color targetAmbC = new Color(rAmb * invCount, gAmb * invCount, bAmb * invCount, aAmb * invCount);
                 Color targetFogC = new Color(rFog * invCount, gFog * invCount, bFog * invCount, aFog * invCount);
                 
                 targetDirI *= invCount;
@@ -220,19 +215,17 @@ namespace Mado.Visual.Environment
 
                 currentDirColor = Color.Lerp(currentDirColor, targetDirC, dt);
                 currentDirIntensity = Mathf.Lerp(currentDirIntensity, targetDirI, dt);
-                currentAmbientColor = Color.Lerp(currentAmbientColor, targetAmbC, dt);
                 currentFogColor = Color.Lerp(currentFogColor, targetFogC, dt);
                 currentFogStart = Mathf.Lerp(currentFogStart, targetFogS, dt);
                 currentFogEnd = Mathf.Lerp(currentFogEnd, targetFogE, dt);
                 currentFogPower = Mathf.Lerp(currentFogPower, targetFogP, dt);
 
                 // 실제 렌더링에 적용
-                if (globalDirectionalLight != null)
+                if (globalLight2D != null)
                 {
-                    globalDirectionalLight.color = currentDirColor;
-                    globalDirectionalLight.intensity = currentDirIntensity;
+                    globalLight2D.color = currentDirColor;
+                    globalLight2D.intensity = currentDirIntensity;
                 }
-                RenderSettings.ambientLight = currentAmbientColor;
 
                 Shader.SetGlobalColor(fogColorID, currentFogColor);
                 Shader.SetGlobalFloat(fogStartID, currentFogStart);

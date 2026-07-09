@@ -6,17 +6,13 @@ namespace Mado.Visual.Environment
     [CreateAssetMenu(fileName = "NewBiomeAtmosphere", menuName = "Visual/Biome Atmosphere Profile", order = 1)]
     public class BiomeAtmosphereProfile : ScriptableObject
     {
-        [Header("Global Lighting")]
-        [Tooltip("해당 구역의 주 광원(태양/달빛) 색상")]
+        [Header("Global Lighting (2D)")]
+        [Tooltip("구역 전체를 덮는 Global Light 2D의 색상 (전체적인 톤/분위기)")]
         public Color directionalLightColor = Color.white;
-        [Range(0f, 3f)] 
+        [Tooltip("구역 전체를 덮는 Global Light 2D의 밝기 강도")]
         public float directionalLightIntensity = 1f;
         
-        [Header("Ambient/Environment Lighting")]
-        [Tooltip("환경광(그림자 영역에 맺히는 기본 색상)")]
-        public Color ambientColor = new Color(0.2f, 0.2f, 0.3f, 1f);
-
-        [Header("Z-Distance Fog (대기 원근법)")]
+        [Header("Distance Fog (대기 원근법)")]
         [Tooltip("멀어질수록 덮일 안개(배경) 색상")]
         public Color fogColor = new Color(0.1f, 0.15f, 0.2f, 1f);
         [Tooltip("안개가 시작되는 Z 거리 (카메라 기준)")]
