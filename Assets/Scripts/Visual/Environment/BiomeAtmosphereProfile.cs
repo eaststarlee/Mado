@@ -30,15 +30,5 @@ namespace Mado.Visual.Environment
         [Tooltip("이 바이옴에 진입 시 흩날릴 파티클 프리팹들 (예: 낙엽, 먼지, 눈)")]
         public GameObject[] ambientParticlePrefabs;
 
-#if UNITY_EDITOR
-        private void OnValidate()
-        {
-            // 에디터에서 값을 수정했을 때, 씬 뷰에 즉시 반영되도록 매니저에게 알림
-            if (!Application.isPlaying && AtmosphereManager.Instance != null)
-            {
-                AtmosphereManager.Instance.ForceUpdateFromEditor();
-            }
-        }
-#endif
     }
 }

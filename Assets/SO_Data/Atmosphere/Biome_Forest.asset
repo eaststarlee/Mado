@@ -18,6 +18,6 @@ MonoBehaviour:
   fogStartDistance: 0
   fogEndDistance: 25
   fogPower: 3
-  biomeVolumeProfile: {fileID: 0}
+  biomeVolumeProfile: {fileID: 11400000, guid: ab09877e2e707104187f6f83e2f62510, type: 2}
   ambientParticlePrefabs:
   - {fileID: 8969853858450214755, guid: fbfc13d550a7bac44bfb4772ab767b85, type: 3}

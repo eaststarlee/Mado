@@ -11,10 +11,6 @@ namespace Mado.Visual.Environment
     {
         public static AtmosphereManager Instance { get; private set; }
 
-        [Header("Editor Preview")]
-        [Tooltip("에디터 모드에서 실시간으로 테스트할 분위기 프로필을 여기에 넣으세요. (플레이 시에는 무시됨)")]
-        public BiomeAtmosphereProfile previewProfile;
-
         [Header("Scene References")]
         [Tooltip("씬의 메인 2D 글로벌 조명 (태양광/달빛 - URP Global Light 2D)")]
         public Light2D globalLight2D;
@@ -76,26 +72,6 @@ namespace Mado.Visual.Environment
             // 씬 진입/리스폰 시 어색한 Lerp 없이 즉시 환경을 덮어씌움 (Snap)
             SnapToCurrentZone();
         }
-
-#if UNITY_EDITOR
-        public void ForceUpdateFromEditor()
-        {
-            if (Application.isPlaying) return;
-            if (previewProfile != null)
-            {
-                Shader.SetGlobalColor(fogColorID, previewProfile.fogColor);
-                Shader.SetGlobalFloat(fogStartID, previewProfile.fogStartDistance);
-                Shader.SetGlobalFloat(fogEndID, previewProfile.fogEndDistance);
-                Shader.SetGlobalFloat(fogPowerID, previewProfile.fogPower);
-                
-                if (globalLight2D != null)
-                {
-                    globalLight2D.color = previewProfile.directionalLightColor;
-                    globalLight2D.intensity = previewProfile.directionalLightIntensity;
-                }
-            }
-        }
-#endif
 
         private void CheckInitialOverlap()
         {
@@ -205,14 +181,6 @@ namespace Mado.Visual.Environment
 
         private void Update()
         {
-#if UNITY_EDITOR
-            if (!Application.isPlaying)
-            {
-                if (Instance == null) Instance = this;
-                ForceUpdateFromEditor();
-                return;
-            }
-#endif
             UpdateFrustumCulling();
             UpdateLightingBlending();
         }
