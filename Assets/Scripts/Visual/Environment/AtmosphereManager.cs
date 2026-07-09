@@ -19,6 +19,9 @@ namespace Mado.Visual.Environment
         [Tooltip("씬의 메인 2D 글로벌 조명 (태양광/달빛 - URP Global Light 2D)")]
         public Light2D globalLight2D;
         
+        [Tooltip("씬 전체를 덮는 Global Post-Processing Volume (구역 진입 시 이 프로필을 교체)")]
+        public Volume globalPostProcessVolume;
+        
         [Header("Settings")]
         [Tooltip("구역 전환 시 색상/안개가 변하는 속도 (Lerp Speed)")]
         public float transitionSpeed = 2f;
@@ -69,6 +72,9 @@ namespace Mado.Visual.Environment
 
             // [초기화 버그 픽스] 게임 시작 시 플레이어가 이미 Zone 안에 있는지 강제 검사
             CheckInitialOverlap();
+            
+            // 씬 진입/리스폰 시 어색한 Lerp 없이 즉시 환경을 덮어씌움 (Snap)
+            SnapToCurrentZone();
         }
 
 #if UNITY_EDITOR
@@ -129,6 +135,72 @@ namespace Mado.Visual.Environment
         public void RemoveOverlappedZone(BiomeZoneVolume zone)
         {
             overlappedZones.Remove(zone);
+        }
+
+        /// <summary>
+        /// 텔레포트, 리스폰, 씬 최초 진입 시 목표 조명/안개/포스트프로세싱으로 즉시 전환합니다. (Lerp 생략)
+        /// </summary>
+        public void SnapToCurrentZone()
+        {
+            if (overlappedZones.Count == 0) return;
+            
+            float targetDirI = 0f, targetFogS = 0f, targetFogE = 0f, targetFogP = 0f;
+            float rDir = 0f, gDir = 0f, bDir = 0f, aDir = 0f;
+            float rFog = 0f, gFog = 0f, bFog = 0f, aFog = 0f;
+            
+            VolumeProfile latestVolumeProfile = null;
+            int count = 0;
+
+            foreach (var zone in overlappedZones)
+            {
+                var profile = zone.biomeProfile;
+                if (profile == null) continue;
+                
+                rDir += profile.directionalLightColor.r; gDir += profile.directionalLightColor.g; bDir += profile.directionalLightColor.b; aDir += profile.directionalLightColor.a;
+                rFog += profile.fogColor.r; gFog += profile.fogColor.g; bFog += profile.fogColor.b; aFog += profile.fogColor.a;
+                
+                targetDirI += profile.directionalLightIntensity;
+                targetFogS += profile.fogStartDistance;
+                targetFogE += profile.fogEndDistance;
+                targetFogP += profile.fogPower;
+                
+                // 포스트 프로세싱 프로필은 섞을 수 없으므로, 가장 늦게 진입한(배열 마지막) Zone의 프로필을 우선시합니다.
+                if (profile.biomeVolumeProfile != null) latestVolumeProfile = profile.biomeVolumeProfile;
+                count++;
+            }
+
+            if (count > 0)
+            {
+                float invCount = 1f / count;
+                currentDirColor = new Color(rDir * invCount, gDir * invCount, bDir * invCount, aDir * invCount);
+                currentFogColor = new Color(rFog * invCount, gFog * invCount, bFog * invCount, aFog * invCount);
+                
+                currentDirIntensity = targetDirI * invCount;
+                currentFogStart = targetFogS * invCount;
+                currentFogEnd = targetFogE * invCount;
+                currentFogPower = targetFogP * invCount;
+                
+                ApplyCurrentRenderValues();
+                
+                if (globalPostProcessVolume != null && latestVolumeProfile != null)
+                {
+                    globalPostProcessVolume.profile = latestVolumeProfile;
+                }
+            }
+        }
+
+        private void ApplyCurrentRenderValues()
+        {
+            if (globalLight2D != null)
+            {
+                globalLight2D.color = currentDirColor;
+                globalLight2D.intensity = currentDirIntensity;
+            }
+
+            Shader.SetGlobalColor(fogColorID, currentFogColor);
+            Shader.SetGlobalFloat(fogStartID, currentFogStart);
+            Shader.SetGlobalFloat(fogEndID, currentFogEnd);
+            Shader.SetGlobalFloat(fogPowerID, currentFogPower);
         }
 
         private void Update()
@@ -220,17 +292,23 @@ namespace Mado.Visual.Environment
                 currentFogEnd = Mathf.Lerp(currentFogEnd, targetFogE, dt);
                 currentFogPower = Mathf.Lerp(currentFogPower, targetFogP, dt);
 
-                // 실제 렌더링에 적용
-                if (globalLight2D != null)
+                ApplyCurrentRenderValues();
+                
+                // 포스트 프로세싱은 점진적 섞기가 불가능하므로 볼륨 자체를 덮어씌움
+                VolumeProfile latestVolumeProfile = null;
+                foreach (var zone in overlappedZones)
                 {
-                    globalLight2D.color = currentDirColor;
-                    globalLight2D.intensity = currentDirIntensity;
+                    if (zone.biomeProfile != null && zone.biomeProfile.biomeVolumeProfile != null)
+                    {
+                        latestVolumeProfile = zone.biomeProfile.biomeVolumeProfile;
+                    }
                 }
-
-                Shader.SetGlobalColor(fogColorID, currentFogColor);
-                Shader.SetGlobalFloat(fogStartID, currentFogStart);
-                Shader.SetGlobalFloat(fogEndID, currentFogEnd);
-                Shader.SetGlobalFloat(fogPowerID, currentFogPower);
+                
+                // 현재 할당된 프로필과 다를 때만 교체 (GC 방지)
+                if (globalPostProcessVolume != null && latestVolumeProfile != null && globalPostProcessVolume.profile != latestVolumeProfile)
+                {
+                    globalPostProcessVolume.profile = latestVolumeProfile;
+                }
             }
         }
     }

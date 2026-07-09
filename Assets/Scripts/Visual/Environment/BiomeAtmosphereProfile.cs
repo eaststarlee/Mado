@@ -26,6 +26,10 @@ namespace Mado.Visual.Environment
         [Tooltip("이 구역에 진입했을 때 덮어씌울 로컬 포스트 프로세싱 볼륨 프로필")]
         public VolumeProfile biomeVolumeProfile;
 
+        [Header("Ambient Particles (환경 효과)")]
+        [Tooltip("이 바이옴에 진입 시 흩날릴 파티클 프리팹들 (예: 낙엽, 먼지, 눈)")]
+        public GameObject[] ambientParticlePrefabs;
+
 #if UNITY_EDITOR
         private void OnValidate()
         {

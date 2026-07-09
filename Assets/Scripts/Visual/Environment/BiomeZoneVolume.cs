@@ -8,9 +8,7 @@ namespace Mado.Visual.Environment
     {
         [Tooltip("이 구역에 적용될 분위기 데이터 (조명 및 안개 색상)")]
         public BiomeAtmosphereProfile biomeProfile;
-        
-        [Tooltip("이 구역에서 흩날릴 파티클 프리팹들 (여러 개 동시 배치 가능)")]
-        public GameObject[] ambientParticlePrefabs;
+
         
         private Collider2D _collider;
         public Collider2D VolumeCollider => _collider;
@@ -26,9 +24,9 @@ namespace Mado.Visual.Environment
 
         private void InitializeParticleSystem()
         {
-            if (ambientParticlePrefabs == null || ambientParticlePrefabs.Length == 0) return;
+            if (biomeProfile == null || biomeProfile.ambientParticlePrefabs == null || biomeProfile.ambientParticlePrefabs.Length == 0) return;
 
-            foreach (GameObject prefab in ambientParticlePrefabs)
+            foreach (GameObject prefab in biomeProfile.ambientParticlePrefabs)
             {
                 if (prefab == null) continue;
 

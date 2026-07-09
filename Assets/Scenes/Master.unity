@@ -6742,7 +6742,7 @@ MonoBehaviour:
   m_Intensity: 1
   m_LightVolumeIntensity: 0.5
   m_LightVolumeEnabled: 0
-  m_ApplyToSortingLayers: d5a79847674bd3c7914a738c4ba993d9d330aa03a9005761bd636439958a0c10436124e1
+  m_ApplyToSortingLayers: 674bd3c7914a738c4ba993d9d330aa03a9005761bd636439958a0c10436124e1
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
@@ -8592,6 +8592,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Mado.Visual.Environment.AtmosphereManager
   previewProfile: {fileID: 11400000, guid: 8502c44d21ceda341b4386f07a44d366, type: 2}
   globalLight2D: {fileID: 1175770947}
+  globalPostProcessVolume: {fileID: 247480809}
   transitionSpeed: 1
   cullingMarginRatio: 0.2
 --- !u!4 &955788368
@@ -11636,7 +11637,7 @@ MonoBehaviour:
   m_LightType: 4
   m_BlendStyleIndex: 0
   m_FalloffIntensity: 0.5
-  m_Color: {r: 0.33810964, g: 0.3578323, b: 0.5471698, a: 1}
+  m_Color: {r: 1, g: 0.1948227, b: 0, a: 1}
   m_Intensity: 1
   m_LightVolumeIntensity: 1
   m_LightVolumeEnabled: 0
@@ -21548,7 +21549,7 @@ MonoBehaviour:
   m_Intensity: 1
   m_LightVolumeIntensity: 0.5
   m_LightVolumeEnabled: 0
-  m_ApplyToSortingLayers: 00000000d5a79847674bd3c7914a738c4ba993d9d330aa03a9005761bd636439958a0c10436124e1
+  m_ApplyToSortingLayers: 674bd3c7914a738c4ba993d9d330aa03a9005761bd636439958a0c10436124e1
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
@@ -21678,10 +21679,12 @@ Light:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 1175770948}
   - {fileID: 738684055}
   - {fileID: 91013347}
   - {fileID: 11146183}
+  - {fileID: 955788368}
+  - {fileID: 1175770948}
+  - {fileID: 247480810}
   - {fileID: 1210730863}
   - {fileID: 121635685}
   - {fileID: 982056111}
@@ -21697,5 +21700,3 @@ SceneRoots:
   - {fileID: 1975101947}
   - {fileID: 1369034580}
   - {fileID: 1617285026}
-  - {fileID: 955788368}
-  - {fileID: 247480810}
