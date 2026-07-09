@@ -57,16 +57,30 @@ namespace Mado.Visual.Environment
                         float scaleZ = Mathf.Abs(pt.forward.x) > 0.5f ? bSize.x : (Mathf.Abs(pt.forward.y) > 0.5f ? bSize.y : depth);
 
                         shape.scale = new Vector3(scaleX, scaleY, scaleZ);
+                        
+                        // Box 표면에서만 생성되어 벽면 기둥처럼 보이는 것을 방지 (볼륨 전체 생성)
+                        shape.boxThickness = new Vector3(1f, 1f, 1f);
                     }
 
                     if (renderer != null)
                     {
                         renderer.sortingLayerName = "Player";
                     }
+
+                    // Trigger 설정이 2D 콜라이더의 Z축 두께(0) 문제로 인해 Z=-5에 있는 
+                    // 모든 파티클을 '구역 밖'으로 인식하고 즉사시키는 문제가 발생했습니다.
+                    // 따라서 Trigger 모듈을 끄고, 대신 1x1x1 프리웜 제거와 boxThickness 보정만으로 기둥 현상을 해결합니다.
+                    var trigger = ps.trigger;
+                    trigger.enabled = false;
                     
                     // 처음엔 Emission을 꺼둠. 매니저가 카메라 Frustum 체크 후 켜줄 예정
                     var emission = ps.emission;
                     emission.enabled = false;
+                    
+                    // 핵심 수정: Instantiate 직후 1x1x1 좁은 크기에서 강제 예열(Prewarm)되어
+                    // 뭉쳐져 버린 파티클 찌꺼기(씬 뒤쪽의 기둥)를 완벽하게 지워버립니다.
+                    ps.Clear(true);
+                    
                     ps.Play(true);
                 }
             }
