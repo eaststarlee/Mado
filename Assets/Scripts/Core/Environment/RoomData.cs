@@ -179,9 +179,9 @@ public class RoomData : MonoBehaviour
             $"[RoomData]\n{roomId}\n{world} | {roomType}"
         );
 
-        // 파티클 스폰 영역(Bounds) 디버깅용 외곽선 (청록색)
+        // 파티클 스폰 영역(Bounds) 디버깅용 외곽선 (핑크색으로 변경됨)
         Bounds b = GetRoomBounds();
-        Gizmos.color = Color.cyan;
+        Gizmos.color = Color.magenta;
         Gizmos.DrawWireCube(b.center, b.size);
     }
 #endif

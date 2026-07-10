@@ -46,6 +46,76 @@ namespace Mado.Visual.Environment
         // 3번 피드백: 여러 파티클이 동시에 Prewarm 되어 프레임이 튀는 것을 막기 위한 스태거링(Staggering) 큐
         private Queue<ParticleSystem> prewarmQueue = new Queue<ParticleSystem>();
 
+        // [추가] 파티클 풀링 구조 (의존성 분리 및 RAM 최적화 지원)
+        private Dictionary<GameObject, List<ParticleSystem>> _particlePool = new Dictionary<GameObject, List<ParticleSystem>>();
+
+        public ParticleSystem RequestParticle(GameObject prefab, Transform parent)
+        {
+            if (prefab == null) return null;
+            
+            if (!_particlePool.ContainsKey(prefab))
+            {
+                _particlePool[prefab] = new List<ParticleSystem>();
+            }
+
+            var list = _particlePool[prefab];
+            if (list.Count > 0)
+            {
+                ParticleSystem ps = list[list.Count - 1];
+                list.RemoveAt(list.Count - 1);
+                
+                ps.transform.SetParent(parent, false);
+                ps.transform.localPosition = Vector3.zero;
+                ps.gameObject.SetActive(true);
+                return ps;
+            }
+            else
+            {
+                GameObject instance = Instantiate(prefab, parent);
+                instance.transform.localPosition = Vector3.zero;
+                ParticleSystem ps = instance.GetComponent<ParticleSystem>();
+                
+                var main = ps.main;
+                main.playOnAwake = false;
+                main.loop = true;
+                main.startDelay = 0f;
+                main.cullingMode = ParticleSystemCullingMode.AlwaysSimulate;
+                
+                var trigger = ps.trigger;
+                trigger.enabled = false;
+                
+                var emission = ps.emission;
+                emission.enabled = false;
+                
+                var renderer = ps.GetComponent<ParticleSystemRenderer>();
+                if (renderer != null)
+                {
+                    renderer.sortingLayerName = "Player";
+                }
+                
+                return ps;
+            }
+        }
+
+        public void ReturnParticle(GameObject prefab, ParticleSystem ps)
+        {
+            if (ps == null || prefab == null) return;
+            
+            // 완전한 상태 리셋 (과거 잔여물 파기 및 Transform 리셋)
+            ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            ps.Clear(true);
+            
+            ps.gameObject.SetActive(false);
+            ps.transform.SetParent(transform, false);
+            ps.transform.localPosition = Vector3.zero;
+            
+            if (!_particlePool.ContainsKey(prefab))
+            {
+                _particlePool[prefab] = new List<ParticleSystem>();
+            }
+            _particlePool[prefab].Add(ps);
+        }
+
         public void EnqueuePrewarm(ParticleSystem ps)
         {
             // 중복 큐잉 방지

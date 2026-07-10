@@ -21272,7 +21272,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1c905cdeda0ae1439e6b21f7534a839, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerController: {fileID: 0}
+  playerController: {fileID: 11146178}
   dampingChangeSpeed: 10
   lookOffsetChangeSpeed: 5
   dynamicStateCooldown: 0.2
