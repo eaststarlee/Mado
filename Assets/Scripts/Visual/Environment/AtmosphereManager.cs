@@ -43,6 +43,19 @@ namespace Mado.Visual.Environment
         private static List<BiomeZoneVolume> allZones = new List<BiomeZoneVolume>();
         private List<BiomeZoneVolume> overlappedZones = new List<BiomeZoneVolume>();
 
+        // 3번 피드백: 여러 파티클이 동시에 Prewarm 되어 프레임이 튀는 것을 막기 위한 스태거링(Staggering) 큐
+        private Queue<ParticleSystem> prewarmQueue = new Queue<ParticleSystem>();
+
+        public void EnqueuePrewarm(ParticleSystem ps)
+        {
+            // 중복 큐잉 방지
+            foreach (var item in prewarmQueue)
+            {
+                if (item == ps) return;
+            }
+            prewarmQueue.Enqueue(ps);
+        }
+
         // 최적화를 위한 참조 캐싱
         private Camera mainCamera;
         
@@ -183,6 +196,27 @@ namespace Mado.Visual.Environment
         {
             UpdateFrustumCulling();
             UpdateLightingBlending();
+            ProcessPrewarmQueue();
+        }
+
+        private void ProcessPrewarmQueue()
+        {
+            // 3번 피드백: 한 프레임에 최대 1개의 파티클 시스템만 Native Prewarm 처리하여 프레임 스파이크 방지
+            if (prewarmQueue.Count > 0)
+            {
+                ParticleSystem ps = prewarmQueue.Dequeue();
+                if (ps != null)
+                {
+                    // 4번 피드백 준수: 반드시 명시적 순서를 지킵니다. (Shape는 생성 시점에 이미 맞췄음)
+                    // 1. 초기화 및 리셋
+                    ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                    // 2. Prewarm 플래그 켜기
+                    var main = ps.main;
+                    main.prewarm = true;
+                    // 3. 실행 (이 순간 C++ 백엔드에서 1주기치 사전 연산을 동기적으로 수행함)
+                    ps.Play(true);
+                }
+            }
         }
 
         private void UpdateFrustumCulling()

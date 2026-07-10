@@ -65,21 +65,29 @@ namespace Mado.Visual.Environment
                         renderer.sortingLayerName = "Player";
                     }
 
-                    // Trigger 설정이 2D 콜라이더의 Z축 두께(0) 문제로 인해 Z=-5에 있는 
-                    // 모든 파티클을 '구역 밖'으로 인식하고 즉사시키는 문제가 발생했습니다.
-                    // 따라서 Trigger 모듈을 끄고, 대신 1x1x1 프리웜 제거와 boxThickness 보정만으로 기둥 현상을 해결합니다.
                     var trigger = ps.trigger;
                     trigger.enabled = false;
+                    
+                    // [최적화 & 버그픽스] (피드백 1번, 4번, 5번)
+                    var main = ps.main;
+                    
+                    // 프리팹 원본에 자동 재생이 켜져있어 생기는 Awake 폭탄 연산을 방지합니다.
+                    // (Shape.scale 세팅은 이미 위에서 끝났으므로, 이후 Play() 시 올바른 크기로 예열됩니다.)
+                    main.playOnAwake = false;
+                    
+                    // 1번 피드백: Prewarm 작동 조건 강제 활성화 (loop 필수, startDelay 0 필수)
+                    main.loop = true;
+                    main.startDelay = 0f;
+                    
+                    // 5번 피드백: 우리가 스크립트에서 emission으로 직접 제어하므로, 
+                    // 엔진 내부 Culling Mode와 충돌하지 않도록 Always Simulate로 강제 설정합니다.
+                    main.cullingMode = ParticleSystemCullingMode.AlwaysSimulate;
                     
                     // 처음엔 Emission을 꺼둠. 매니저가 카메라 Frustum 체크 후 켜줄 예정
                     var emission = ps.emission;
                     emission.enabled = false;
                     
-                    // 핵심 수정: Instantiate 직후 1x1x1 좁은 크기에서 강제 예열(Prewarm)되어
-                    // 뭉쳐져 버린 파티클 찌꺼기(씬 뒤쪽의 기둥)를 완벽하게 지워버립니다.
-                    ps.Clear(true);
-                    
-                    ps.Play(true);
+                    // 예전처럼 여기서 ps.Clear()나 ps.Play()를 호출하지 않고 대기합니다.
                 }
             }
         }
@@ -128,17 +136,32 @@ namespace Mado.Visual.Environment
                 {
                     if (!emission.enabled)
                     {
-                        // 오랫동안 화면 밖에 있어서 파티클이 모두 소멸한 상태에서 화면에 들어오면
-                        // 빈 공간에서 서서히 차오르는 것을 방지하기 위해 강제 예열(Prewarm)
+                        emission.enabled = true;
+
+                        // 2번 피드백: 오래 이탈해 파티클이 완전히 0이 된 상태에서 재진입 시
+                        // 단순 emission.enabled = true 만 하면 텅 빈 채로 서서히 차오르게 됩니다.
+                        // 이를 방지하기 위해 particleCount == 0 체크 후 리필(Prewarm) 수행.
                         if (ps.particleCount == 0)
                         {
-                            emission.enabled = true;
-                            ps.Simulate(15f, true, true, false);
-                            ps.Play(true);
+                            // 3번 피드백: 프레임 스파이크 방지를 위해 매니저에게 스태거링(Staggering) Prewarm을 요청
+                            if (AtmosphereManager.Instance != null)
+                            {
+                                AtmosphereManager.Instance.EnqueuePrewarm(ps);
+                            }
+                            else
+                            {
+                                // Fallback (매니저가 없을 시 직접 즉시 처리)
+                                // 4번 피드백 준수: Stop -> prewarm = true -> Play 순서 엄수
+                                ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                                var main = ps.main;
+                                main.prewarm = true;
+                                ps.Play(true);
+                            }
                         }
-                        else
+                        else if (!ps.isPlaying)
                         {
-                            emission.enabled = true;
+                            // 0이 아닐 경우(아직 잔여 파티클이 있을 경우) 그냥 다시 켜주기만 함
+                            ps.Play(true);
                         }
                     }
                 }
