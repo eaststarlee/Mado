@@ -25,6 +25,19 @@ namespace Mado.Visual.Environment
         [Tooltip("카메라 Culling 검사 시 Frustum의 여유 공간 비율 (0.2 = 20% 확장) - 팝인 방지")]
         public float cullingMarginRatio = 0.2f;
 
+        [Header("Post-Processing Blend")]
+        [Tooltip("볼륨 블렌딩 크로스페이드 속도")]
+        public float volumeBlendSpeed = 1.5f;
+
+        private class ActiveBiomeVolume
+        {
+            public Volume volume;
+            public VolumeProfile originalAsset;
+            public float targetWeight;
+        }
+
+        private List<ActiveBiomeVolume> _activeBiomeVolumes = new List<ActiveBiomeVolume>();
+
         // 글로벌 안개 프로퍼티
         private readonly int fogColorID = Shader.PropertyToID("_GlobalFogColor");
         private readonly int fogStartID = Shader.PropertyToID("_GlobalFogStart");
@@ -156,6 +169,32 @@ namespace Mado.Visual.Environment
             SnapToCurrentZone();
         }
 
+        private void CleanupDynamicVolumes()
+        {
+            if (this == null) return;
+            for (int i = transform.childCount - 1; i >= 0; i--)
+            {
+                Transform child = transform.GetChild(i);
+                if (child.name.StartsWith("DynamicBiomeVolume"))
+                {
+                    if (Application.isPlaying) Destroy(child.gameObject);
+                    else DestroyImmediate(child.gameObject);
+                }
+            }
+        }
+
+        private void OnEnable()
+        {
+            CleanupDynamicVolumes();
+            if (_activeBiomeVolumes != null) _activeBiomeVolumes.Clear();
+        }
+
+        private void OnDisable()
+        {
+            CleanupDynamicVolumes();
+            if (_activeBiomeVolumes != null) _activeBiomeVolumes.Clear();
+        }
+
         private void CheckInitialOverlap()
         {
             if (mainCamera == null) return;
@@ -240,12 +279,10 @@ namespace Mado.Visual.Environment
                 currentFogPower = targetFogP * invCount;
                 
                 ApplyCurrentRenderValues();
-                
-                if (globalPostProcessVolume != null && latestVolumeProfile != null)
-                {
-                    globalPostProcessVolume.profile = latestVolumeProfile;
-                }
             }
+            
+            // Post-Processing 덮어쓰기 로직 제거, 멀티 볼륨 스냅 적용
+            UpdateVolumeBlending(latestVolumeProfile, true);
         }
 
         private void ApplyCurrentRenderValues()
@@ -365,9 +402,12 @@ namespace Mado.Visual.Environment
                 currentFogPower = Mathf.Lerp(currentFogPower, targetFogP, dt);
 
                 ApplyCurrentRenderValues();
-                
-                // 포스트 프로세싱은 점진적 섞기가 불가능하므로 볼륨 자체를 덮어씌움
-                VolumeProfile latestVolumeProfile = null;
+            }
+            
+            // 겹쳐진 존 중 가장 최근(우선순위 높은) 존의 프로필 획득
+            VolumeProfile latestVolumeProfile = null;
+            if (overlappedZones.Count > 0)
+            {
                 foreach (var zone in overlappedZones)
                 {
                     if (zone.biomeProfile != null && zone.biomeProfile.biomeVolumeProfile != null)
@@ -375,11 +415,93 @@ namespace Mado.Visual.Environment
                         latestVolumeProfile = zone.biomeProfile.biomeVolumeProfile;
                     }
                 }
-                
-                // 현재 할당된 프로필과 다를 때만 교체 (GC 방지)
-                if (globalPostProcessVolume != null && latestVolumeProfile != null && globalPostProcessVolume.profile != latestVolumeProfile)
+            }
+
+            // 멀티 볼륨 크로스페이드(Lerp) 적용
+            UpdateVolumeBlending(latestVolumeProfile, false);
+        }
+
+        private void UpdateVolumeBlending(VolumeProfile targetProfile, bool snap)
+        {
+            if (targetProfile != null)
+            {
+                bool found = false;
+                foreach (var abv in _activeBiomeVolumes)
                 {
-                    globalPostProcessVolume.profile = latestVolumeProfile;
+                    if (abv.originalAsset == targetProfile)
+                    {
+                        found = true;
+                        abv.targetWeight = 1f;
+                    }
+                    else
+                    {
+                        abv.targetWeight = 0f;
+                    }
+                }
+
+                if (!found)
+                {
+                    GameObject go = new GameObject("DynamicBiomeVolume_" + targetProfile.name);
+                    go.transform.SetParent(this.transform);
+                    go.hideFlags = HideFlags.DontSave; // 씬 파일 오염 방지
+                    
+                    Volume v = go.AddComponent<Volume>();
+                    v.isGlobal = true;
+                    v.priority = 1; // 베이스 GlobalVolume(0)보다 높게 설정하여 Override
+                    v.weight = snap ? 1f : 0f;
+                    v.profile = Instantiate(targetProfile); // 런타임 복사본 생성 (에셋 오염 방지)
+                    
+                    ActiveBiomeVolume newAbv = new ActiveBiomeVolume();
+                    newAbv.volume = v;
+                    newAbv.originalAsset = targetProfile;
+                    newAbv.targetWeight = 1f;
+                    
+                    _activeBiomeVolumes.Add(newAbv);
+                }
+            }
+            else
+            {
+                // 타겟 프로필이 없으면 모두 Fade Out
+                foreach (var abv in _activeBiomeVolumes)
+                {
+                    abv.targetWeight = 0f;
+                }
+            }
+
+            // 에디터 모드 ExecuteAlways 호환을 위한 dt 설정
+            float dt = Application.isPlaying ? Time.deltaTime : 0.016f;
+
+            for (int i = _activeBiomeVolumes.Count - 1; i >= 0; i--)
+            {
+                var abv = _activeBiomeVolumes[i];
+                if (abv.volume != null)
+                {
+                    if (snap)
+                    {
+                        abv.volume.weight = abv.targetWeight;
+                    }
+                    else
+                    {
+                        abv.volume.weight = Mathf.MoveTowards(abv.volume.weight, abv.targetWeight, dt * volumeBlendSpeed);
+                    }
+
+                    // 페이드 아웃 완료 시 런타임 파기 및 풀 반환
+                    if (abv.targetWeight == 0f && abv.volume.weight <= 0f)
+                    {
+                        if (abv.volume.profile != null)
+                        {
+                            if (Application.isPlaying) Destroy(abv.volume.profile);
+                            else DestroyImmediate(abv.volume.profile);
+                        }
+                        if (Application.isPlaying) Destroy(abv.volume.gameObject);
+                        else DestroyImmediate(abv.volume.gameObject);
+                        
+                        _activeBiomeVolumes.RemoveAt(i);
+                    }
+                }
+                else
+                {
+                    _activeBiomeVolumes.RemoveAt(i);
                 }
             }
         }
