@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Biome_Forest_Inside
   m_EditorClassIdentifier: Assembly-CSharp::Mado.Visual.Environment.BiomeAtmosphereProfile
   directionalLightColor: {r: 0.5947846, g: 0.61490166, b: 0.7735849, a: 0}
-  directionalLightIntensity: 1
+  directionalLightIntensity: 0.05
   fogColor: {r: 0.121840514, g: 0.6981132, b: 0.20416515, a: 1}
   fogStartDistance: 0
   fogEndDistance: 25
