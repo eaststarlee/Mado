@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Biome_Devil_Inside
   m_EditorClassIdentifier: Assembly-CSharp::Mado.Visual.Environment.BiomeAtmosphereProfile
   directionalLightColor: {r: 0.7735849, g: 0.73162156, b: 0.5801887, a: 1}
-  directionalLightIntensity: 1
+  directionalLightIntensity: 0.05
   fogColor: {r: 0.6415094, g: 0.3886233, b: 0.3661445, a: 1}
   fogStartDistance: 0
   fogEndDistance: 25
