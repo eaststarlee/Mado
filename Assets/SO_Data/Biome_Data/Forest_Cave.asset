@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbcdd8ec2923ca14c80cb3d4375a1a52, type: 3}
-  m_Name: Biome_Devil_Inside
+  m_Name: Forest_Cave
   m_EditorClassIdentifier: Assembly-CSharp::Mado.Visual.Environment.BiomeAtmosphereProfile
-  directionalLightColor: {r: 0.7735849, g: 0.73162156, b: 0.5801887, a: 1}
-  directionalLightIntensity: 0.05
-  fogColor: {r: 0.6415094, g: 0.3886233, b: 0.3661445, a: 1}
-  fogStartDistance: 0
-  fogEndDistance: 25
+  directionalLightColor: {r: 0.50980395, g: 0.67058825, b: 1, a: 0}
+  directionalLightIntensity: 0.3
+  fogColor: {r: 0.25490198, g: 0.1764706, b: 0.34901962, a: 1}
+  fogStartDistance: -3
+  fogEndDistance: 23
   fogPower: 3
   biomeVolumeProfile: {fileID: 11400000, guid: ab09877e2e707104187f6f83e2f62510, type: 2}
   ambientParticlePrefabs:
-  - {fileID: 8969853858450214755, guid: 3e217ace694c71044abe6f886b3c07c5, type: 3}
+  - {fileID: 8969853858450214755, guid: fbfc13d550a7bac44bfb4772ab767b85, type: 3}

@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbcdd8ec2923ca14c80cb3d4375a1a52, type: 3}
-  m_Name: Biome_Forest_Inside
+  m_Name: Forest_Window
   m_EditorClassIdentifier: Assembly-CSharp::Mado.Visual.Environment.BiomeAtmosphereProfile
-  directionalLightColor: {r: 0.5947846, g: 0.61490166, b: 0.7735849, a: 0}
-  directionalLightIntensity: 0.05
-  fogColor: {r: 0.121840514, g: 0.6981132, b: 0.20416515, a: 1}
+  directionalLightColor: {r: 0.9843137, g: 1, b: 0.6666667, a: 1}
+  directionalLightIntensity: 1
+  fogColor: {r: 0.9607843, g: 1, b: 0.50980395, a: 1}
   fogStartDistance: 0
-  fogEndDistance: 25
-  fogPower: 3
+  fogEndDistance: 9
+  fogPower: 2
   biomeVolumeProfile: {fileID: 11400000, guid: ab09877e2e707104187f6f83e2f62510, type: 2}
   ambientParticlePrefabs:
-  - {fileID: 8969853858450214755, guid: fbfc13d550a7bac44bfb4772ab767b85, type: 3}
+  - {fileID: 8969853858450214755, guid: 3e217ace694c71044abe6f886b3c07c5, type: 3}
