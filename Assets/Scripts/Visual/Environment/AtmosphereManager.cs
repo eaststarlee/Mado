@@ -187,12 +187,60 @@ namespace Mado.Visual.Environment
         {
             CleanupDynamicVolumes();
             if (_activeBiomeVolumes != null) _activeBiomeVolumes.Clear();
+            GameEvents.OnRoomEntered += HandleRoomEntered;
+            GameEvents.OnDimensionSwitched += HandleDimensionSwitched;
         }
 
         private void OnDisable()
         {
             CleanupDynamicVolumes();
             if (_activeBiomeVolumes != null) _activeBiomeVolumes.Clear();
+            GameEvents.OnRoomEntered -= HandleRoomEntered;
+            GameEvents.OnDimensionSwitched -= HandleDimensionSwitched;
+        }
+
+        private void HandleRoomEntered(RoomData room)
+        {
+            ForceSnapToCurrentZone();
+        }
+
+        private void HandleDimensionSwitched(WorldType targetWorld)
+        {
+            ForceSnapToCurrentZone();
+        }
+
+        public void ForceSnapToCurrentZone()
+        {
+            Vector2 checkPos = Vector2.zero;
+            bool posFound = false;
+
+            var player = GameManager.Instance?.Player;
+            if (player != null)
+            {
+                checkPos = player.transform.position;
+                posFound = true;
+            }
+            else if (mainCamera != null)
+            {
+                checkPos = mainCamera.transform.position;
+                posFound = true;
+            }
+
+            if (!posFound) return;
+
+            overlappedZones.Clear();
+            foreach (var zone in allZones)
+            {
+                if (zone != null && zone.VolumeCollider != null)
+                {
+                    if (zone.VolumeCollider.OverlapPoint(checkPos))
+                    {
+                        AddOverlappedZone(zone);
+                    }
+                }
+            }
+
+            SnapToCurrentZone();
         }
 
         private void CheckInitialOverlap()

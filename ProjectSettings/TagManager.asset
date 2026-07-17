@@ -57,16 +57,16 @@ TagManager:
   - name: Decorate
     uniqueID: 61485267
     locked: 0
-  - name: Platform
+  - name: Interactable
     uniqueID: 1633091753
     locked: 0
-  - name: Interactable
+  - name: Player
     uniqueID: 962880445
     locked: 0
-  - name: Player
+  - name: Enemy
     uniqueID: 3537739009
     locked: 0
-  - name: Enemy
+  - name: Platform
     uniqueID: 2399096135
     locked: 0
   - name: Foreground_Fixed
