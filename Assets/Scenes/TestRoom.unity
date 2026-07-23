@@ -24531,7 +24531,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 385976344427256729, guid: 2d1f4230b8a6cba418123cd28f2732ee, type: 3}
       propertyPath: groundLayer.m_Bits
-      value: 0
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 1261039641762532325, guid: 2d1f4230b8a6cba418123cd28f2732ee, type: 3}
       propertyPath: obstacleLayer.m_Bits
@@ -24644,7 +24644,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5594277064685277956, guid: 46ac44b22070c7b418a876a319623a20, type: 3}
       propertyPath: groundLayer.m_Bits
-      value: 0
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 5780884288738606372, guid: 46ac44b22070c7b418a876a319623a20, type: 3}
       propertyPath: m_Name
