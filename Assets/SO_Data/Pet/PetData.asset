@@ -30,6 +30,10 @@ MonoBehaviour:
   stuckTimeThreshold: 0.25
   ghostSpeed: 20
   ghostAlpha: 0.9
+  scoutOffsetUp: {x: 3, y: 5.5}
+  scoutOffsetDown: {x: 3, y: -5}
+  scoutSpeed: 15
+  scoutArrivalThreshold: 0.1
   followMaxSpeed: 10
   runawayVelocityThreshold: 15
   arrivalThreshold: 0.05

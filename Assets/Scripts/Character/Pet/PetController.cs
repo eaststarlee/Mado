@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public enum GhostReason { None, FarAway, Stuck }
+public enum GhostReason { None, FarAway, Stuck, ScoutReturn }
 
 public class PetController : MonoBehaviour
 {
@@ -8,6 +8,7 @@ public class PetController : MonoBehaviour
     public PetStateMachine StateMachine { get; private set; }
     public PetFollowState FollowState { get; private set; }
     public PetGhostState GhostState { get; private set; }
+    public PetScoutState ScoutState { get; private set; }
     #endregion
     
     #region References
@@ -71,6 +72,7 @@ public class PetController : MonoBehaviour
         StateMachine = new PetStateMachine();
         FollowState = new PetFollowState(this, StateMachine);
         GhostState = new PetGhostState(this, StateMachine);
+        ScoutState = new PetScoutState(this, StateMachine);
     }
     
     private void Start()
@@ -101,6 +103,12 @@ public class PetController : MonoBehaviour
         
         // 3. 상태 머신 업데이트
         StateMachine.CurrentState?.LogicUpdate();
+        
+        // 4. 정찰 상태 전환 체크
+        if (Player.VerticalLookIntention != 0 && StateMachine.CurrentState == FollowState)
+        {
+            StateMachine.ChangeState(ScoutState);
+        }
 
 #if UNITY_EDITOR
         UpdateDebugInfo();

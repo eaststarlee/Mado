@@ -14,3 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Mado.AnimationSystem.CharacterAnimationSet
   animationDatas:
   - {fileID: 11400000, guid: 4253d14d25cdb7049ae09754004b7939, type: 2}
+  - {fileID: 11400000, guid: 95830adf4edc3c444893d9b5b58e7d45, type: 2}
+  - {fileID: 11400000, guid: bad995b39971b73418a390b5bf981c5d, type: 2}

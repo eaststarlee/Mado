@@ -9,12 +9,13 @@ public class PlayerIdleState : PlayerState
     }
 
     private float lookTimer;
-    private const float LOOK_DELAY = 0.1f;
+    private const float LOOK_DELAY = 0.5f;
 
     public override void Enter()
     {
         base.Enter(); // 애니메이션 재생 (SetBaseState)
         lookTimer = 0f;
+        player.VerticalLookIntention = 0;
         
         if (player.RB != null && player.RB.bodyType != RigidbodyType2D.Static)
         {
@@ -22,30 +23,32 @@ public class PlayerIdleState : PlayerState
         }
     }
 
+    public override void Exit()
+    {
+        base.Exit();
+        player.VerticalLookIntention = 0;
+    }
+
     public override void LogicUpdate()
     {
         base.LogicUpdate();
         
+        player.animationController?.SetBaseState(AnimStateName);
+        
         if (player.InputY > 0.5f)
         {
             lookTimer += Time.deltaTime;
-            if (lookTimer > LOOK_DELAY)
-            {
-                player.animationController?.SetBaseState("LookUp");
-            }
+            if (lookTimer > LOOK_DELAY) player.VerticalLookIntention = 1;
         }
         else if (player.InputY < -0.5f)
         {
             lookTimer += Time.deltaTime;
-            if (lookTimer > LOOK_DELAY)
-            {
-                player.animationController?.SetBaseState("LookDown");
-            }
+            if (lookTimer > LOOK_DELAY) player.VerticalLookIntention = -1;
         }
         else
         {
             lookTimer = 0f;
-            player.animationController?.SetBaseState(AnimStateName);
+            player.VerticalLookIntention = 0;
         }
         
         // DashInput 체크 (대쉬가 모든 스프린트의 시작점)

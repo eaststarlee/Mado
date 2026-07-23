@@ -42,6 +42,7 @@ public class PlayerController : MonoBehaviour
     private float ledgeFailCooldownTimer = 0f;
     private float grappleBufferTimer = 0f;
     public bool IsInDimensionZone { get; set; }
+    public int VerticalLookIntention { get; set; } = 0;
     #endregion
 
     #region Input Variables

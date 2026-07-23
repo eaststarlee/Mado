@@ -212,48 +212,30 @@ public class PlayerCamera : MonoBehaviour
 
     private void HandleVerticalLook()
     {
-        // 1. 기본 상태 체크 (반드시 Idle 상태여야 합니다)
+        // 기본 상태 체크 (반드시 Idle 상태여야 합니다)
         if (playerController.StateMachine.CurrentState != playerController.IdleState)
         {
             ResetVerticalLook();
             return;
         }
 
-        // 2. 입력 및 행동 체크 (엄격한 조건)
-        // - 수평 이동 중이면 안 됨 (InputX 체크)
-        // - 공격 중이면 안 됨 (Combat 상태)
-        // - 공격 키를 누르고 있으면 안 됨 (X키 홀드 대응)
-        bool isMovingHorizontally = Mathf.Abs(playerController.InputX) > 0.01f;
-        // Combat이 null일 수 있으므로 null 체크 필수
-        bool isAttacking = (playerController.Combat != null && playerController.Combat.IsAttacking);
-        // 키 설정이 하드코딩 되어 있다면 Input Manager나 KeyCode 변수를 사용하는 것이 좋지만, 현재는 X키로 가정
-        bool isAttackInput = playerController.IsAttackHeld; // Use IsAttackHeld
-
-        // 위 조건 중 하나라도 해당되면 시선 이동 취소
-        if (isMovingHorizontally || isAttacking || isAttackInput)
+        // 펫 기반 연동 확인
+        if (playerController.Pet != null && playerController.Pet.StateMachine != null)
         {
-            ResetVerticalLook();
-            return;
-        }
-
-        // 3. 수직 입력 체크 (Vertical Input)
-        float verticalInput = playerController.InputY; // Use InputY
-
-        if (Mathf.Abs(verticalInput) > 0.1f)
-        {
-            m_VerticalLookTimer += Time.deltaTime;
-
-            // 설정된 지연 시간(Activate Delay)이 지나면 시선 이동 적용
-            if (m_VerticalLookTimer >= verticalLookActivateDelay)
+            if (playerController.Pet.StateMachine.CurrentState is PetScoutState scoutState)
             {
-                float targetY = defaultVerticalOffset + (verticalInput > 0 ? verticalLookOffset : -verticalLookOffset);
-                m_TargetTrackedOffset.y = Mathf.Lerp(m_TargetTrackedOffset.y, targetY, Time.deltaTime * lookOffsetChangeSpeed);
+                int intentY = playerController.VerticalLookIntention;
+                if (intentY != 0)
+                {
+                    float targetY = defaultVerticalOffset + (intentY > 0 ? verticalLookOffset : -verticalLookOffset);
+                    m_TargetTrackedOffset.y = Mathf.Lerp(m_TargetTrackedOffset.y, targetY, Time.deltaTime * lookOffsetChangeSpeed);
+                    return;
+                }
             }
         }
-        else
-        {
-            ResetVerticalLook();
-        }
+        
+        // 정찰 상태가 아니거나 목표에 도달하지 않았으면 원위치 복귀
+        ResetVerticalLook();
     }
 
     // 시선 이동 초기화 헬퍼 메서드

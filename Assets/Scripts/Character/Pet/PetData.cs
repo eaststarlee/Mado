@@ -71,6 +71,19 @@ public class PetData : ScriptableObject
     [Range(0f, 1f)]
     public float ghostAlpha = 0.5f;
     
+    [Header("Scout Settings (정찰 설정)")]
+    [Tooltip("위(Up) 방향 정찰 시 오프셋 (X: 전방 거리, Y: 위쪽 거리)")]
+    public Vector2 scoutOffsetUp = new Vector2(5f, 6f);
+    
+    [Tooltip("아래(Down) 방향 정찰 시 오프셋 (X: 전방 거리, Y: 아래쪽 거리 - 음수로 입력)")]
+    public Vector2 scoutOffsetDown = new Vector2(5f, -4f);
+    
+    [Tooltip("정찰 이동 속도")]
+    public float scoutSpeed = 15f;
+    
+    [Tooltip("목표 지점 도달 허용 오차 반경")]
+    public float scoutArrivalThreshold = 0.1f;
+    
     [Header("Follow Movement (이동 제어)")]
     [Tooltip("Follow 상태 최대 이동 속도 (추격 시 보정됨)")]
     public float followMaxSpeed = 20f;

@@ -14,8 +14,15 @@ public class PetGhostState : PetState
         // 콜라이더 완전 비활성화
         pet.Collider.enabled = false;
         
-        // 투명도 감소
-        pet.SetAlpha(pet.PetData.ghostAlpha);
+        // 투명도 설정 (단, 정찰에서 복귀 중일 때는 투명해지지 않음)
+        if (pet.CurrentGhostReason != GhostReason.ScoutReturn)
+        {
+            pet.SetAlpha(pet.PetData.ghostAlpha);
+        }
+        else
+        {
+            pet.SetAlpha(1f);
+        }
         
         // 둥실거림 활성화 (Ghost 상태 시에도 유지하도록 변경)
         pet.SetFloating(true);
@@ -82,6 +89,10 @@ public class PetGhostState : PetState
         else if (pet.CurrentGhostReason == GhostReason.FarAway)
         {
             moveSpeed = pet.PetData.ghostFastSpeed; 
+        }
+        else if (pet.CurrentGhostReason == GhostReason.ScoutReturn)
+        {
+            moveSpeed = pet.PetData.scoutSpeed; // 정찰 속도 유지
         }
 
         // [특수 행동 중] 플레이어 속도보다 빠르게 이동하여 확실히 추격
