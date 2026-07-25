@@ -89,6 +89,7 @@ public class BootSequencer : MonoBehaviour
                 if (mainMenuUI != null) mainMenuUI.gameObject.SetActive(false);
 
                 EnsureCharactersActive();
+                EnsureGameplayUIActive();
                 SceneManager.SetActiveScene(scene);
                 SceneLoader.Instance.BindToAlreadyLoadedRoom(scene.name);
 
@@ -144,6 +145,7 @@ public class BootSequencer : MonoBehaviour
 
         // ── 4. 플레이어/펫 활성화 보장 ─────────────────────
         EnsureCharactersActive();
+        EnsureGameplayUIActive();
 
         // ── 5. 씬 로드 ──────────────────────────────────────
         SceneLoader.Instance.LoadNextRoom(data.lastSceneName, data.lastSpawnId);
@@ -182,5 +184,23 @@ public class BootSequencer : MonoBehaviour
         var pet = FindAnyObjectByType<PetController>(FindObjectsInactive.Include);
         if (pet != null && !pet.gameObject.activeSelf)
             pet.gameObject.SetActive(true);
+    }
+
+    /// <summary>비활성화된 게임플레이 UI(HP 캔버스 등)가 있다면 강제 활성화합니다.</summary>
+    private void EnsureGameplayUIActive()
+    {
+        var healthUI = FindAnyObjectByType<HealthUI>(FindObjectsInactive.Include);
+        if (healthUI != null)
+        {
+            Canvas parentCanvas = healthUI.GetComponentInParent<Canvas>(true);
+            if (parentCanvas != null && !parentCanvas.gameObject.activeSelf)
+            {
+                parentCanvas.gameObject.SetActive(true);
+            }
+            else if (!healthUI.gameObject.activeSelf)
+            {
+                healthUI.gameObject.SetActive(true);
+            }
+        }
     }
 }

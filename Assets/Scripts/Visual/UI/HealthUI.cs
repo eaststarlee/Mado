@@ -27,12 +27,12 @@ public class HealthUI : MonoBehaviour
         var playerHealth = FindFirstObjectByType<PlayerHealth>();
         if (playerHealth != null)
         {
-            UpdateHealth(playerHealth.CurrentHealth, playerHealth.MaxHealth);
+            UpdateHealthInternal(playerHealth.CurrentHealth, playerHealth.MaxHealth, false);
         }
         else
         {
             Debug.LogWarning("PlayerHealth를 찾을 수 없습니다. 기본값으로 초기화합니다.");
-            UpdateHealth(5, 5); // 기본값
+            UpdateHealthInternal(5, 5, false); // 기본값
         }
     }
     
@@ -63,10 +63,10 @@ public class HealthUI : MonoBehaviour
 
     private void RefreshVisibility(GameState state)
     {
-        // Gameplay 상태에서만 하트 컨테이너 노출
+        // 메인 메뉴를 제외하고 노출 (로딩 중 페이드인 될 때 자연스럽게 보이도록)
         if (heartContainer != null)
         {
-            heartContainer.gameObject.SetActive(state == GameState.Gameplay);
+            heartContainer.gameObject.SetActive(state != GameState.MainMenu);
         }
     }
     #endregion
@@ -76,6 +76,11 @@ public class HealthUI : MonoBehaviour
     /// 체력 업데이트 (PlayerEvents.OnHealthChanged 콜백)
     /// </summary>
     private void UpdateHealth(int current, int max)
+    {
+        UpdateHealthInternal(current, max, animateChanges);
+    }
+
+    private void UpdateHealthInternal(int current, int max, bool doAnimate)
     {
         // 최대 체력 변경 시 하트 개수 조정
         if (max != maxHealth)
@@ -99,7 +104,7 @@ public class HealthUI : MonoBehaviour
             // 각 하트는 1칸을 담당
             // 예: 체력 2.5 → 하트0=1.0, 하트1=1.0, 하트2=0.5
             float fillAmount = Mathf.Clamp01(current - i);
-            hearts[i].SetFillAmount(fillAmount, animateChanges);
+            hearts[i].SetFillAmount(fillAmount, doAnimate);
         }
         
         currentHealth = current;
